@@ -35,7 +35,7 @@ async function getCurrentScene(socket: SocketIOClient.Socket): Promise<Scene> {
         socket.once("status", (status: Status) => {
             resolve(status);
         });
-        socket.emit("get status");
+        socket.emit("getstatus");
     });
     return createScene(status.scene);
 }

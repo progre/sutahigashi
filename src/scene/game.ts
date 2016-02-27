@@ -2,15 +2,13 @@ import {getLogger} from "log4js";
 let logger = getLogger();
 import {Game, Player} from "../domain/status";
 import Synchronizer from "../infrastructure/synchronizer";
-import Users from "../domain/users";
 import {Input} from "../domain/input";
 import * as result from "./result";
 
 export const NAME = "game";
 
-export async function exec(synchronizer: Synchronizer, users: Users) {
+export async function exec(synchronizer: Synchronizer) {
     logger.info("Game starting.");
-    synchronizer.postScene(NAME);
     let sockets = synchronizer.io.sockets.sockets;
     eachSockets(sockets, x => x.addListener("inputs", onInput));
     let inputsRepository = <Input[][]>[];
@@ -25,7 +23,7 @@ export async function exec(synchronizer: Synchronizer, users: Users) {
         if (inputs == null) {
             return;
         }
-        updateGame(game, inputs)
+        updateGame(game, inputs);
         synchronizer.postScene(NAME, { game });
     }, 33);
     await new Promise((resolve, reject) => {
@@ -58,7 +56,7 @@ function eachSockets(
     }
 }
 
-function move(input: Input, player: { x: number, y: number }) {
+function move(input: Input, player: Player) {
     let x: number = -<any>input.left + <any>input.right;
     let y: number = -<any>input.up + <any>input.down;
     player.x += x;

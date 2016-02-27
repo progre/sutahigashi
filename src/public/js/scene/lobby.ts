@@ -17,7 +17,7 @@ export default async function lobby(
                 }
                 resolve(createScene(status.scene));
             });
-            socket.emit("get status");
+            socket.emit("getstatus");
         });
     } finally {
         document.getElementById("join").removeEventListener("click", onJoinClick);

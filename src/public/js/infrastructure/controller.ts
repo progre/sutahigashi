@@ -12,7 +12,7 @@ export default class Controller {
     }
 
     release() {
-        window.removeEventListener("keydown", this)
+        window.removeEventListener("keydown", this);
     }
 
     popStatus() {
