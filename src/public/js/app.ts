@@ -1,26 +1,36 @@
 /// <reference path="../../../typings/browser.d.ts" />
 import "babel-polyfill";
-import * as lobby from "./scene/lobby";
+import lobby from "./scene/lobby";
+import {Status} from "../../domain/status";
+import {VERSION} from "../../domain/version";
 
 async function main() {
     let socket = io(location.hostname + ":8000/");
+    socket.on("status", (status: Status) => {
+        if (status.version !== VERSION) {
+            window.location.reload(true);
+        }
+    });
     let stage = new createjs.Stage("canvas");
     // 今のステートを調べる
     let currentScene = await getCurrentScene();
     while (true) {
-        currentScene = await currentScene.show(stage, socket);
+        currentScene = await currentScene(stage, socket);
     }
 }
 
-async function getCurrentScene(): Promise<Scene> {
+function getCurrentScene(): Promise<Scene> {
     // サーバーに問い合わせる
-    return lobby;
+    return Promise.resolve(lobby);
 }
 
 interface Scene {
-    show(stage: createjs.Stage, socket: SocketIOClient.Socket): Scene;
+    (stage: createjs.Stage, socket: SocketIOClient.Socket): Promise<Scene>;
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    main().catch(e => e.stack != null ? e.stack : e);
+    main().catch(e => {
+        console.error(e);
+        throw e;
+    });
 });

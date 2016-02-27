@@ -1,32 +1,37 @@
-export default class Users {
+import {EventEmitter} from "events";
+import {getLogger} from "log4js";
+let logger = getLogger();
+
+
+export default class Users extends EventEmitter {
     private items = <User[]>[];
 
-    join(user: User) {
+    tryJoin(user: User) {
         if (user.name == null || user.name.length == null
             || user.name.length <= 0 || user.name.length > 32) {
-            throw new Error("Invalid name");
+            logger.warn(`Invalid name: ${userToString(user)}`);
+            return false;
         }
         if (this.items.findIndex(x => x.socket === user.socket) >= 0) {
-            throw new Error("Already joined");
+            logger.warn(`Already joined: ${userToString(user)}`);
+            return false;
         }
         this.items.push(user);
+        this.emit("update");
+        logger.info(`${userToString(user)} joined. (users: ${this.length})`);
+        return true;
     }
 
     tryLeave(socket: SocketIO.Socket) {
         let idx = this.items.findIndex(x => x.socket === socket);
         if (idx < 0) {
+            logger.info(`Unjoined: ${socket.client.conn.remoteAddress}`);
             return null;
         }
         let user = this.items[idx];
         this.items.splice(idx, 1);
-        return user;
-    }
-
-    leave(socket: SocketIO.Socket) {
-        let user = this.tryLeave(socket);
-        if (user == null) {
-            throw new Error("Unjoined");
-        }
+        this.emit("update");
+        logger.info(`${userToString(user)} leaved. (users: ${this.length})`);
         return user;
     }
 
@@ -42,4 +47,8 @@ export default class Users {
 interface User {
     name: string;
     socket: SocketIO.Socket;
+}
+
+function userToString(user: User) {
+    return `${user.name}@${user.socket.client.conn.remoteAddress}`;
 }

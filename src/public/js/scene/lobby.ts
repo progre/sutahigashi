@@ -1,21 +1,41 @@
-export function show(stage: createjs.Stage, socket: SocketIOClient.Socket) {
-    socket.on("users", (users: { name: string }[]) => {
-        (<HTMLTextAreaElement>document.getElementById("users"))
-            .value = users.map(x => x.name).join("\n");
-    });
-    socket.emit("get users");
+import {Status, User} from "../../../domain/status";
+import game from "./game";
 
-    document.getElementById("join")
-        .addEventListener("click", e => {
-            let input = <HTMLInputElement>document.getElementById("name");
-            socket.emit("join", input.value);
-            console.log("join emitted");
+export default async function lobby(
+    stage: createjs.Stage,
+    socket: SocketIOClient.Socket
+) {
+    document.getElementById("join").addEventListener("click", onJoinClick);
+    document.getElementById("leave").addEventListener("click", onLeaveClick);
+    try {
+        return await new Promise<any>((resolve, reject) => {
+            socket.on("status", function onSocketStatus(status: Status) {
+                if (status.scene === "lobby") {
+                    updateUsers(status.users);
+                    return;
+                }
+                resolve(game);
+            });
+            socket.emit("get status");
         });
-    document.getElementById("leave")
-        .addEventListener("click", e => {
-            socket.emit("leave");
-            console.log("leave emitted");
-        });
-    return <any>new Promise((resolve, reject) => {
-    });
+    } finally {
+        document.getElementById("join").removeEventListener("click", onJoinClick);
+        document.getElementById("leave").removeEventListener("click", onLeaveClick);
+    }
+
+    function onJoinClick(e: MouseEvent) {
+        let input = <HTMLInputElement>document.getElementById("name");
+        socket.emit("join", input.value);
+        console.log("join emitted");
+    }
+
+    function onLeaveClick(e: MouseEvent) {
+        socket.emit("leave");
+        console.log("leave emitted");
+    }
+}
+
+function updateUsers(users: User[]) {
+    (<HTMLTextAreaElement>document.getElementById("users"))
+        .value = users.map(x => x.name).join("\n");
 }
