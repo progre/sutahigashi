@@ -1,3 +1,9 @@
+import {CHIP_PIXEL, createResizedBitmap} from "./chip";
+
+export const RESOURCES = [
+    { id: "hardblock", src: "res/hardblock.jpg" }
+];
+
 enum Chip {
     NONE, HARDBLOCK, SOFTBLOCK, BOMB
 }
@@ -26,19 +32,13 @@ const FIELD = `
         }
     }));
 
-export const RESOURCES = [
-    { id: "hardblock", src: "res/hardblock.jpg" }
-];
-
-const CHIP_SIZE = 54;
-
 export default function createField(loadQueue: createjs.LoadQueue) {
     let field = new createjs.MovieClip();
     FIELD.forEach((line, y) => {
         line.forEach((chip, x) => {
             let image = loadImage(loadQueue, chip);
-            image.x = x * CHIP_SIZE;
-            image.y = y * CHIP_SIZE;
+            image.x = x * CHIP_PIXEL;
+            image.y = y * CHIP_PIXEL;
             field.addChild(image);
         });
     });
@@ -51,15 +51,11 @@ function loadImage(loadQueue: createjs.LoadQueue, chip: Chip): createjs.DisplayO
             let shape = new createjs.Shape();
             shape.graphics
                 .beginFill("white")
-                .drawRect(0, 0, CHIP_SIZE, CHIP_SIZE)
+                .drawRect(0, 0, CHIP_PIXEL, CHIP_PIXEL)
                 .endFill();
             return shape;
         case Chip.HARDBLOCK:
-            let image = <HTMLImageElement>loadQueue.getResult("hardblock");
-            let bitmap = new createjs.Bitmap(image);
-            bitmap.scaleX = CHIP_SIZE / image.width;
-            bitmap.scaleY = CHIP_SIZE / image.height;
-            return bitmap;
+            return createResizedBitmap(<any>loadQueue.getResult("hardblock"));
         default: throw new Error();
     }
 }

@@ -1,8 +1,10 @@
 import {Status} from "../../../domain/status";
 import createField, {RESOURCES as fieldResources} from "../component/field";
+import createPlayer, {RESOURCES as playerResources} from "../component/player";
 import createScene from "./scenefactory";
+import {FIELD_PIXEL} from "../component/chip";
 
-export const RESOURCES = fieldResources;
+export const RESOURCES = fieldResources.concat(playerResources);
 
 export default async function game(
     loadQueue: createjs.LoadQueue,
@@ -10,8 +12,14 @@ export default async function game(
     socket: SocketIOClient.Socket
 ) {
     console.log("Game starting.");
-    let field = createField(loadQueue);
-    stage.addChild(field);
+    let game = new createjs.Container();
+    stage.addChild(game);
+    let canvas = <HTMLCanvasElement>stage.canvas;
+    let fieldArea = new createjs.Container();
+    centering(fieldArea, canvas, FIELD_PIXEL);
+    game.addChild(fieldArea);
+    fieldArea.addChild(createField(loadQueue));
+    fieldArea.addChild(createPlayer(loadQueue, 0));
     stage.update();
     let scene = await new Promise<any>((resolve, reject) => {
         socket.on("status", function onSocketStatus(status: Status) {
@@ -22,8 +30,17 @@ export default async function game(
             resolve(createScene(status.scene));
         });
     });
-    stage.removeChild(field);
+    stage.removeChild(game);
     stage.update();
     console.log("Game finished.");
     return scene;
+}
+
+function centering(
+    child: createjs.DisplayObject,
+    parentRect: { width: number; height: number; },
+    childRect: { width: number; height: number; }
+) {
+    child.x = (parentRect.width - childRect.width) / 2;
+    child.y = (parentRect.height - childRect.height) / 2;
 }
