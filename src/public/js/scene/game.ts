@@ -2,7 +2,8 @@ import {Status} from "../../../domain/status";
 import createField, {RESOURCES as fieldResources} from "../component/field";
 import createPlayer, {RESOURCES as playerResources} from "../component/player";
 import createScene from "./scenefactory";
-import {FIELD_PIXEL} from "../component/chip";
+import {CHIP_PIXEL, FIELD_PIXEL} from "../component/chip";
+import Controller from "../infrastructure/controller";
 
 export const RESOURCES = fieldResources.concat(playerResources);
 
@@ -12,28 +13,63 @@ export default async function game(
     socket: SocketIOClient.Socket
 ) {
     console.log("Game starting.");
+
+    let controller = new Controller();
+
     let game = new createjs.Container();
     stage.addChild(game);
-    let canvas = <HTMLCanvasElement>stage.canvas;
-    let fieldArea = new createjs.Container();
-    centering(fieldArea, canvas, FIELD_PIXEL);
+
+    let fieldArea = createFieldArea(loadQueue, <HTMLCanvasElement>stage.canvas);
     game.addChild(fieldArea);
-    fieldArea.addChild(createField(loadQueue));
-    fieldArea.addChild(createPlayer(loadQueue, 0));
+
+    let players = [0, 1, 2, 3].map(x => createPlayer(loadQueue, x));
+    players.forEach(x => fieldArea.addChild(x));
+
     stage.update();
+
+    let wait = 1;
+    let tick = 0;
+    let sendingTick = 0;
+    let onUpdateTimer = setInterval(() => {
+        if (sendingTick < tick - wait) {
+            return;
+        }
+        socket.emit("inputs", controller.popStatus());
+        sendingTick++;
+    }, 33);
+
     let scene = await new Promise<any>((resolve, reject) => {
         socket.on("status", function onSocketStatus(status: Status) {
             if (status.scene === "game") {
+                tick = status.game.tick;
+                status.game.players.forEach((player, i) => {
+                    console.log(player);
+                    players[i].x = player.x * CHIP_PIXEL;
+                    players[i].y = player.y * CHIP_PIXEL;
+                });
+                stage.update();
                 return;
             }
             socket.off("status", onSocketStatus);
             resolve(createScene(status.scene));
         });
     });
+    clearInterval(onUpdateTimer);
     stage.removeChild(game);
     stage.update();
+    controller.release();
     console.log("Game finished.");
     return scene;
+}
+
+function createFieldArea(
+    loadQueue: createjs.LoadQueue,
+    parentRect: { width: number; height: number; }
+) {
+    let fieldArea = new createjs.Container();
+    centering(fieldArea, parentRect, FIELD_PIXEL);
+    fieldArea.addChild(createField(loadQueue));
+    return fieldArea;
 }
 
 function centering(

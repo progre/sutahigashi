@@ -1,4 +1,4 @@
-import {CHIP_PIXEL, createResizedBitmap} from "./chip";
+import {createResizedBitmap} from "./chip";
 
 export const RESOURCES = [
     { id: "p1", src: "res/p1.png" },

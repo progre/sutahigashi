@@ -1,16 +1,18 @@
+import {EventEmitter} from "events";
+const merge = require("merge");
 import {Status} from "../domain/status";
 import {VERSION} from "../domain/version";
 import Users from "../domain/users";
 
 export default class Synchronizer {
     constructor(
-        private io: SocketIO.Server,
+        public io: SocketIO.Server,
         private users: Users
     ) {
     }
 
-    postScene(scene: string) {
-        this.io.emit("status", createStatus(scene, this.users));
+    postScene(scene: string, obj?: Status) {
+        this.io.emit("status", merge(createStatus(scene, this.users), obj));
     }
 
     postSceneToUser(socket: SocketIO.Socket, scene: string) {
