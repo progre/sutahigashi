@@ -1,10 +1,21 @@
 /// <reference path="../../../typings/browser.d.ts" />
 import "babel-polyfill";
-import lobby from "./scene/lobby";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import Lobby from "./component/lobby";
+import {Scene} from "./scene/scene";
+import createScene from "./scene/scenefactory";
+import {RESOURCES as gameResource} from "./scene/game";
+import {RESOURCES as resultResource} from "./scene/result";
 import {Status} from "../../domain/status";
 import {VERSION} from "../../domain/version";
 
-async function main() {
+async function main(loadQueue: createjs.LoadQueue) {
+    ReactDOM.render(
+        React.createElement(Lobby, null),
+        document.getElementById("lobby")
+    );
+
     let socket = io(location.hostname + ":8000/");
     socket.on("status", (status: Status) => {
         if (status.version !== VERSION) {
@@ -13,24 +24,40 @@ async function main() {
     });
     let stage = new createjs.Stage("canvas");
     // 今のステートを調べる
-    let currentScene = await getCurrentScene();
+    let currentScene = await getCurrentScene(socket);
     while (true) {
-        currentScene = await currentScene(stage, socket);
+        currentScene = await currentScene(loadQueue, stage, socket);
     }
 }
 
-function getCurrentScene(): Promise<Scene> {
-    // サーバーに問い合わせる
-    return Promise.resolve(lobby);
+async function getCurrentScene(socket: SocketIOClient.Socket): Promise<Scene> {
+    let status = await new Promise<Status>((resolve, reject) => {
+        socket.once("status", (status: Status) => {
+            resolve(status);
+        });
+        socket.emit("get status");
+    });
+    return createScene(status.scene);
 }
 
-interface Scene {
-    (stage: createjs.Stage, socket: SocketIOClient.Socket): Promise<Scene>;
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-    main().catch(e => {
+Promise.all([
+    new Promise((resolve, reject) => {
+        let loadQueue = new createjs.LoadQueue();
+        loadQueue.on("complete", function onComplete() {
+            loadQueue.off("complete", onComplete);
+            resolve(loadQueue);
+        });
+        loadQueue.loadManifest(gameResource.concat(resultResource));
+    }),
+    new Promise((resolve, reject) => {
+        window.addEventListener("DOMContentLoaded", function onDOMContentLoaded() {
+            window.removeEventListener("DOMContentLoaded", onDOMContentLoaded);
+            resolve();
+        });
+    })
+])
+    .then((x: [createjs.LoadQueue, any]) => main(x[0]))
+    .catch(e => {
         console.error(e);
         throw e;
     });
-});

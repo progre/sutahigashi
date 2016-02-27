@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "jsx": "react",
         "noImplicitAny": true,
         "noEmitOnError": true,
         "target": "es6"

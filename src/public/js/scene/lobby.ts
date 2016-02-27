@@ -1,7 +1,8 @@
 import {Status, User} from "../../../domain/status";
-import game from "./game";
+import createScene from "./scenefactory";
 
 export default async function lobby(
+    loader: createjs.PreloadJS,
     stage: createjs.Stage,
     socket: SocketIOClient.Socket
 ) {
@@ -14,7 +15,7 @@ export default async function lobby(
                     updateUsers(status.users);
                     return;
                 }
-                resolve(game);
+                resolve(createScene(status.scene));
             });
             socket.emit("get status");
         });

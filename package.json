@@ -9,6 +9,8 @@
     "koa-serve-static": "^1.0.0",
     "koa-static": "^2.0.0",
     "log4js": "^0.6.31",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
     "socket.io": "^1.4.5"
   },
   "devDependencies": {

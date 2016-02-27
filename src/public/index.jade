@@ -9,18 +9,12 @@ link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/
 script(src='https://code.jquery.com/jquery-2.2.1.min.js')
 script(src='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.js')
 script(src='https://code.createjs.com/createjs-2015.11.26.min.js')
-script(src='https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react.min.js')
-script(src='https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.min.js')
 script(src='https://cdn.socket.io/socket.io-1.4.5.js')
 script(src='js/app.js')
 //[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js">
     <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js">
     <![endif]
-.ui.input(style='margin-right: 0.25em;')
-  input#name(type='text')
-button.ui.button#join Join
-button.ui.button#leave Leave
-br
-textarea#users(cols='20', rows='10', readonly='true')
-canvas#canvas(width='1280', height='720')
+body(style='background-color: gray;')
+    div#lobby(style='position: absolute;')
+    canvas#canvas(width='1280', height='720', style='background-color: dimgray;')
