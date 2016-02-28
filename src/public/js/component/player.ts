@@ -1,10 +1,10 @@
 import {createResizedBitmap} from "./chip";
 
 export const RESOURCES = [
-    { id: "p1", src: "res/p1.png" },
-    { id: "p2", src: "res/p2.png" },
-    { id: "p3", src: "res/p3.png" },
-    { id: "p4", src: "res/p4.png" }
+    { id: "p1", src: "https://pbs.twimg.com/media/CSX967rUYAAMQww.png" },
+    { id: "p2", src: "https://pbs.twimg.com/media/CSX_bQQVAAE8GDs.png" },
+    { id: "p3", src: "https://pbs.twimg.com/media/CSX-kMzUAAEZ1f9.png" },
+    { id: "p4", src: "https://pbs.twimg.com/media/CSX-VzQUkAAj6a9.png" }
 ];
 
 export default function createPlayer(loadQueue: createjs.LoadQueue, player: number) {
