@@ -1,4 +1,4 @@
-export const CHIP_PIXEL = 54;
+export const CHIP_PIXEL = 80;
 export const FIELD_PIXEL = { width: CHIP_PIXEL * 15, height: CHIP_PIXEL * 13 };
 
 export function createResizedBitmap(image: HTMLImageElement) {

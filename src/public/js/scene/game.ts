@@ -42,10 +42,7 @@ export default async function game(
         socket.on("status", function onSocketStatus(status: Status) {
             if (status.scene === "game") {
                 tick = status.game.tick;
-                status.game.players.forEach((player, i) => {
-                    players[i].x = player.x * CHIP_PIXEL;
-                    players[i].y = player.y * CHIP_PIXEL;
-                });
+                render(players, status);
                 stage.update();
                 return;
             }
@@ -59,6 +56,14 @@ export default async function game(
     controller.release();
     console.log("Game finished.");
     return scene;
+}
+
+function render(players: createjs.Bitmap[], status: Status) {
+    status.game.players.forEach((player, i) => {
+        console.log(i);
+        players[i].x = player.x * CHIP_PIXEL;
+        players[i].y = player.y * CHIP_PIXEL;
+    });
 }
 
 function createFieldArea(

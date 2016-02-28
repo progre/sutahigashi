@@ -18,24 +18,24 @@ export default class Synchronizer extends EventEmitter {
         io.on("connection", socket => {
             logger.debug("connected");
 
-            socket.on("disconnect", () => {
+            socket.on("disconnect", () => tryCatch(() => {
                 logger.debug("disconnected");
                 this.users.tryLeave(socket);
-            });
+            }));
 
-            socket.on("getstatus", () => {
+            socket.on("getstatus", () => tryCatch(() => {
                 socket.emit("status", createStatus(this.scene, this.users));
-            });
+            }));
 
-            socket.on("join", (name: string) => {
+            socket.on("join", (name: string) => tryCatch(() => {
                 this.users.tryJoin({ socket, name });
-            });
+            }));
 
-            socket.on("leave", () => {
+            socket.on("leave", () => tryCatch(() => {
                 this.users.tryLeave(socket);
-            });
+            }));
 
-            socket.on("input", (input: Input) => {
+            socket.on("input", (input: Input) => tryCatch(() => {
                 let number = this.users.socketIndexOf(socket);
                 if (number < 0) {
                     return;
@@ -46,7 +46,7 @@ export default class Synchronizer extends EventEmitter {
                     let inputs = this.inputsRepository.shift();
                     this.emit("inputs", inputs);
                 }
-            });
+            }));
         });
         this.users.on("update", () => {
             this.emit("usersupdate", this.users);
@@ -94,3 +94,10 @@ function createStatus(scene: string, users: Users) {
     return status;
 }
 
+function tryCatch(func: Function) {
+    try {
+        func();
+    } catch (e) {
+        logger.error(e.stack != null ? e.stack : e);
+    }
+}

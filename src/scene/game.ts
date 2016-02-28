@@ -4,7 +4,6 @@ import {Game, Player} from "../domain/status";
 import Synchronizer from "../infrastructure/synchronizer";
 import {Input} from "../domain/input";
 import * as result from "./result";
-import {LIMIT} from "../domain/users";
 
 export const NAME = "game";
 
@@ -15,7 +14,10 @@ export async function exec(synchronizer: Synchronizer) {
     let game = {
         tick: 0,
         players: [
-            { x: 1, y: 1 }
+            { x: 1, y: 1 },
+            { x: 13, y: 11 },
+            { x: 13, y: 1 },
+            { x: 1, y: 11 }
         ]
     };
     let onUpdateTimer = setInterval(() => {
@@ -41,7 +43,9 @@ export async function exec(synchronizer: Synchronizer) {
 }
 
 function updateGame(game: Game, inputs: Input[]) {
-    move(inputs[0], game.players[0]);
+    inputs.forEach((input, i) => {
+        move(input, game.players[i]);
+    });
     game.tick++;
 }
 
@@ -51,4 +55,3 @@ function move(input: Input, player: Player) {
     player.x += x;
     player.y += y;
 }
-

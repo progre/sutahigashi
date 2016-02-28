@@ -5,55 +5,27 @@ export default class MultiItemArray<T> extends Array<T[]> {
 
     pushOffset(offset: number, item: T) {
         let idx = lastInputIndex(this, offset) + 1;
-        let inputs = this.getOrCreate(idx);
-        {
-            let count = 0;
-            inputs.forEach(x=> count++);
-            if (inputs.length !== count) {
-                throw new Error("Broken list.p");
-            }
-        }
-        inputs[offset] = item;
+        let multi = this.getOrCreate(idx);
+        put(multi, offset, item);
     }
 
     filled(index: number) {
         let multi = this[index];
-        {
-            let count = 0;
-            multi.forEach(x=> count++);
-            if (multi.length !== count) {
-                throw new Error("Broken list.");
-            }
-        }
         return multi != null
             && multi.length === this.limit
             && multi.every(x => x != null);
     }
 
     private getOrCreate(index: number) {
-        let item = this[index];
-        if (item != null) {
-            {
-                let count = 0;
-                item.forEach(x=> count++);
-                if (item.length !== count) {
-                    throw new Error("Broken list.hoge");
-                }
-            }
-            return item;
+        let mutli = this[index];
+        if (mutli != null) {
+            return mutli;
         }
-        let array = <T[]>[];
+        let multi = <T[]>[];
         for (let i = 0; i < this.limit; i++) {
-            array.push();
+            multi.push();
         }
-        {
-            let count = 0;
-            array.forEach(x=> count++);
-            if (array.length !== count) {
-                throw new Error("Broken list. hetakuso");
-            }
-        }
-        return this[index] = array;
+        return put(this, index, multi);
     }
 }
 
@@ -67,3 +39,9 @@ function lastInputIndex<T>(multiItemArray: MultiItemArray<T>, number: number) {
     return multiItemArray.length - 1;
 }
 
+function put<T>(list: T[], idx: number, item: T) {
+    while (list.length < idx + 1) {
+        list.push(null);
+    }
+    return list[idx] = item;
+}
