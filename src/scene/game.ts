@@ -4,13 +4,13 @@ import {Game, Player} from "../domain/status";
 import Synchronizer from "../infrastructure/synchronizer";
 import {Input} from "../domain/input";
 import * as result from "./result";
+import {LIMIT} from "../domain/users";
 
 export const NAME = "game";
 
 export async function exec(synchronizer: Synchronizer) {
     logger.info("Game starting.");
-    let sockets = synchronizer.io.sockets.sockets;
-    eachSockets(sockets, x => x.addListener("inputs", onInput));
+    synchronizer.on("inputs", onInputs);
     let inputsRepository = <Input[][]>[];
     let game = {
         tick: 0,
@@ -30,30 +30,19 @@ export async function exec(synchronizer: Synchronizer) {
         setTimeout(resolve, 10 * 1000);
     });
 
-    eachSockets(sockets, x => x.removeListener("inputs", onInput));
+    synchronizer.removeListener("inputs", onInputs);
     clearInterval(onUpdateTimer);
     logger.info("Game finished.");
     return result;
 
-    function onInput(input: Input) {
-        inputsRepository.push([input]);
+    function onInputs(inputs: Input[]) {
+        inputsRepository.push(inputs);
     }
 }
 
 function updateGame(game: Game, inputs: Input[]) {
     move(inputs[0], game.players[0]);
     game.tick++;
-}
-
-function eachSockets(
-    sockets: typeof Synchronizer.prototype.io.sockets.sockets,
-    func: (socket: SocketIO.Socket) => void
-) {
-    for (let id in sockets) {
-        if (sockets.hasOwnProperty(id)) {
-            func(sockets[id]);
-        }
-    }
 }
 
 function move(input: Input, player: Player) {

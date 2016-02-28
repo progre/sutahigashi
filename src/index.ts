@@ -21,5 +21,4 @@ async function main() {
         scene = await scene.exec(synchronizer);
     }
 }
-
-main();
+main().catch(e => console.error(e.stack));

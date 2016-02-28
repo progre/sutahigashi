@@ -34,7 +34,7 @@ export default async function game(
         if (sendingTick < tick - wait) {
             return;
         }
-        socket.emit("inputs", controller.popStatus());
+        socket.emit("input", controller.popStatus());
         sendingTick++;
     }, 33);
 
@@ -43,7 +43,6 @@ export default async function game(
             if (status.scene === "game") {
                 tick = status.game.tick;
                 status.game.players.forEach((player, i) => {
-                    console.log(player);
                     players[i].x = player.x * CHIP_PIXEL;
                     players[i].y = player.y * CHIP_PIXEL;
                 });

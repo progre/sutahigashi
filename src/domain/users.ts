@@ -2,11 +2,15 @@ import {EventEmitter} from "events";
 import {getLogger} from "log4js";
 let logger = getLogger();
 
+export const LIMIT = 2;
 
 export default class Users extends EventEmitter {
     private items = <User[]>[];
 
     tryJoin(user: User) {
+        if (this.items.length >= LIMIT) {
+            return;
+        }
         if (user.name == null || user.name.length == null
             || user.name.length <= 0 || user.name.length > 32) {
             logger.warn(`Invalid name: ${userToString(user)}`);
@@ -41,6 +45,10 @@ export default class Users extends EventEmitter {
 
     map<U>(callbackfn: (value: User, index: number, array: User[]) => U, thisArg?: any) {
         return this.items.map(callbackfn);
+    }
+
+    socketIndexOf(socket: SocketIO.Socket) {
+        return this.items.findIndex(x => x.socket === socket);
     }
 }
 
