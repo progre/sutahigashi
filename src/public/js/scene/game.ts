@@ -1,7 +1,7 @@
 import {Status, Game} from "../../../domain/status";
 import createField, {RESOURCES as fieldResources} from "../component/field";
 import createPlayer, {RESOURCES as playerResources} from "../component/player";
-import {createBomb, RESOURCES as objectsResources} from "../component/objects";
+import {createBomb, createBall, RESOURCES as objectsResources} from "../component/objects";
 import createScene from "./scenefactory";
 import {CHIP_PIXEL, FIELD_PIXEL} from "../component/chip";
 import Controller from "../infrastructure/controller";
@@ -56,6 +56,7 @@ export default async function game(
 class GameViewContainer extends createjs.Container {
     players: createjs.DisplayObject[];
     bombs: createjs.DisplayObject[];
+    balls: createjs.DisplayObject[];
 
     constructor(loadQueue: createjs.LoadQueue, parentRect: { width: number; height: number; }) {
         super();
@@ -71,6 +72,13 @@ class GameViewContainer extends createjs.Container {
             this.bombs.push(bomb);
             fieldArea.addChild(bomb);
         }
+        this.balls = [];
+        for (let i = 0; i < 15 * 13 * 8; i++) {
+            let ball = createBall(loadQueue);
+            ball.visible = false;
+            this.balls.push(ball);
+            fieldArea.addChild(ball);
+        }
     }
 }
 
@@ -85,8 +93,17 @@ function render(container: GameViewContainer, game: Game) {
             return;
         }
         bombView.visible = true;
-        bombView.x = game.bombs[i].x * CHIP_PIXEL;
-        bombView.y = game.bombs[i].y * CHIP_PIXEL;
+        bombView.x = game.bombs[i].point.x * CHIP_PIXEL;
+        bombView.y = game.bombs[i].point.y * CHIP_PIXEL;
+    });
+    container.balls.forEach((ballView, i) => {
+        if (i >= game.balls.length) {
+            ballView.visible = false;
+            return;
+        }
+        ballView.visible = true;
+        ballView.x = game.balls[i].point.x * CHIP_PIXEL;
+        ballView.y = game.balls[i].point.y * CHIP_PIXEL;
     });
 }
 
