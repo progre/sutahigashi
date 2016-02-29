@@ -16,7 +16,7 @@ async function main() {
             window.removeEventListener("DOMContentLoaded", onDOMContentLoaded);
             resolve();
         });
-    })
+    });
     let loadQueue = new createjs.LoadQueue(false);
     await new Promise((resolve, reject) => {
         loadQueue.on("complete", function onComplete() {
@@ -31,7 +31,7 @@ async function main() {
         document.getElementById("lobby")
     );
 
-    let socket = io(location.hostname + ":8000/");
+    let socket = io();
     socket.on("status", (status: Status) => {
         if (status.version !== VERSION) {
             window.location.reload(true);
