@@ -10,7 +10,22 @@ import {RESOURCES as resultResource} from "./scene/result";
 import {Status} from "../../domain/status";
 import {VERSION} from "../../domain/version";
 
-async function main(loadQueue: createjs.LoadQueue) {
+async function main() {
+    await new Promise((resolve, reject) => {
+        window.addEventListener("DOMContentLoaded", function onDOMContentLoaded() {
+            window.removeEventListener("DOMContentLoaded", onDOMContentLoaded);
+            resolve();
+        });
+    })
+    let loadQueue = new createjs.LoadQueue(false);
+    await new Promise((resolve, reject) => {
+        loadQueue.on("complete", function onComplete() {
+            loadQueue.off("complete", onComplete);
+            resolve(loadQueue);
+        });
+        loadQueue.loadManifest(gameResource.concat(resultResource));
+    });
+
     ReactDOM.render(
         React.createElement(Lobby, null),
         document.getElementById("lobby")
@@ -40,24 +55,7 @@ async function getCurrentScene(socket: SocketIOClient.Socket): Promise<Scene> {
     return createScene(status.scene);
 }
 
-Promise.all([
-    new Promise((resolve, reject) => {
-        let loadQueue = new createjs.LoadQueue();
-        loadQueue.on("complete", function onComplete() {
-            loadQueue.off("complete", onComplete);
-            resolve(loadQueue);
-        });
-        loadQueue.loadManifest(gameResource.concat(resultResource));
-    }),
-    new Promise((resolve, reject) => {
-        window.addEventListener("DOMContentLoaded", function onDOMContentLoaded() {
-            window.removeEventListener("DOMContentLoaded", onDOMContentLoaded);
-            resolve();
-        });
-    })
-])
-    .then((x: [createjs.LoadQueue, any]) => main(x[0]))
-    .catch(e => {
-        console.error(e);
-        throw e;
-    });
+main().catch(e => {
+    console.error(e);
+    throw e;
+});

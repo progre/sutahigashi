@@ -60,7 +60,6 @@ export default async function game(
 
 function render(players: createjs.Bitmap[], status: Status) {
     status.game.players.forEach((player, i) => {
-        console.log(i);
         players[i].x = player.x * CHIP_PIXEL;
         players[i].y = player.y * CHIP_PIXEL;
     });

@@ -7,18 +7,7 @@ configure({
     appenders: [{ type: "console", layout: { type: "basic" } }]
 });
 let logger = getLogger();
+import direct from "./scene/director";
 
-import Synchronizer from "./infrastructure/synchronizer";
-import {Scene} from "./scene/scene";
-import * as lobby from "./scene/lobby";
-
-async function main() {
-    let scene: Scene = lobby;
-    let synchronizer = new Synchronizer(socket(8000));
-    logger.info("Server started.");
-    while (true) {
-        synchronizer.startScene(scene.NAME);
-        scene = await scene.exec(synchronizer);
-    }
-}
-main().catch(e => console.error(e.stack));
+logger.info("Server started.");
+direct(socket(8000)).catch(e => console.error(e.stack));
