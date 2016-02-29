@@ -1,11 +1,14 @@
-import {Status} from "../../../domain/status";
+import {Status, Game} from "../../../domain/status";
 import createField, {RESOURCES as fieldResources} from "../component/field";
 import createPlayer, {RESOURCES as playerResources} from "../component/player";
+import {createBomb, RESOURCES as objectsResources} from "../component/objects";
 import createScene from "./scenefactory";
 import {CHIP_PIXEL, FIELD_PIXEL} from "../component/chip";
 import Controller from "../infrastructure/controller";
 
-export const RESOURCES = fieldResources.concat(playerResources);
+export const RESOURCES = fieldResources
+    .concat(playerResources)
+    .concat(objectsResources);
 
 export default async function game(
     loadQueue: createjs.LoadQueue,
@@ -15,16 +18,8 @@ export default async function game(
     console.log("Game starting.");
 
     let controller = new Controller();
-
-    let game = new createjs.Container();
-    stage.addChild(game);
-
-    let fieldArea = createFieldArea(loadQueue, <HTMLCanvasElement>stage.canvas);
-    game.addChild(fieldArea);
-
-    let players = [0, 1, 2, 3].map(x => createPlayer(loadQueue, x));
-    players.forEach(x => fieldArea.addChild(x));
-
+    let container = new GameViewContainer(loadQueue, <HTMLCanvasElement>stage.canvas);
+    stage.addChild(container);
     stage.update();
 
     let wait = 1;
@@ -42,7 +37,7 @@ export default async function game(
         socket.on("status", function onSocketStatus(status: Status) {
             if (status.scene === "game") {
                 tick = status.game.tick;
-                render(players, status);
+                render(container, status.game);
                 stage.update();
                 return;
             }
@@ -51,17 +46,47 @@ export default async function game(
         });
     });
     clearInterval(onUpdateTimer);
-    stage.removeChild(game);
+    stage.removeChild(container);
     stage.update();
     controller.release();
     console.log("Game finished.");
     return scene;
 }
 
-function render(players: createjs.Bitmap[], status: Status) {
-    status.game.players.forEach((player, i) => {
-        players[i].x = player.x * CHIP_PIXEL;
-        players[i].y = player.y * CHIP_PIXEL;
+class GameViewContainer extends createjs.Container {
+    players: createjs.DisplayObject[];
+    bombs: createjs.DisplayObject[];
+
+    constructor(loadQueue: createjs.LoadQueue, parentRect: { width: number; height: number; }) {
+        super();
+        let fieldArea = createFieldArea(loadQueue, parentRect);
+        this.addChild(fieldArea);
+
+        this.players = [0, 1, 2, 3].map(x => createPlayer(loadQueue, x));
+        this.players.forEach(x => fieldArea.addChild(x));
+        this.bombs = [];
+        for (let i = 0; i < 15 * 13; i++) {
+            let bomb = createBomb(loadQueue);
+            bomb.visible = false;
+            this.bombs.push(bomb);
+            fieldArea.addChild(bomb);
+        }
+    }
+}
+
+function render(container: GameViewContainer, game: Game) {
+    game.players.forEach((player, i) => {
+        container.players[i].x = player.x * CHIP_PIXEL;
+        container.players[i].y = player.y * CHIP_PIXEL;
+    });
+    container.bombs.forEach((bombView, i) => {
+        if (i >= game.bombs.length) {
+            bombView.visible = false;
+            return;
+        }
+        bombView.visible = true;
+        bombView.x = game.bombs[i].x * CHIP_PIXEL;
+        bombView.y = game.bombs[i].y * CHIP_PIXEL;
     });
 }
 

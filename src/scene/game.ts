@@ -1,6 +1,6 @@
 import {getLogger} from "log4js";
 let logger = getLogger();
-import {Game, Player} from "../domain/status";
+import {Game, Point} from "../domain/status";
 import Synchronizer from "../infrastructure/synchronizer";
 import {Input} from "../domain/input";
 import * as result from "./result";
@@ -18,6 +18,8 @@ export async function exec(synchronizer: Synchronizer) {
             { x: 13, y: 11 },
             { x: 13, y: 1 },
             { x: 1, y: 11 }
+        ],
+        bombs: <Point[]>[
         ]
     };
     let onUpdateTimer = setInterval(() => {
@@ -44,12 +46,16 @@ export async function exec(synchronizer: Synchronizer) {
 
 function updateGame(game: Game, inputs: Input[]) {
     inputs.forEach((input, i) => {
-        move(input, game.players[i]);
+        let player = game.players[i];
+        move(input, player);
+        if (input.bomb) {
+            game.bombs.push({ x: player.x, y: player.y });
+        }
     });
     game.tick++;
 }
 
-function move(input: Input, player: Player) {
+function move(input: Input, player: Point) {
     let x: number = -<any>input.left + <any>input.right;
     let y: number = -<any>input.up + <any>input.down;
     player.x += x;

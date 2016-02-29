@@ -11,10 +11,11 @@ export interface User {
 
 export interface Game {
     tick: number;
-    players: Player[];
+    players: Point[];
+    bombs: Point[];
 }
 
-export interface Player {
+export interface Point {
     x: number;
     y: number;
 }
