@@ -58,7 +58,7 @@ export async function exec(synchronizer: Synchronizer) {
 function updateGame(game: Game, inputs: Input[]) {
     inputs.forEach((input, i) => {
         let player = game.players[i];
-        move(input, player, game.lands);
+        movePlayer(input, player, game.lands);
         if (input.bomb) {
             game.bombs.push({ remain: BOMB_DEFAULT_REMAIN, point: { x: player.x, y: player.y } });
         }
@@ -69,7 +69,7 @@ function updateGame(game: Game, inputs: Input[]) {
         if (bomb.remain > 0) {
             return;
         }
-        let speed = 2;
+        let speed = 4;
         game.balls.push(
             {
                 speed,
@@ -102,27 +102,42 @@ function updateGame(game: Game, inputs: Input[]) {
         if (ball.remain > 0) {
             return;
         }
-        switch (ball.direction) {
-            case 8: ball.point.y--; break;
-            case 6: ball.point.x++; break;
-            case 2: ball.point.y++; break;
-            case 4: ball.point.x--; break;
-            default: throw new Error();
-        }
+        moveBall(ball, game.lands);
         ball.remain = FPS / ball.speed;
     });
-
+    game.balls = game.balls.filter(x => x.point != null);
     game.tick++;
 }
 
-function move(input: Input, player: Point, lands: Land[][]) {
+function movePlayer(input: Input, player: Point, lands: Land[][]) {
+    let x: number = -<any>input.left + <any>input.right;
+    let y: number = -<any>input.up + <any>input.down;
+    addPoint(player, x, y, lands);
+}
+
+function moveBall(ball: Ball, lands: Land[][]) {
+    let x = 0;
+    let y = 0;
+    switch (ball.direction) {
+        case 8: y = -1; break;
+        case 6: x = 1; break;
+        case 2: y = 1; break;
+        case 4: x = -1; break;
+        default: throw new Error();
+    }
+    let {x: oldX, y: oldY} = ball.point;
+    addPoint(ball.point, x, y, lands);
+    if (ball.point.x === oldX || ball.point.y === oldY) {
+        ball.point = null;
+    }
+}
+
+function addPoint(point: Point, x: number, y: number, lands: Land[][]) {
     const width = lands[0].length;
     const height = lands.length;
 
-    let x: number = -<any>input.left + <any>input.right;
-    let y: number = -<any>input.up + <any>input.down;
-    let targetX = player.x + x;
-    let targetY = player.y + y;
+    let targetX = point.x + x;
+    let targetY = point.y + y;
     if (targetX < 0) {
         targetX = 0;
     } else if (targetX >= width) {
@@ -136,6 +151,6 @@ function move(input: Input, player: Point, lands: Land[][]) {
     if (lands[targetY][targetX] === Land.HARDBLOCK) {
         return;
     }
-    player.x = targetX;
-    player.y = targetY;
+    point.x = targetX;
+    point.y = targetY;
 }
