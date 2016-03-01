@@ -29,7 +29,6 @@
     "gulp-concat": "^2.6.0",
     "gulp-eslint": "^2.0.0",
     "gulp-espower": "^1.0.2",
-    "gulp-express": "^0.3.5",
     "gulp-if": "^2.0.0",
     "gulp-jade": "^1.1.0",
     "gulp-mocha": "^2.2.0",
@@ -53,8 +52,7 @@
     "lib"
   ],
   "homepage": "https://github.com/progre/sutahigashi/",
-  "keywords": [
-  ],
+  "keywords": [],
   "license": "MIT",
   "main": "lib/index.js",
   "private": true,

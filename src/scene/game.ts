@@ -1,6 +1,7 @@
 import {getLogger} from "log4js";
 let logger = getLogger();
-import {Game, Bomb, Ball, Point} from "../domain/status";
+import {Game, Bomb, Ball, Point, Land, Overlay} from "../domain/status";
+import {createField} from "../domain/game/field";
 import Synchronizer from "../infrastructure/synchronizer";
 import {Input} from "../domain/input";
 import {FPS} from "../domain/gamedefinition";
@@ -22,7 +23,9 @@ export async function exec(synchronizer: Synchronizer) {
             { x: 1, y: 11 }
         ],
         bombs: <Bomb[]>[],
-        balls: <Ball[]>[]
+        balls: <Ball[]>[],
+        lands: createField(),
+        overlays: <Overlay[][]>[]
     };
     let waiting = 0;
     let onUpdateTimer = setInterval(() => {
@@ -55,7 +58,7 @@ export async function exec(synchronizer: Synchronizer) {
 function updateGame(game: Game, inputs: Input[]) {
     inputs.forEach((input, i) => {
         let player = game.players[i];
-        move(input, player);
+        move(input, player, game.lands);
         if (input.bomb) {
             game.bombs.push({ remain: BOMB_DEFAULT_REMAIN, point: { x: player.x, y: player.y } });
         }
@@ -112,9 +115,27 @@ function updateGame(game: Game, inputs: Input[]) {
     game.tick++;
 }
 
-function move(input: Input, player: Point) {
+function move(input: Input, player: Point, lands: Land[][]) {
+    const width = lands[0].length;
+    const height = lands.length;
+
     let x: number = -<any>input.left + <any>input.right;
     let y: number = -<any>input.up + <any>input.down;
-    player.x += x;
-    player.y += y;
+    let targetX = player.x + x;
+    let targetY = player.y + y;
+    if (targetX < 0) {
+        targetX = 0;
+    } else if (targetX >= width) {
+        targetX = width - 1;
+    }
+    if (targetY < 0) {
+        targetY = 0;
+    } else if (targetY >= height) {
+        targetY = height - 1;
+    }
+    if (lands[targetY][targetX] === Land.HARDBLOCK) {
+        return;
+    }
+    player.x = targetX;
+    player.y = targetY;
 }

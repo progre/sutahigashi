@@ -14,6 +14,8 @@ export interface Game {
     players: Point[];
     bombs: Bomb[];
     balls: Ball[];
+    lands: Land[][];
+    overlays: Overlay[][];
 }
 
 export interface Bomb {
@@ -31,4 +33,12 @@ export interface Ball {
 export interface Point {
     x: number;
     y: number;
+}
+
+export enum Land {
+    NONE, HARDBLOCK
+}
+
+export enum Overlay {
+    NONE, SOFTBLOCK/*, BOMB*/
 }
