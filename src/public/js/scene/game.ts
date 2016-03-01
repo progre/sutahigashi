@@ -23,12 +23,19 @@ export default async function game(
     stage.addChild(container);
     stage.update();
 
-    let wait = 1;
+    const wait = 1;
     let tick = 0;
     let sendingTick = 0;
+    let waiting = 0;
     let onUpdateTimer = setInterval(() => {
-        if (sendingTick < tick - wait) {
+        if (sendingTick > tick + wait) {
+            // 入力が先行しすぎないようにする
+            waiting++;
             return;
+        }
+        if (waiting > 0) {
+            console.log(`Input waited caused by server lated: ${waiting} frame{s}`);
+            waiting = 0;
         }
         socket.emit("input", controller.popStatus());
         sendingTick++;

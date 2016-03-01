@@ -24,10 +24,16 @@ export async function exec(synchronizer: Synchronizer) {
         bombs: <Bomb[]>[],
         balls: <Ball[]>[]
     };
+    let waiting = 0;
     let onUpdateTimer = setInterval(() => {
         let inputs = inputsRepository[game.tick];
         if (inputs == null) {
+            waiting++;
             return;
+        }
+        if (waiting > 0) {
+            logger.info(`Game waited caused by late clients: ${waiting} frame(s)`);
+            waiting = 0;
         }
         updateGame(game, inputs);
         synchronizer.postScene(NAME, { game });
