@@ -1,9 +1,9 @@
 {
-  "name": "template-typescript",
-  "description": "Project template.",
+  "name": "sutahigashi",
+  "description": "Suta-higashi.",
   "version": "1.0.0",
   "author": "progre",
-  "bugs": "https://github.com/progre/template-typescript/issues",
+  "bugs": "https://github.com/progre/sutahigashi/issues",
   "dependencies": {
     "babel-polyfill": "^6.5.0",
     "connect": "^3.4.1",
@@ -52,14 +52,13 @@
   "files": [
     "lib"
   ],
-  "homepage": "https://github.com/progre/template-typescript/",
+  "homepage": "https://github.com/progre/sutahigashi/",
   "keywords": [
-    "template"
   ],
   "license": "MIT",
   "main": "lib/index.js",
   "private": true,
-  "repository": "https://github.com/progre/template-typescript.git",
+  "repository": "https://github.com/progre/sutahigashi.git",
   "scripts": {
     "build": "gulp release-build",
     "test": "gulp test:test"
