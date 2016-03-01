@@ -1,7 +1,6 @@
 sudo: required
 language: node_js
 node_js:
-  - 4
   - 5
 services:
   - docker
@@ -10,7 +9,7 @@ cache:
     - node_modules
 script:
   - npm run build
-deploy:
-  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_UESRNAME" -p="$DOCKER_PASSWORD"
+after_script:
+  - docker login --email="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
   - docker build -t progre/sutahigashi .
   - docker push progre/sutahigashi
