@@ -1,4 +1,5 @@
 import {Status, Game} from "../../../domain/status";
+import {FPS} from "../../../domain/gamedefinition";
 import createField, {RESOURCES as fieldResources} from "../component/field";
 import createPlayer, {RESOURCES as playerResources} from "../component/player";
 import {createBomb, createBall, RESOURCES as objectsResources} from "../component/objects";
@@ -31,7 +32,7 @@ export default async function game(
         }
         socket.emit("input", controller.popStatus());
         sendingTick++;
-    }, 33);
+    }, 1000 / FPS);
 
     let scene = await new Promise<any>((resolve, reject) => {
         socket.on("status", function onSocketStatus(status: Status) {

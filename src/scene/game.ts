@@ -3,9 +3,9 @@ let logger = getLogger();
 import {Game, Bomb, Ball, Point} from "../domain/status";
 import Synchronizer from "../infrastructure/synchronizer";
 import {Input} from "../domain/input";
+import {FPS} from "../domain/gamedefinition";
 import * as result from "./result";
 
-const FPS = 15;
 const BOMB_DEFAULT_REMAIN = FPS * 3;
 export const NAME = "game";
 
