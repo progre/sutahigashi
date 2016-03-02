@@ -96,6 +96,7 @@ function render(container: GameViewContainer, game: Game) {
             container.players[i].visible = false;
             return;
         }
+        container.players[i].visible = true;
         container.players[i].x = player.x * CHIP_PIXEL;
         container.players[i].y = player.y * CHIP_PIXEL;
     });

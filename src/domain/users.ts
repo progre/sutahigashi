@@ -2,13 +2,11 @@ import {EventEmitter} from "events";
 import {getLogger} from "log4js";
 let logger = getLogger();
 
-export const LIMIT = 2;
-
 export default class Users extends EventEmitter {
     private items = <User[]>[];
 
     tryJoin(user: User) {
-        if (this.items.length >= LIMIT) {
+        if (this.items.length >= 4) {
             return;
         }
         if (user.name == null || user.name.length == null

@@ -5,13 +5,13 @@ let logger = getLogger();
 import {Input} from "../domain/input";
 import MultiItemArray from "../domain/multiitemarray";
 import {Status} from "../domain/status";
-import Users, {LIMIT} from "../domain/users";
+import Users from "../domain/users";
 import {VERSION} from "../domain/version";
 
 export default class Synchronizer extends EventEmitter {
     private scene: string;
     private users = new Users();
-    private inputsRepository = new MultiItemArray<Input>(LIMIT);
+    private inputsRepository: MultiItemArray<Input>;
 
     constructor(private io: SocketIO.Server) {
         super();
@@ -56,6 +56,7 @@ export default class Synchronizer extends EventEmitter {
     startScene(scene: string) {
         this.scene = scene;
         this.postScene(scene, null);
+        this.inputsRepository = new MultiItemArray<Input>(this.users.length);
     }
 
     postScene(scene: string, obj: Status) {

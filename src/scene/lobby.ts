@@ -1,19 +1,17 @@
 import Synchronizer from "../infrastructure/synchronizer";
-import Users, {LIMIT} from "../domain/users";
-import * as game from "./game";
+import Users from "../domain/users";
 
 export const NAME = "lobby";
 
 export async function exec(synchronizer: Synchronizer) {
-    await new Promise((resolve, reject) => {
+    return await new Promise<number>((resolve, reject) => {
         synchronizer.on("usersupdate", function onUpdate(users: Users) {
             synchronizer.postScene(NAME, null);
-            if (users.length < LIMIT) {
+            if (users.length < 2) {
                 return;
             }
             synchronizer.removeListener("usersupdate", onUpdate);
-            resolve();
+            resolve(users.length);
         });
     });
-    return game;
 }

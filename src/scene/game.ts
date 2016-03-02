@@ -9,44 +9,51 @@ import * as result from "./result";
 
 const BOMB_DEFAULT_REMAIN = FPS * 3;
 export const NAME = "game";
+function getDefaultPoint(i: number) {
+    return [
+        { x: 1, y: 1 },
+        { x: 13, y: 11 },
+        { x: 13, y: 1 },
+        { x: 1, y: 11 }
+    ][i];
+}
 
-export async function exec(synchronizer: Synchronizer) {
+export async function exec(numPlayers: number, synchronizer: Synchronizer) {
     logger.info("Game starting.");
     synchronizer.on("inputs", onInputs);
     let inputsRepository = <Input[][]>[];
     let game = {
         tick: 0,
-        players: [
-            { x: 1, y: 1 },
-            { x: 13, y: 11 },
-            { x: 13, y: 1 },
-            { x: 1, y: 11 }
-        ],
+        players: <Point[]>[],
         bombs: <Bomb[]>[],
         balls: <Ball[]>[],
         lands: createField(),
         overlays: <Overlay[][]>[]
     };
+    for (let i = 0; i < 2; i++) {
+        game.players.push(getDefaultPoint(i));
+    }
     let waiting = 0;
-    let onUpdateTimer = setInterval(() => {
-        let inputs = inputsRepository[game.tick];
-        if (inputs == null) {
-            waiting++;
-            return;
-        }
-        if (waiting > 0) {
-            logger.info(`Game waited caused by late clients: ${waiting} frame(s)`);
-            waiting = 0;
-        }
-        updateGame(game, inputs);
-        synchronizer.postScene(NAME, { game });
-    }, 1000 / FPS);
     await new Promise((resolve, reject) => {
-        setTimeout(resolve, 10 * 1000);
+        let onUpdateTimer = setInterval(() => {
+            let inputs = inputsRepository[game.tick];
+            if (inputs == null) {
+                waiting++;
+                return;
+            }
+            if (waiting > 0) {
+                logger.info(`Game waited caused by late clients: ${waiting} frame(s)`);
+                waiting = 0;
+            }
+            updateGame(game, inputs);
+            synchronizer.postScene(NAME, { game });
+            if (game.players.filter(x => x.x != null).length <= 1) {
+                clearInterval(onUpdateTimer);
+                resolve();
+            }
+        }, 1000 / FPS);
     });
-
     synchronizer.removeListener("inputs", onInputs);
-    clearInterval(onUpdateTimer);
     logger.info("Game finished.");
     return result;
 

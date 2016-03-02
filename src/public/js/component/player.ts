@@ -8,5 +8,7 @@ export const RESOURCES = [
 ];
 
 export default function createPlayer(loadQueue: createjs.LoadQueue, player: number) {
-    return createResizedBitmap(<any>loadQueue.getResult(`p${player + 1}`));
+    let displayObject = createResizedBitmap(<any>loadQueue.getResult(`p${player + 1}`));
+    displayObject.visible = false;
+    return displayObject;
 }

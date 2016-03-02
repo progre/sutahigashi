@@ -7,9 +7,9 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
     let synchronizer = new Synchronizer(io);
     while (true) {
         synchronizer.startScene(lobby.NAME);
-        await lobby.exec(synchronizer);
+        let numPlayers = await lobby.exec(synchronizer);
         synchronizer.startScene(game.NAME);
-        await game.exec(synchronizer);
+        await game.exec(numPlayers, synchronizer);
         synchronizer.startScene(result.NAME);
         await result.exec(synchronizer);
     }
