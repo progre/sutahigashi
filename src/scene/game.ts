@@ -127,7 +127,7 @@ function moveBall(ball: Ball, lands: Land[][]) {
     }
     let {x: oldX, y: oldY} = ball.point;
     addPoint(ball.point, x, y, lands);
-    if (ball.point.x === oldX || ball.point.y === oldY) {
+    if (ball.point.x === oldX && ball.point.y === oldY) {
         ball.point = null;
     }
 }
