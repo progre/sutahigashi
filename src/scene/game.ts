@@ -58,9 +58,16 @@ export async function exec(synchronizer: Synchronizer) {
 function updateGame(game: Game, inputs: Input[]) {
     inputs.forEach((input, i) => {
         let player = game.players[i];
+        if (player.x == null) {
+            return;
+        }
         movePlayer(input, player, game.lands);
         if (input.bomb) {
             game.bombs.push({ remain: BOMB_DEFAULT_REMAIN, point: { x: player.x, y: player.y } });
+        }
+        if (game.balls.some(x => player.x === x.point.x && player.y === x.point.y)) {
+            player.x = null;
+            player.y = null;
         }
     });
     game.bombs = game.bombs.filter(x => x.remain > 0);

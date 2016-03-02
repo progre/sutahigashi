@@ -92,6 +92,10 @@ class GameViewContainer extends createjs.Container {
 
 function render(container: GameViewContainer, game: Game) {
     game.players.forEach((player, i) => {
+        if (player.x == null) {
+            container.players[i].visible = false;
+            return;
+        }
         container.players[i].x = player.x * CHIP_PIXEL;
         container.players[i].y = player.y * CHIP_PIXEL;
     });
