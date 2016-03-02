@@ -54,8 +54,13 @@ gulp.task("watch", () => {
         callback();
     }
 
-    function end() {
-        console.log(".:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._.:*~*:._");
+    function end(callback) {
+        console.log("   __       __");
+        console.log("   ) \\     / (      .-.    .---.  .---. .-.   .-.");
+        console.log("  )_  \\_V_/  _(     | |   /   __}{_   _}|  `.'  |");
+        console.log("    )__   __(       | `--.\\  {_ }  | |  | |\\ /| |");
+        console.log("       `-'          `----' `---'   `-'  `-' ` `-'");
+        callback();
     }
     gulp.watch("src/**/*.js", gulp.series(begin, "copy:copy", "serve:serve", end));
     gulp.watch(["src/**/*.ts*", "!src/test/**"], gulp.series(begin, "ts:debug", "test:test", "serve:serve", end));
