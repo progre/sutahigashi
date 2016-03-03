@@ -1,6 +1,4 @@
-/// <reference path="../../typings/DefinitelyTyped/mocha/mocha.d.ts" />
-/// <reference path="../../typings/DefinitelyTyped/power-assert/power-assert.d.ts" />
-/// <reference path="../../typings/main.d.ts" />
+/// <reference path="../../typings/test.d.ts" />
 const getPort = <() => Promise<number>>require("native-promisify")(require("getport"));
 import {fork} from "child_process";
 import assert from "power-assert";
