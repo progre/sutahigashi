@@ -41,6 +41,13 @@ gulp.task("release-build",
 
 gulp.task("watch", () => {
     let signal = false;
+
+    gulp.watch("src/**/*.js", gulp.series(begin, "copy:copy", end));
+    gulp.watch(["src/**/*.ts*", "!src/test/**"], gulp.series(begin, "ts:debug", "test:test", "serve:serve", end));
+    gulp.watch("src/**/*.jade", gulp.series(begin, "jade:debug", end));
+    gulp.watch("src/**/*.stylus", gulp.series(begin, "stylus:stylus", end));
+    gulp.watch("src/test/**/*.ts", gulp.series(begin, "test:test", end));
+
     function begin(callback) {
         if (signal) {
             callback(new Error("Alread started."));
@@ -49,7 +56,7 @@ gulp.task("watch", () => {
         signal = true;
         setTimeout(() => {
             signal = false;
-        }, 10 * 1000);
+        }, 3 * 1000);
         console.log("✂─────────────────────────────────────────────────…………");
         callback();
     }
@@ -62,11 +69,6 @@ gulp.task("watch", () => {
         console.log("       `-'          `----' `---'   `-'  `-' ` `-'");
         callback();
     }
-    gulp.watch("src/**/*.js", gulp.series(begin, "copy:copy", "serve:serve", end));
-    gulp.watch(["src/**/*.ts*", "!src/test/**"], gulp.series(begin, "ts:debug", "test:test", "serve:serve", end));
-    gulp.watch("src/**/*.jade", gulp.series(begin, "jade:debug", "serve:serve", end));
-    gulp.watch("src/**/*.stylus", gulp.series(begin, "stylus:stylus", "serve:serve", end));
-    gulp.watch("src/test/**/*.ts", gulp.series(begin, "test:test", "serve:serve", end));
 });
 
 gulp.task("default",
