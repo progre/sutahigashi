@@ -17,6 +17,6 @@ let app = connect();
 app.use(serveStatic("./lib/public/"));
 let server = createServer(app);
 let io = socket(server);
-server.listen(3000);
+server.listen(process.argv[2] || 3000);
 logger.info("Server started.");
 direct(io).catch(e => console.error(e.stack));
