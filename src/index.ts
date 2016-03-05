@@ -1,6 +1,6 @@
 /// <reference path="../typings/main.d.ts" />
 try { require("source-map-support").install(); } catch (e) { /* empty */ }
-import {createServer} from "http";
+import {createServer, IncomingMessage, ServerResponse} from "http";
 import * as connect from "connect";
 import * as serveStatic from "serve-static";
 import * as SocketIOStatic from "socket.io";
@@ -13,10 +13,14 @@ let logger = getLogger();
 import direct from "./scene/director";
 
 
+let webSocketPort = process.argv[3] || "" + 3001;
 let app = connect();
+app.use("/websocketport", (req: IncomingMessage, res: ServerResponse) => {
+    res.end(webSocketPort);
+});
 app.use(serveStatic("./lib/public/"));
 let server = createServer(app);
-let io = socket(server);
 server.listen(process.argv[2] || 3000);
 logger.info("Server started.");
+let io = socket(webSocketPort);
 direct(io).catch(e => console.error(e.stack));
