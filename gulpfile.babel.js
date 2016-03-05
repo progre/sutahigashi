@@ -4,7 +4,6 @@ import del from "del";
 import "./gulp/copy";
 import "./gulp/jade";
 import "./gulp/selflint";
-import "./gulp/serve";
 import "./gulp/stylus";
 import "./gulp/test";
 import "./gulp/ts";

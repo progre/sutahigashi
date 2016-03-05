@@ -10,9 +10,12 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
         synchronizer.startScene(lobby.NAME);
         let numPlayers = await lobby.exec(synchronizer);
         synchronizer.startScene(game.NAME);
-        do {
-            await game.exec(numPlayers, synchronizer);
-        } while (!(await interval([], "", synchronizer)).finished);
+        while (true) {
+            let winner = await game.exec(numPlayers, synchronizer);
+            if ((await interval(winner, synchronizer)).finished) {
+                break;
+            }
+        }
         synchronizer.startScene(result.NAME);
         await result.exec(synchronizer);
     }
