@@ -4,4 +4,4 @@ WORKDIR /app
 COPY package.json package.json
 RUN npm install --production
 COPY lib lib
-CMD ["node", "."]
+CMD ["node", ".", "80", "8080"]
