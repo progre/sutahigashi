@@ -10,7 +10,7 @@ import {VERSION} from "../domain/version";
 
 export default class Synchronizer extends EventEmitter {
     private scene: string;
-    private users = new Users();
+    users = new Users();
     private inputsRepository: MultiItemArray<Input>;
 
     constructor(private io: SocketIO.Server) {
@@ -91,7 +91,7 @@ function createStatus(scene: string, users: Users) {
     let status = <Status>{};
     status.version = VERSION;
     status.scene = scene;
-    status.users = users.map(x => ({ name: x.name }));
+    status.users = users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }));
     return status;
 }
 

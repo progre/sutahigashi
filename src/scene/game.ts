@@ -55,7 +55,7 @@ export async function exec(numPlayers: number, synchronizer: Synchronizer) {
     });
     synchronizer.removeListener("inputs", onInputs);
     logger.info("Game finished.");
-    return result;
+    return game.players.findIndex(x => x.x != null);
 
     function onInputs(inputs: Input[]) {
         inputsRepository.push(inputs);

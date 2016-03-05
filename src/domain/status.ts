@@ -7,6 +7,7 @@ export interface Status {
 
 export interface User {
     name: string;
+    wins: number;
 }
 
 export interface Game {

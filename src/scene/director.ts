@@ -12,7 +12,7 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
         synchronizer.startScene(game.NAME);
         do {
             await game.exec(numPlayers, synchronizer);
-        } while (await interval([], "", synchronizer));
+        } while (!(await interval([], "", synchronizer)).finished);
         synchronizer.startScene(result.NAME);
         await result.exec(synchronizer);
     }

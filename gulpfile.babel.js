@@ -43,7 +43,10 @@ gulp.task("watch", () => {
     let signal = false;
 
     gulp.watch("src/**/*.js", gulp.series(begin, "copy:copy", end));
-    gulp.watch(["src/**/*.ts*", "!src/test/**"], gulp.series(begin, "ts:debug", "test:test", "serve:serve", end));
+    gulp.watch(
+        ["src/**/*.ts*", "!src/public/**", "!src/test/**"],
+        gulp.series(begin, "ts:debug", "test:test", "serve:serve", "serve:reload", end));
+    gulp.watch("src/public/**/*.ts*", gulp.series(begin, "ts:browser", "serve:reload", end));
     gulp.watch("src/**/*.jade", gulp.series(begin, "jade:debug", end));
     gulp.watch("src/**/*.stylus", gulp.series(begin, "stylus:stylus", end));
     gulp.watch("src/test/**/*.ts", gulp.series(begin, "test:test", end));
@@ -73,11 +76,8 @@ gulp.task("watch", () => {
 
 gulp.task("default",
     gulp.series(
-        gulp.parallel(
-            "selflint:selflint",
-            "build"
-        ),
         "serve:serve",
+        "serve:browser",
         "watch"
     )
 );

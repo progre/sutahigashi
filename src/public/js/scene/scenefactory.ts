@@ -3,7 +3,7 @@ import game from "./game";
 import interval from "./interval";
 import result from "./result";
 
-export default function createScene(name: string) {
+export default function createScene(name: string): any {
     switch (name) {
         case "lobby": return lobby;
         case "game": return game;
