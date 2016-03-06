@@ -28,6 +28,7 @@ export class RoomReceiver extends EventEmitter {
 
 export class InputReceiver extends EventEmitter {
     private inputsRepository: MultiItemArray<Input>;
+    private timeoutTimers = new Map<SocketIO.Socket, NodeJS.Timer>();
     private onInput: Function;
     private onDisconnect: Function;
 
@@ -37,24 +38,19 @@ export class InputReceiver extends EventEmitter {
         let self = this;
         this.onInput = function(input: Input) {
             tryCatch(() => {
-                let sender = this;
+                let sender = <SocketIO.Socket>this;
+                clearTimeout(self.timeoutTimers.get(sender));
                 input.number = sockets.findIndex(x => x === sender);
                 self.addNewInput(input);
+                self.timeoutTimers.set(sender, setTimeout(() => {
+                    self.suicide(sender);
+                }, 1 * 1000));
             });
         };
         this.onDisconnect = function() {
             tryCatch(() => {
-                let sender = this;
-                let input = {
-                    number: sockets.findIndex(x => x === sender),
-                    up: false,
-                    down: false,
-                    left: false,
-                    right: false,
-                    bomb: false,
-                    suicide: true
-                };
-                self.addNewInput(input);
+                let sender = <SocketIO.Socket>this;
+                self.suicide(sender);
             });
         };
         sockets.forEach((socket, i) => {
@@ -68,6 +64,19 @@ export class InputReceiver extends EventEmitter {
             socket.removeListener("input", this.onInput);
             socket.removeListener("disconnect", this.onDisconnect);
         });
+    }
+
+    private suicide(socket: SocketIO.Socket) {
+        let input = {
+            number: this.sockets.findIndex(x => x === socket),
+            up: false,
+            down: false,
+            left: false,
+            right: false,
+            bomb: false,
+            suicide: true
+        };
+        this.addNewInput(input);
     }
 
     private addNewInput(input: Input) {
