@@ -18,6 +18,10 @@ export default class Users {
             logger.warn(`Already joined: ${userToString(user)}`);
             return false;
         }
+        if (this.items.findIndex(x => x.name === user.name) >= 0) {
+            logger.warn(`Reject reason same name: ${userToString(user)}`);
+            return false;
+        }
         this.items.push(user);
         logger.info(`${userToString(user)} joined. (users: ${this.length})`);
         return true;
