@@ -1,7 +1,7 @@
-import {Input} from "../input";
 import {Game as GameState, Bomb, Ball, Point, Land, Overlay} from "../status";
 import {FPS} from "./definition";
 import {createField} from "./field";
+import {Input} from "./input";
 
 const BOMB_DEFAULT_REMAIN = FPS * 3;
 

@@ -1,4 +1,4 @@
-import {Input} from "../../../domain/input";
+import {Input} from "../../../domain/game/input";
 
 export default class Controller {
     private up = false;

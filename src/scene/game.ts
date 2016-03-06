@@ -2,7 +2,7 @@ import {getLogger} from "log4js";
 let logger = getLogger();
 import {createStatus, update} from "../domain/game/game";
 import {FPS} from "../domain/game/definition";
-import {Input} from "../domain/input";
+import {Input} from "../domain/game/input";
 import Synchronizer from "../infrastructure/synchronizer";
 
 export const NAME = "game";

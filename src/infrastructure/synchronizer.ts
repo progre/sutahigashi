@@ -2,7 +2,7 @@ import {EventEmitter} from "events";
 const merge = require("merge");
 import {getLogger} from "log4js";
 let logger = getLogger();
-import {Input} from "../domain/input";
+import {Input} from "../domain/game/input";
 import MultiItemArray from "../domain/multiitemarray";
 import {Status} from "../domain/status";
 import Users from "../domain/users";
