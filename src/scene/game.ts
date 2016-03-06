@@ -6,13 +6,16 @@ import {Input} from "../domain/game/input";
 import {InputReceiver} from "../infrastructure/receiver";
 import Sender from "../infrastructure/sender";
 
-export const NAME = "game";
+const NAME = "game";
 
-export async function exec(numPlayers: number, receiver: InputReceiver, sender: Sender) {
+export default async function game(numPlayers: number, receiver: InputReceiver, sender: Sender) {
     logger.info("Game starting.");
-    let game = createStatus(2);
-    receiver.on("inputs", onInputs);
+    let game = createStatus(numPlayers);
     let inputsRepository = <Input[][]>[];
+    let onInputs = (inputs: Input[]) => {
+        inputsRepository.push(inputs);
+    };
+    receiver.on("inputs", onInputs);
     let waiting = 0;
     let onUpdateTimer: NodeJS.Timer;
     let winner = await new Promise<number>(resolve => {
@@ -37,8 +40,4 @@ export async function exec(numPlayers: number, receiver: InputReceiver, sender: 
     receiver.removeListener("inputs", onInputs);
     logger.info("Game finished.");
     return winner;
-
-    function onInputs(inputs: Input[]) {
-        inputsRepository.push(inputs);
-    }
 }

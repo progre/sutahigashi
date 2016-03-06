@@ -4,9 +4,9 @@ import Sender from "../infrastructure/sender";
 import {RoomReceiver, InputReceiver} from "../infrastructure/receiver";
 import Users from "../domain/users";
 import Lobby, {NAME as LOBBY_NAME} from "./lobby";
-import * as game from "./game";
-import * as result from "./result";
+import game from "./game";
 import interval from "./interval";
+import result from "./result";
 
 export default async function direct(io: SocketIO.Server): Promise<void> {
     let users = new Users();
@@ -52,11 +52,10 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
         }
 
         let sockets = users.map(x => io.sockets.sockets[x.id]);
-        let inputReceiver = new InputReceiver(sockets);
-
-        sender.send(game.NAME, null);
         while (true) {
-            let winner = await game.exec(numPlayers, inputReceiver, sender);
+            let inputReceiver = new InputReceiver(sockets);
+            let winner = await game(numPlayers, inputReceiver, sender);
+            inputReceiver.close();
             sender.send("interval", {
                 users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
             });
@@ -64,8 +63,6 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
                 break;
             }
         }
-        inputReceiver.close();
-        sender.send(result.NAME, null);
-        await result.exec();
+        await result(sender);
     }
 }
