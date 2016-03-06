@@ -1,6 +1,7 @@
+import {getLogger} from "log4js";
+let logger = getLogger();
 import Sender from "../infrastructure/sender";
-import {InputReceiver} from "../infrastructure/receiver";
-import Synchronizer from "../infrastructure/synchronizer";
+import {RoomReceiver, InputReceiver} from "../infrastructure/receiver";
 import Users from "../domain/users";
 import Lobby, {NAME as LOBBY_NAME} from "./lobby";
 import * as game from "./game";
@@ -10,7 +11,16 @@ import interval from "./interval";
 export default async function direct(io: SocketIO.Server): Promise<void> {
     let users = new Users();
     let sender = new Sender(io, { scene: LOBBY_NAME });
-    let synchronizer = new Synchronizer(io, users, sender);
+    io.on("connect", socket => {
+        socket.on("getstatus", () => {
+            try {
+                socket.emit("status", sender.lastStatus);
+            } catch (e) {
+                logger.error(e.stack != null ? e.stack : e);
+            }
+        });
+    });
+    let roomReceiver = new RoomReceiver(io);
     while (true) {
         let numPlayers: number;
         {
@@ -31,14 +41,14 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
                     users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
                 });
             };
-            synchronizer.on("join", onJoin);
-            synchronizer.on("leave", onLeave);
+            roomReceiver.on("join", onJoin);
+            roomReceiver.on("leave", onLeave);
 
             numPlayers = await new Promise<number>((resolve, reject) => {
                 lobby.once("end", resolve);
             });
-            synchronizer.removeListener("join", onJoin);
-            synchronizer.removeListener("leave", onLeave);
+            roomReceiver.removeListener("join", onJoin);
+            roomReceiver.removeListener("leave", onLeave);
         }
 
         let sockets = users.map(x => io.sockets.sockets[x.id]);
@@ -56,6 +66,6 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
         }
         inputReceiver.close();
         sender.send(result.NAME, null);
-        await result.exec(synchronizer);
+        await result.exec();
     }
 }
