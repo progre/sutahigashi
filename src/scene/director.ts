@@ -2,6 +2,7 @@ import {getLogger} from "log4js";
 let logger = getLogger();
 import Sender from "../infrastructure/sender";
 import {RoomReceiver, InputReceiver} from "../infrastructure/receiver";
+import {User} from "../domain/status";
 import lobby, {NAME as LOBBY_NAME} from "./lobby";
 import game from "./game";
 import interval from "./interval";
@@ -19,8 +20,9 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
         });
     });
     let roomReceiver = new RoomReceiver(io);
+    let winner: User;
     while (true) {
-        let users = await lobby(roomReceiver, sender);
+        let users = await lobby(roomReceiver, sender, winner);
         let sockets = users.map(x => io.sockets.sockets[x.id]);
         while (true) {
             let inputReceiver = new InputReceiver(sockets);
@@ -32,6 +34,7 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
                 break;
             }
         }
+        winner = users.sort((a, b) => -(a.wins - b.wins))[0];
         await result(sender);
     }
 }

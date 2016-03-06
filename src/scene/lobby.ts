@@ -5,9 +5,12 @@ import Users from "../domain/users";
 
 export const NAME = "lobby";
 
-export default function lobby(roomReceiver: RoomReceiver, sender: Sender) {
+export default function lobby(roomReceiver: RoomReceiver, sender: Sender, previousVisitor: User) {
     return new Promise<User[]>(resolve => {
         let users = new Users();
+        if (previousVisitor != null) {
+            users.join(previousVisitor);
+        }
         sender.send(NAME, {
             lobby: { users: users.map(x => x) }
         });
