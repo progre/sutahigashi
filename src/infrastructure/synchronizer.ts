@@ -35,7 +35,7 @@ export default class Synchronizer extends EventEmitter {
             }));
 
             socket.on("input", (input: Input) => tryCatch(() => {
-                let number = this.users.socketIndexOf(socket);
+                let number = this.users.idIndexOf(socket.id);
                 if (number < 0) {
                     return;
                 }

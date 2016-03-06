@@ -15,11 +15,11 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
             let lobby = new Lobby(users);
 
             let onJoin = (socket: SocketIO.Socket, name: string) => {
-                lobby.join(socket, name);
+                lobby.join(socket.id, name);
                 synchronizer.postScene(LOBBY_NAME, null);
             };
             let onLeave = (socket: SocketIO.Socket) => {
-                lobby.leave(socket);
+                lobby.leave(socket.id);
                 synchronizer.postScene(LOBBY_NAME, null);
             };
             synchronizer.on("join", onJoin);

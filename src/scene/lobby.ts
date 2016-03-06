@@ -8,15 +8,15 @@ export default class Lobby extends EventEmitter {
         super();
     }
 
-    join(socket: SocketIO.Socket, name: string) {
-        this.users.tryJoin({ socket, name });
+    join(id: string, name: string) {
+        this.users.tryJoin({ id, name });
         if (this.users.length < 2) {
             return;
         }
         this.emit("end", this.users.length);
     }
 
-    leave(socket: SocketIO.Socket) {
-        return this.users.tryLeave(socket);
+    leave(id: string) {
+        return this.users.tryLeave(id);
     }
 }

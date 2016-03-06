@@ -13,7 +13,7 @@ export default class Users {
             logger.warn(`Invalid name: ${userToString(user)}`);
             return false;
         }
-        if (this.items.findIndex(x => x.socket === user.socket) >= 0) {
+        if (this.items.findIndex(x => x.id === user.id) >= 0) {
             logger.warn(`Already joined: ${userToString(user)}`);
             return false;
         }
@@ -22,10 +22,10 @@ export default class Users {
         return true;
     }
 
-    tryLeave(socket: SocketIO.Socket) {
-        let idx = this.items.findIndex(x => x.socket === socket);
+    tryLeave(id: string) {
+        let idx = this.items.findIndex(x => x.id === id);
         if (idx < 0) {
-            logger.info(`Unjoined: ${socket.client.conn.remoteAddress}`);
+            logger.info(`Unjoined: ${id}`);
             return null;
         }
         let user = this.items[idx];
@@ -42,16 +42,16 @@ export default class Users {
         return this.items.map(callbackfn);
     }
 
-    socketIndexOf(socket: SocketIO.Socket) {
-        return this.items.findIndex(x => x.socket === socket);
+    idIndexOf(id: string) {
+        return this.items.findIndex(x => x.id === id);
     }
 }
 
 interface User {
+    id: string;
     name: string;
-    socket: SocketIO.Socket;
 }
 
 function userToString(user: User) {
-    return `${user.name}@${user.socket.client.conn.remoteAddress}`;
+    return `${user.name}@${user.id}`;
 }
