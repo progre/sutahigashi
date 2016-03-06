@@ -11,17 +11,17 @@ export default function lobby(roomReceiver: RoomReceiver, sender: Sender) {
             users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
         });
         let onLeave = (socket: SocketIO.Socket) => {
-            this.users.leave(socket.id);
+            users.leave(socket.id);
             sender.send(NAME, {
                 users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
             });
         };
         let onJoin = (socket: SocketIO.Socket, name: string) => {
-            this.users.join({ id: socket.id, name });
+            users.join({ id: socket.id, name });
             sender.send(NAME, {
                 users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
             });
-            if (this.users.length < 2) {
+            if (users.length < 2) {
                 return;
             }
             roomReceiver.removeListener("leave", onLeave);
