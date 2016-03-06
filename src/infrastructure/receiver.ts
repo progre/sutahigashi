@@ -8,7 +8,7 @@ export class InputReceiver extends EventEmitter {
     private inputsRepository: MultiItemArray<Input>;
     private onInput: Function;
 
-    constructor(private sockets: SocketIO.Socket[]) { // TODO: Namespace使えないか
+    constructor(private sockets: SocketIO.Socket[]) {
         super();
         this.inputsRepository = new MultiItemArray<Input>(sockets.length);
         let self = this;
