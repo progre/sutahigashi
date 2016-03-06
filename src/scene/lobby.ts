@@ -1,11 +1,12 @@
 import {RoomReceiver} from "../infrastructure/receiver";
 import Sender from "../infrastructure/sender";
+import {User} from "../domain/status";
 import Users from "../domain/users";
 
 export const NAME = "lobby";
 
 export default function lobby(roomReceiver: RoomReceiver, sender: Sender) {
-    return new Promise<Users>(resolve => {
+    return new Promise<User[]>(resolve => {
         let users = new Users();
         sender.send(NAME, {
             lobby: { users: users.map(x => x) }
@@ -26,7 +27,7 @@ export default function lobby(roomReceiver: RoomReceiver, sender: Sender) {
             }
             roomReceiver.removeListener("leave", onLeave);
             roomReceiver.removeListener("join", onJoin);
-            resolve(users);
+            resolve(users.map(x => x));
         };
         roomReceiver.on("leave", onLeave);
         roomReceiver.on("join", onJoin);

@@ -26,7 +26,9 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
             let inputReceiver = new InputReceiver(sockets);
             let winner = await game(users.length, inputReceiver, sender);
             inputReceiver.close();
-            if ((await interval(winner, users, sender)).finished) {
+            let result = await interval(winner, users, sender);
+            users = result.users;
+            if (result.finished) {
                 break;
             }
         }

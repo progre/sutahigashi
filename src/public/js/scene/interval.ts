@@ -20,10 +20,9 @@ export default async function lobby(
                 return;
             }
             document.body.appendChild(container);
+            console.log(status.interval);
             ReactDOM.render(
-                React.createElement(View, {
-                    users: status.interval.users
-                }),
+                React.createElement(View, status.interval),
                 document.getElementById(container.id)
             );
         });
