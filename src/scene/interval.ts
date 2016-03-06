@@ -1,8 +1,10 @@
 import Sender from "../infrastructure/sender";
 import Users from "../domain/users";
 
+const NAME = "interval";
+
 export default async function interval(winner: number, users: Users, sender: Sender) {
-    sender.send("interval", {
+    sender.send(NAME, {
         users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
     });
     await new Promise<number>((resolve, reject) => {

@@ -1,8 +1,17 @@
 export interface Status {
     version?: number;
     scene?: string;
-    users?: User[];
+    lobby?: Lobby;
     game?: Game;
+}
+
+export interface Lobby {
+    users: User[];
+}
+
+export interface Interval {
+    users: User[];
+    winner: string;
 }
 
 export interface User {
