@@ -23,7 +23,7 @@ export default async function game(
     stage.addChild(container);
     stage.update();
 
-    const wait = 1;
+    const wait = 10;
     let tick = 0;
     let sendingTick = 0;
     let waiting = 0;
