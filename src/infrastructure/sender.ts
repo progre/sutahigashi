@@ -3,11 +3,16 @@ import {Status} from "../domain/status";
 import {VERSION} from "../domain/version";
 
 export default class Sender {
-    constructor(private io: SocketIO.Server) {
+    constructor(private io: SocketIO.Server, private status: Status) {
     }
 
     send(scene: string, obj: Status) {
-        this.io.emit("status", merge(createStatus(scene), obj));
+        this.status = merge(createStatus(scene), obj);
+        this.io.emit("status", this.status);
+    }
+
+    get lastStatus() {
+        return this.status;
     }
 }
 

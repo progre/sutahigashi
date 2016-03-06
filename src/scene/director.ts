@@ -8,14 +8,15 @@ import interval from "./interval";
 
 export default async function direct(io: SocketIO.Server): Promise<void> {
     let users = new Users();
-    let sender = new Sender(io);
-    let synchronizer = new Synchronizer(io, users);
+    let sender = new Sender(io, { scene: LOBBY_NAME });
+    let synchronizer = new Synchronizer(io, users, sender);
     while (true) {
         let numPlayers: number;
         {
-            synchronizer.startScene(LOBBY_NAME, {
+            sender.send(LOBBY_NAME, {
                 users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
             });
+            synchronizer.startScene();
             let lobby = new Lobby(users);
 
             let onJoin = (socket: SocketIO.Socket, name: string) => {
@@ -41,17 +42,20 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
         }
 
 
-        synchronizer.startScene(game.NAME, null);
+        synchronizer.startScene();
+        sender.send(game.NAME, null);
         while (true) {
             let winner = await game.exec(numPlayers, sender, synchronizer);
-            synchronizer.startScene("interval", {
+            synchronizer.startScene();
+            sender.send("interval", {
                 users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
             });
             if ((await interval(winner, users, sender)).finished) {
                 break;
             }
         }
-        synchronizer.startScene(result.NAME, null);
+        synchronizer.startScene();
+        sender.send(result.NAME, null);
         await result.exec(synchronizer);
     }
 }

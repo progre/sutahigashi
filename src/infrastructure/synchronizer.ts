@@ -3,15 +3,13 @@ import {getLogger} from "log4js";
 let logger = getLogger();
 import {Input} from "../domain/game/input";
 import MultiItemArray from "../domain/multiitemarray";
-import {Status} from "../domain/status";
 import Users from "../domain/users";
 import Sender from "./sender";
 
 export default class Synchronizer extends EventEmitter {
-    private scene: string;
     private inputsRepository: MultiItemArray<Input>;
 
-    constructor(private io: SocketIO.Server, private users: Users) {
+    constructor(private io: SocketIO.Server, private users: Users, sender: Sender) {
         super();
         io.on("connection", socket => {
             logger.debug("connected");
@@ -30,7 +28,7 @@ export default class Synchronizer extends EventEmitter {
             }));
 
             socket.on("getstatus", () => tryCatch(() => {
-                new Sender(this.io).send(this.scene, null);
+                socket.emit("status", sender.lastStatus);
             }));
 
             socket.on("input", (input: Input) => tryCatch(() => {
@@ -48,9 +46,7 @@ export default class Synchronizer extends EventEmitter {
         });
     }
 
-    startScene(scene: string, obj: Status) {
-        this.scene = scene;
-        new Sender(this.io).send(scene, obj);
+    startScene() {
         this.inputsRepository = new MultiItemArray<Input>(this.users.length);
     }
 
