@@ -1,12 +1,11 @@
 import {EventEmitter} from "events";
-const merge = require("merge");
 import {getLogger} from "log4js";
 let logger = getLogger();
 import {Input} from "../domain/game/input";
 import MultiItemArray from "../domain/multiitemarray";
 import {Status} from "../domain/status";
 import Users from "../domain/users";
-import {VERSION} from "../domain/version";
+import Sender from "./sender";
 
 export default class Synchronizer extends EventEmitter {
     private scene: string;
@@ -31,7 +30,7 @@ export default class Synchronizer extends EventEmitter {
             }));
 
             socket.on("getstatus", () => tryCatch(() => {
-                socket.emit("status", createStatus(this.scene, this.users));
+                new Sender(this.io).send(this.scene, this.users, null);
             }));
 
             socket.on("input", (input: Input) => tryCatch(() => {
@@ -49,14 +48,14 @@ export default class Synchronizer extends EventEmitter {
         });
     }
 
-    startScene(scene: string) {
+    startScene(scene: string, obj: Status) {
         this.scene = scene;
-        this.postScene(scene, null);
+        this.postScene(scene, obj);
         this.inputsRepository = new MultiItemArray<Input>(this.users.length);
     }
 
     postScene(scene: string, obj: Status) {
-        this.io.emit("status", merge(createStatus(scene, this.users), obj));
+        new Sender(this.io).send(scene, this.users, obj);
     }
 
     forEachSockets(func: (socket: SocketIO.Socket) => void) {
@@ -81,14 +80,6 @@ function asArray<T>(arrayLike: { [idx: number]: T }) {
         }
     }
     return array;
-}
-
-function createStatus(scene: string, users: Users) {
-    let status = <Status>{};
-    status.version = VERSION;
-    status.scene = scene;
-    status.users = users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }));
-    return status;
 }
 
 function tryCatch(func: Function) {

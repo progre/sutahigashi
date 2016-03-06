@@ -2,7 +2,7 @@ export interface Status {
     version?: number;
     scene?: string;
     users?: User[];
-    game: Game;
+    game?: Game;
 }
 
 export interface User {
