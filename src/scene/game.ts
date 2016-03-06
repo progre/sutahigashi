@@ -10,6 +10,7 @@ const NAME = "game";
 
 export default async function game(numPlayers: number, receiver: InputReceiver, sender: Sender) {
     logger.info("Game starting.");
+    sender.send(NAME, null);
     let game = createStatus(numPlayers);
     let inputsRepository = <Input[][]>[];
     let onInputs = (inputs: Input[]) => {
