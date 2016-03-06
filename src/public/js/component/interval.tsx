@@ -1,5 +1,5 @@
 import * as React from "react";
-import {RESOURCES} from "./player";
+import {RESOURCES} from "./game/player";
 
 export default class Interval extends React.Component<any, any> {
     render() {

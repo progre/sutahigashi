@@ -1,11 +1,11 @@
 import {Status, Game} from "../../../domain/status";
 import {FPS} from "../../../domain/game/definition";
-import createField, {RESOURCES as fieldResources} from "../component/field";
-import createPlayer, {RESOURCES as playerResources} from "../component/player";
-import {createBomb, createBall, RESOURCES as objectsResources} from "../component/objects";
-import createScene from "./scenefactory";
-import {CHIP_PIXEL, FIELD_PIXEL} from "../component/chip";
 import Controller from "../infrastructure/controller";
+import createField, {RESOURCES as fieldResources} from "../component/game/field";
+import createPlayer, {RESOURCES as playerResources} from "../component/game/player";
+import {createBomb, createBall, RESOURCES as objectsResources} from "../component/game/objects";
+import {CHIP_PIXEL, FIELD_PIXEL} from "../component/game/chip";
+import createScene from "./scenefactory";
 
 export const RESOURCES = fieldResources
     .concat(playerResources)

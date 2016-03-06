@@ -1,5 +1,5 @@
-import {Land} from "../../../domain/status";
-import * as Field from "../../../domain/game/field";
+import {Land} from "../../../../domain/status";
+import * as Field from "../../../../domain/game/field";
 import {CHIP_PIXEL, createResizedBitmap} from "./chip";
 
 export const RESOURCES = [
