@@ -35,6 +35,6 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
             }
         }
         winner = users.sort((a, b) => -(a.wins - b.wins))[0];
-        await result(sender);
+        await result(sender, users.findIndex(x => x === winner), winner);
     }
 }

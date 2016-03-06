@@ -1,9 +1,9 @@
-import {Status} from "../../../domain/status";
-import createScene from "./scenefactory";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import {Status} from "../../../domain/status";
 import View from "../component/interval";
 import {createContainer} from "../component/utils";
+import createScene from "./scenefactory";
 
 export default async function lobby(
     loader: createjs.PreloadJS,
@@ -20,7 +20,6 @@ export default async function lobby(
                 return;
             }
             document.body.appendChild(container);
-            console.log(status.interval);
             ReactDOM.render(
                 React.createElement(View, status.interval),
                 document.getElementById(container.id)

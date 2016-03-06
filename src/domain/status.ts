@@ -4,6 +4,7 @@ export interface Status {
     lobby?: Lobby;
     game?: Game;
     interval?: Interval;
+    result?: Result;
 }
 
 export interface Lobby {
@@ -13,6 +14,11 @@ export interface Lobby {
 export interface Interval {
     users: User[];
     winner: number;
+}
+
+export interface Result {
+    number: number;
+    winner: User;
 }
 
 export interface User {
