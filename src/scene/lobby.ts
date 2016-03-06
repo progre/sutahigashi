@@ -8,18 +8,18 @@ export default function lobby(roomReceiver: RoomReceiver, sender: Sender) {
     return new Promise<Users>(resolve => {
         let users = new Users();
         sender.send(NAME, {
-            users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
+            lobby: { users: users.map(x => x) }
         });
         let onLeave = (socket: SocketIO.Socket) => {
             users.leave(socket.id);
             sender.send(NAME, {
-                users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
+                lobby: { users: users.map(x => x) }
             });
         };
         let onJoin = (socket: SocketIO.Socket, name: string) => {
-            users.join({ id: socket.id, name });
+            users.join({ id: socket.id, name, wins: 0 });
             sender.send(NAME, {
-                users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
+                lobby: { users: users.map(x => x) }
             });
             if (users.length < 2) {
                 return;

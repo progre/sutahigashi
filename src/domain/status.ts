@@ -3,6 +3,7 @@ export interface Status {
     scene?: string;
     lobby?: Lobby;
     game?: Game;
+    interval?: Interval;
 }
 
 export interface Lobby {
@@ -11,10 +12,11 @@ export interface Lobby {
 
 export interface Interval {
     users: User[];
-    winner: string;
+    winner: number;
 }
 
 export interface User {
+    id: string;
     name: string;
     wins: number;
 }

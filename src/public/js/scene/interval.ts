@@ -22,7 +22,7 @@ export default async function lobby(
             document.body.appendChild(container);
             ReactDOM.render(
                 React.createElement(View, {
-                    users: status.users
+                    users: status.interval.users
                 }),
                 document.getElementById(container.id)
             );

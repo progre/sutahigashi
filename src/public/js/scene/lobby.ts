@@ -12,7 +12,7 @@ export default async function lobby(
         return await new Promise<any>((resolve, reject) => {
             socket.on("status", function onSocketStatus(status: Status) {
                 if (status.scene === "lobby") {
-                    updateUsers(status.users);
+                    updateUsers(status.lobby.users);
                     return;
                 }
                 resolve(createScene(status.scene));

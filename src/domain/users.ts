@@ -1,5 +1,6 @@
 import {getLogger} from "log4js";
 let logger = getLogger();
+import {User} from "./status";
 
 export default class Users {
     private items = <User[]>[];
@@ -45,11 +46,6 @@ export default class Users {
     idIndexOf(id: string) {
         return this.items.findIndex(x => x.id === id);
     }
-}
-
-interface User {
-    id: string;
-    name: string;
 }
 
 function userToString(user: User) {

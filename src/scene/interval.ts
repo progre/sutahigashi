@@ -5,7 +5,10 @@ const NAME = "interval";
 
 export default async function interval(winner: number, users: Users, sender: Sender) {
     sender.send(NAME, {
-        users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
+        interval: {
+            users: users.map(x => x),
+            winner
+        }
     });
     await new Promise<number>((resolve, reject) => {
         setTimeout(resolve, 3000);
