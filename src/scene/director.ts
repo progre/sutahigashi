@@ -1,18 +1,42 @@
 import Synchronizer from "../infrastructure/synchronizer";
-import * as lobby from "./lobby";
+import Users from "../domain/users";
+import Lobby, {NAME as LOBBY_NAME} from "./lobby";
 import * as game from "./game";
 import * as result from "./result";
 import interval from "./interval";
 
 export default async function direct(io: SocketIO.Server): Promise<void> {
-    let synchronizer = new Synchronizer(io);
+    let users = new Users();
+    let synchronizer = new Synchronizer(io, users);
     while (true) {
-        synchronizer.startScene(lobby.NAME);
-        let numPlayers = await lobby.exec(synchronizer);
+        let numPlayers: number;
+        {
+            synchronizer.startScene(LOBBY_NAME);
+            let lobby = new Lobby(users);
+
+            let onJoin = (socket: SocketIO.Socket, name: string) => {
+                lobby.join(socket, name);
+                synchronizer.postScene(LOBBY_NAME, null);
+            };
+            let onLeave = (socket: SocketIO.Socket) => {
+                lobby.leave(socket);
+                synchronizer.postScene(LOBBY_NAME, null);
+            };
+            synchronizer.on("join", onJoin);
+            synchronizer.on("leave", onLeave);
+
+            numPlayers = await new Promise<number>((resolve, reject) => {
+                lobby.once("end", resolve);
+            });
+            synchronizer.removeListener("join", onJoin);
+            synchronizer.removeListener("leave", onLeave);
+        }
+
+
         synchronizer.startScene(game.NAME);
         while (true) {
             let winner = await game.exec(numPlayers, synchronizer);
-            if ((await interval(winner, synchronizer)).finished) {
+            if ((await interval(winner, users, synchronizer)).finished) {
                 break;
             }
         }

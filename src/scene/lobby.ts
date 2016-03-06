@@ -1,17 +1,22 @@
-import Synchronizer from "../infrastructure/synchronizer";
+import {EventEmitter} from "events";
 import Users from "../domain/users";
 
 export const NAME = "lobby";
 
-export async function exec(synchronizer: Synchronizer) {
-    return await new Promise<number>((resolve, reject) => {
-        synchronizer.on("usersupdate", function onUpdate(users: Users) {
-            synchronizer.postScene(NAME, null);
-            if (users.length < 2) {
-                return;
-            }
-            synchronizer.removeListener("usersupdate", onUpdate);
-            resolve(users.length);
-        });
-    });
+export default class Lobby extends EventEmitter {
+    constructor(public users: Users) {
+        super();
+    }
+
+    join(socket: SocketIO.Socket, name: string) {
+        this.users.tryJoin({ socket, name });
+        if (this.users.length < 2) {
+            return;
+        }
+        this.emit("end", this.users.length);
+    }
+
+    leave(socket: SocketIO.Socket) {
+        return this.users.tryLeave(socket);
+    }
 }

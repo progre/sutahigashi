@@ -10,29 +10,28 @@ import {VERSION} from "../domain/version";
 
 export default class Synchronizer extends EventEmitter {
     private scene: string;
-    users = new Users();
     private inputsRepository: MultiItemArray<Input>;
 
-    constructor(private io: SocketIO.Server) {
+    constructor(private io: SocketIO.Server, private users: Users) {
         super();
         io.on("connection", socket => {
             logger.debug("connected");
 
             socket.on("disconnect", () => tryCatch(() => {
                 logger.debug("disconnected");
-                this.users.tryLeave(socket);
+                this.emit("leave", socket);
+            }));
+
+            socket.on("join", (name: string) => tryCatch(() => {
+                this.emit("join", socket, name);
+            }));
+
+            socket.on("leave", () => tryCatch(() => {
+                this.emit("leave", socket);
             }));
 
             socket.on("getstatus", () => tryCatch(() => {
                 socket.emit("status", createStatus(this.scene, this.users));
-            }));
-
-            socket.on("join", (name: string) => tryCatch(() => {
-                this.users.tryJoin({ socket, name });
-            }));
-
-            socket.on("leave", () => tryCatch(() => {
-                this.users.tryLeave(socket);
             }));
 
             socket.on("input", (input: Input) => tryCatch(() => {
@@ -47,9 +46,6 @@ export default class Synchronizer extends EventEmitter {
                     this.emit("inputs", inputs);
                 }
             }));
-        });
-        this.users.on("update", () => {
-            this.emit("usersupdate", this.users);
         });
     }
 

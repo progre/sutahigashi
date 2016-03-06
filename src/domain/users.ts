@@ -1,8 +1,7 @@
-import {EventEmitter} from "events";
 import {getLogger} from "log4js";
 let logger = getLogger();
 
-export default class Users extends EventEmitter {
+export default class Users {
     private items = <User[]>[];
 
     tryJoin(user: User) {
@@ -19,7 +18,6 @@ export default class Users extends EventEmitter {
             return false;
         }
         this.items.push(user);
-        this.emit("update");
         logger.info(`${userToString(user)} joined. (users: ${this.length})`);
         return true;
     }
@@ -32,7 +30,6 @@ export default class Users extends EventEmitter {
         }
         let user = this.items[idx];
         this.items.splice(idx, 1);
-        this.emit("update");
         logger.info(`${userToString(user)} leaved. (users: ${this.length})`);
         return user;
     }
