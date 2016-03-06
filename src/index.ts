@@ -13,13 +13,14 @@ let logger = getLogger();
 import direct from "./scene/director";
 
 
-let webSocketPort = process.argv[3] || "" + 3001;
+let httpPort = process.argv[2] || 3000;
+let wsPort = process.argv[3] || 3001;
 let app = connect();
-app.use("/websocketport", (req: IncomingMessage, res: ServerResponse) => {
-    res.end(webSocketPort);
+app.use("/wsport", (req: IncomingMessage, res: ServerResponse) => {
+    res.end(wsPort);
 });
 app.use(serveStatic("./lib/public/"));
-app.listen(process.argv[2] || 3000);
-let io = socket(webSocketPort);
+app.listen(httpPort);
+let io = socket(wsPort);
 direct(io).catch(e => console.error(e.stack));
-logger.info("Server started.");
+logger.info(`Server started: ${httpPort} ${wsPort}`);
