@@ -1,5 +1,5 @@
 import {Status, Game} from "../../../domain/status";
-import {FPS} from "../../../domain/gamedefinition";
+import {FPS} from "../../../domain/game/definition";
 import createField, {RESOURCES as fieldResources} from "../component/field";
 import createPlayer, {RESOURCES as playerResources} from "../component/player";
 import {createBomb, createBall, RESOURCES as objectsResources} from "../component/objects";

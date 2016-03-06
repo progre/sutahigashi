@@ -4,7 +4,7 @@ import {Game, Bomb, Ball, Point, Land, Overlay} from "../domain/status";
 import {createField} from "../domain/game/field";
 import Synchronizer from "../infrastructure/synchronizer";
 import {Input} from "../domain/input";
-import {FPS} from "../domain/gamedefinition";
+import {FPS} from "../domain/game/definition";
 
 const BOMB_DEFAULT_REMAIN = FPS * 3;
 export const NAME = "game";
