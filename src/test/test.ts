@@ -6,20 +6,21 @@ import assert from "power-assert";
 describe("Server", () => {
     it("is runnable", async function() {
         this.timeout(5000);
-        let port = await getPort();
+        let httpPort = (await getPort()).toString();
+        let wsPort = (await getPort()).toString();
+        let started = `[????-??-?? ??:??:??.???] [INFO] [default] - Server started. ${httpPort} ${wsPort}\n`;
+        const LOG_HEADER_PATTERN = /\[.+\] \[.+\] \[.+\] - /;
         return new Promise((resolve, reject) => {
-            let server = fork(".", [port.toString()], { silent: true });
+            let server = fork(".", [httpPort, wsPort], { silent: true });
             server.on("exit", onExit);
             server.on("error", onError);
             server.stdout.on("readable", () => {
-                const STARTED = "[????-??-?? ??:??:??.???] [INFO] [default] - Server started.\n";
-                const LOG_HEADER_PATTERN = /\[.+\] \[.+\] \[.+\] - /;
-                let log = server.stdout.read(STARTED.length);
+                let log = server.stdout.read(started.length);
                 if (log == null) {
                     return;
                 }
                 try {
-                    assert.equal(log.toString().replace(LOG_HEADER_PATTERN, ""), STARTED.replace(LOG_HEADER_PATTERN, ""));
+                    assert.equal(log.toString().replace(LOG_HEADER_PATTERN, ""), started.replace(LOG_HEADER_PATTERN, ""));
                 } catch (err) {
                     onError(err);
                     return;
