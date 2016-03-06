@@ -29,6 +29,7 @@ export class RoomReceiver extends EventEmitter {
 export class InputReceiver extends EventEmitter {
     private inputsRepository: MultiItemArray<Input>;
     private onInput: Function;
+    private onDisconnect: Function;
 
     constructor(private sockets: SocketIO.Socket[]) {
         super();
@@ -38,22 +39,43 @@ export class InputReceiver extends EventEmitter {
             tryCatch(() => {
                 let sender = this;
                 input.number = sockets.findIndex(x => x === sender);
-                self.inputsRepository.pushOffset(input.number, input);
-                if (self.inputsRepository.filled(0)) {
-                    let inputs = self.inputsRepository.shift();
-                    self.emit("inputs", inputs);
-                }
+                self.addNewInput(input);
+            });
+        };
+        this.onDisconnect = function() {
+            tryCatch(() => {
+                let sender = this;
+                let input = {
+                    number: sockets.findIndex(x => x === sender),
+                    up: false,
+                    down: false,
+                    left: false,
+                    right: false,
+                    bomb: false,
+                    suicide: true
+                };
+                self.addNewInput(input);
             });
         };
         sockets.forEach((socket, i) => {
             socket.on("input", this.onInput);
+            socket.on("disconnect", this.onDisconnect);
         });
     }
 
     close() {
         this.sockets.forEach(socket => {
             socket.removeListener("input", this.onInput);
+            socket.removeListener("disconnect", this.onDisconnect);
         });
+    }
+
+    private addNewInput(input: Input) {
+        this.inputsRepository.pushOffset(input.number, input);
+        if (this.inputsRepository.filled(0)) {
+            let inputs = this.inputsRepository.shift();
+            this.emit("inputs", inputs);
+        }
     }
 }
 

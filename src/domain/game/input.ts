@@ -5,4 +5,5 @@ export interface Input {
     left: boolean;
     right: boolean;
     bomb: boolean;
+    suicide: boolean;
 }

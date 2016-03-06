@@ -39,7 +39,8 @@ export function update(game: GameState, inputs: Input[]) {
         if (input.bomb) {
             game.bombs.push({ remain: BOMB_DEFAULT_REMAIN, point: { x: player.x, y: player.y } });
         }
-        if (game.balls.some(x => player.x === x.point.x && player.y === x.point.y)) {
+        if (input.suicide
+            || game.balls.some(x => player.x === x.point.x && player.y === x.point.y)) {
             player.x = null;
             player.y = null;
         }

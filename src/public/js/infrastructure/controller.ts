@@ -21,7 +21,8 @@ export default class Controller {
             down: this.down,
             left: this.left,
             right: this.right,
-            bomb: this.bomb
+            bomb: this.bomb,
+            suicide: false
         };
         this.up = false;
         this.down = false;
