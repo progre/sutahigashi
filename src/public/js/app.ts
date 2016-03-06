@@ -25,7 +25,7 @@ async function main() {
         });
         loadQueue.loadManifest(gameResource.concat(resultResource));
     });
-    let port = (await fetch("./websocketport")).text();
+    let port = await (await fetch("./websocketport")).text();
 
     ReactDOM.render(
         React.createElement(Lobby, null),

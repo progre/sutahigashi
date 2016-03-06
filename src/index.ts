@@ -19,8 +19,7 @@ app.use("/websocketport", (req: IncomingMessage, res: ServerResponse) => {
     res.end(webSocketPort);
 });
 app.use(serveStatic("./lib/public/"));
-let server = createServer(app);
-server.listen(process.argv[2] || 3000);
-logger.info("Server started.");
+app.listen(process.argv[2] || 3000);
 let io = socket(webSocketPort);
 direct(io).catch(e => console.error(e.stack));
+logger.info("Server started.");
