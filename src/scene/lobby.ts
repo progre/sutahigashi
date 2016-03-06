@@ -9,7 +9,7 @@ export default class Lobby extends EventEmitter {
     }
 
     join(id: string, name: string) {
-        this.users.tryJoin({ id, name });
+        this.users.join({ id, name });
         if (this.users.length < 2) {
             return;
         }
@@ -17,6 +17,6 @@ export default class Lobby extends EventEmitter {
     }
 
     leave(id: string) {
-        return this.users.tryLeave(id);
+        return this.users.leave(id);
     }
 }

@@ -4,7 +4,7 @@ let logger = getLogger();
 export default class Users {
     private items = <User[]>[];
 
-    tryJoin(user: User) {
+    join(user: User) {
         if (this.items.length >= 4) {
             return;
         }
@@ -22,7 +22,7 @@ export default class Users {
         return true;
     }
 
-    tryLeave(id: string) {
+    leave(id: string) {
         let idx = this.items.findIndex(x => x.id === id);
         if (idx < 0) {
             logger.info(`Unjoined: ${id}`);
