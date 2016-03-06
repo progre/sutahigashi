@@ -1,5 +1,5 @@
 /// <reference path="../../typings/test.d.ts" />
-const getPort = <() => Promise<number>>require("native-promisify")(require("getport"));
+const getPort = <(...args: any[]) => Promise<number>>require("native-promisify")(require("getport"));
 import {fork} from "child_process";
 import assert from "power-assert";
 
@@ -7,8 +7,8 @@ describe("Server", () => {
     it("is runnable", async function() {
         this.timeout(5000);
         let httpPort = (await getPort()).toString();
-        let wsPort = (await getPort()).toString();
-        let started = `[????-??-?? ??:??:??.???] [INFO] [default] - Server started. ${httpPort} ${wsPort}\n`;
+        let wsPort = (await getPort(httpPort + 1)).toString();
+        let started = `[????-??-?? ??:??:??.???] [INFO] [default] - Server started: ${httpPort} ${wsPort}\n`;
         const LOG_HEADER_PATTERN = /\[.+\] \[.+\] \[.+\] - /;
         return new Promise((resolve, reject) => {
             let server = fork(".", [httpPort, wsPort], { silent: true });

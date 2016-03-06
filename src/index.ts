@@ -13,8 +13,8 @@ let logger = getLogger();
 import direct from "./scene/director";
 
 
-let httpPort = process.argv[2] || 3000;
-let wsPort = process.argv[3] || 3001;
+let httpPort = process.argv[2] || "3000";
+let wsPort = process.argv[3] || "3001";
 let app = connect();
 app.use("/wsport", (req: IncomingMessage, res: ServerResponse) => {
     res.end(wsPort);
