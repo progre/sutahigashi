@@ -34,7 +34,7 @@ export default async function game(
             return;
         }
         if (waiting > 0) {
-            console.log(`Input waited caused by server lated: ${waiting} frame{s}`);
+            console.log(`Input waited caused by server lated: ${waiting} frame(s)`);
             waiting = 0;
         }
         socket.emit("input", controller.popStatus());
