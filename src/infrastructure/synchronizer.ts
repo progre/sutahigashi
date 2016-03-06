@@ -7,8 +7,6 @@ import Users from "../domain/users";
 import Sender from "./sender";
 
 export default class Synchronizer extends EventEmitter {
-    private inputsRepository: MultiItemArray<Input>;
-
     constructor(private io: SocketIO.Server, private users: Users, sender: Sender) {
         super();
         io.on("connection", socket => {
@@ -30,24 +28,7 @@ export default class Synchronizer extends EventEmitter {
             socket.on("getstatus", () => tryCatch(() => {
                 socket.emit("status", sender.lastStatus);
             }));
-
-            socket.on("input", (input: Input) => tryCatch(() => {
-                let number = this.users.idIndexOf(socket.id);
-                if (number < 0) {
-                    return;
-                }
-                input.number = number;
-                this.inputsRepository.pushOffset(input.number, input);
-                if (this.inputsRepository.filled(0)) {
-                    let inputs = this.inputsRepository.shift();
-                    this.emit("inputs", inputs);
-                }
-            }));
         });
-    }
-
-    startScene() {
-        this.inputsRepository = new MultiItemArray<Input>(this.users.length);
     }
 
     forEachSockets(func: (socket: SocketIO.Socket) => void) {

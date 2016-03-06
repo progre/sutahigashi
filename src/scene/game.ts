@@ -3,15 +3,15 @@ let logger = getLogger();
 import {createStatus, update} from "../domain/game/game";
 import {FPS} from "../domain/game/definition";
 import {Input} from "../domain/game/input";
+import {InputReceiver} from "../infrastructure/receiver";
 import Sender from "../infrastructure/sender";
-import Synchronizer from "../infrastructure/synchronizer";
 
 export const NAME = "game";
 
-export async function exec(numPlayers: number, sender: Sender, synchronizer: Synchronizer) {
+export async function exec(numPlayers: number, receiver: InputReceiver, sender: Sender) {
     logger.info("Game starting.");
     let game = createStatus(2);
-    synchronizer.on("inputs", onInputs);
+    receiver.on("inputs", onInputs);
     let inputsRepository = <Input[][]>[];
     let waiting = 0;
     let onUpdateTimer: NodeJS.Timer;
@@ -34,7 +34,7 @@ export async function exec(numPlayers: number, sender: Sender, synchronizer: Syn
         }, 1000 / FPS);
     });
     clearInterval(onUpdateTimer);
-    synchronizer.removeListener("inputs", onInputs);
+    receiver.removeListener("inputs", onInputs);
     logger.info("Game finished.");
     return winner;
 

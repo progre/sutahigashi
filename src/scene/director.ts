@@ -1,4 +1,5 @@
 import Sender from "../infrastructure/sender";
+import {InputReceiver} from "../infrastructure/receiver";
 import Synchronizer from "../infrastructure/synchronizer";
 import Users from "../domain/users";
 import Lobby, {NAME as LOBBY_NAME} from "./lobby";
@@ -16,7 +17,6 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
             sender.send(LOBBY_NAME, {
                 users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
             });
-            synchronizer.startScene();
             let lobby = new Lobby(users);
 
             let onJoin = (socket: SocketIO.Socket, name: string) => {
@@ -41,12 +41,12 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
             synchronizer.removeListener("leave", onLeave);
         }
 
+        let sockets = users.map(x => io.sockets.sockets[x.id]);
+        let inputReceiver = new InputReceiver(sockets);
 
-        synchronizer.startScene();
         sender.send(game.NAME, null);
         while (true) {
-            let winner = await game.exec(numPlayers, sender, synchronizer);
-            synchronizer.startScene();
+            let winner = await game.exec(numPlayers, inputReceiver, sender);
             sender.send("interval", {
                 users: users.map(x => ({ name: x.name, wins: Math.random() * 4 | 0 }))
             });
@@ -54,7 +54,7 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
                 break;
             }
         }
-        synchronizer.startScene();
+        inputReceiver.close();
         sender.send(result.NAME, null);
         await result.exec(synchronizer);
     }
