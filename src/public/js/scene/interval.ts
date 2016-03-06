@@ -20,7 +20,7 @@ export default async function lobby(
                 return;
             }
             document.body.appendChild(container);
-            let view = ReactDOM.render(
+            ReactDOM.render(
                 React.createElement(View, {
                     users: status.users
                 }),

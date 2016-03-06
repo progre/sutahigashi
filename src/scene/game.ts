@@ -5,7 +5,6 @@ import {createField} from "../domain/game/field";
 import Synchronizer from "../infrastructure/synchronizer";
 import {Input} from "../domain/input";
 import {FPS} from "../domain/gamedefinition";
-import * as result from "./result";
 
 const BOMB_DEFAULT_REMAIN = FPS * 3;
 export const NAME = "game";

@@ -53,8 +53,7 @@ gulp.task("watch", () => {
 
     function begin(callback) {
         if (signal) {
-            callback(new Error("Alread started."));
-            return;
+            throw new Error("Already started.");
         }
         signal = true;
         setTimeout(() => {

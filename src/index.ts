@@ -1,6 +1,6 @@
 /// <reference path="../typings/main.d.ts" />
 try { require("source-map-support").install(); } catch (e) { /* empty */ }
-import {createServer, IncomingMessage, ServerResponse} from "http";
+import {IncomingMessage, ServerResponse} from "http";
 import * as connect from "connect";
 import * as serveStatic from "serve-static";
 import * as SocketIOStatic from "socket.io";
