@@ -3,11 +3,12 @@ let logger = getLogger();
 import {createStatus, update} from "../domain/game/game";
 import {FPS} from "../domain/game/definition";
 import {Input} from "../domain/game/input";
+import Sender from "../infrastructure/sender";
 import Synchronizer from "../infrastructure/synchronizer";
 
 export const NAME = "game";
 
-export async function exec(numPlayers: number, synchronizer: Synchronizer) {
+export async function exec(numPlayers: number, sender: Sender, synchronizer: Synchronizer) {
     logger.info("Game starting.");
     let game = createStatus(2);
     synchronizer.on("inputs", onInputs);
@@ -29,7 +30,7 @@ export async function exec(numPlayers: number, synchronizer: Synchronizer) {
             if (game.players.filter(x => x.x != null).length <= 1) {
                 resolve(game.players.findIndex(x => x.x != null));
             }
-            synchronizer.postScene(NAME, { game });
+            sender.send(NAME, { game });
         }, 1000 / FPS);
     });
     clearInterval(onUpdateTimer);

@@ -30,7 +30,7 @@ export default class Synchronizer extends EventEmitter {
             }));
 
             socket.on("getstatus", () => tryCatch(() => {
-                new Sender(this.io).send(this.scene, this.users, null);
+                new Sender(this.io).send(this.scene, null);
             }));
 
             socket.on("input", (input: Input) => tryCatch(() => {
@@ -50,12 +50,8 @@ export default class Synchronizer extends EventEmitter {
 
     startScene(scene: string, obj: Status) {
         this.scene = scene;
-        this.postScene(scene, obj);
+        new Sender(this.io).send(scene, obj);
         this.inputsRepository = new MultiItemArray<Input>(this.users.length);
-    }
-
-    postScene(scene: string, obj: Status) {
-        new Sender(this.io).send(scene, this.users, obj);
     }
 
     forEachSockets(func: (socket: SocketIO.Socket) => void) {
