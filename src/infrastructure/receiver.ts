@@ -57,16 +57,6 @@ export class InputReceiver extends EventEmitter {
     }
 }
 
-function asArray<T>(arrayLike: { [idx: number]: T }) {
-    let array = <T[]>[];
-    for (let idx in arrayLike) {
-        if (arrayLike.hasOwnProperty(idx)) {
-            array.push(arrayLike[idx]);
-        }
-    }
-    return array;
-}
-
 function tryCatch(func: Function) {
     try {
         func();
