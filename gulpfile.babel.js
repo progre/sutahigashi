@@ -8,7 +8,12 @@ import "./gulp/selflint";
 import "./gulp/serve";
 import "./gulp/stylus";
 import "./gulp/test";
-import "./gulp/ts";
+import {browser} from "./gulp/ts";
+
+browser.files.push({
+    src: "src/public/js/test.tsx",
+    dest: "lib/public/js/"
+});
 
 gulp.task("build",
     gulp.series(
@@ -45,9 +50,11 @@ gulp.task("watch", () => {
 
     gulp.watch("src/**/*.js", gulp.series(begin, "copy:copy", end));
     gulp.watch(
-        ["src/**/*.ts*", "!src/public/**", "!src/test/**"],
+        ["src/**/*.ts*", "!src/public/**/*.ts*", "!src/test/**"],
         gulp.series(begin, "ts:debug", "test:test", "serve:serve", "serve:reload", end));
-    gulp.watch("src/public/**/*.ts*", gulp.series(begin, "ts:browser", "serve:reload", end));
+    gulp.watch(
+        ["src/public/**/*.ts*"],
+        gulp.series(begin, "ts:browser", "serve:reload", end));
     gulp.watch("src/**/*.jade", gulp.series(begin, "jade:debug", end));
     gulp.watch("src/**/*.stylus", gulp.series(begin, "stylus:stylus", end));
     gulp.watch("src/test/**/*.ts", gulp.series(begin, "test:test", end));
@@ -60,7 +67,7 @@ gulp.task("watch", () => {
         signal = true;
         setTimeout(() => {
             signal = false;
-        }, 3 * 1000);
+        }, 5 * 1000);
         console.log("✂─────────────────────────────────────────────────…………");
         callback();
     }
