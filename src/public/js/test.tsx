@@ -13,10 +13,7 @@ import Result from "./component/result";
 async function main() {
     ReactDOM.render(
         <div>
-            <Result number="0" winner="test-player" style={{
-                width: 960,
-                height: 540
-            }}/>
+            <Result number="0" winner="test-player"/>
             <div style={{
                 position: "absolute",
                 top: 0,

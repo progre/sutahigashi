@@ -27,11 +27,6 @@ async function main() {
     });
     let port = await (await fetch("./wsport")).text();
 
-    ReactDOM.render(
-        React.createElement(Lobby, null),
-        document.getElementById("lobby")
-    );
-
     let socket = io(`${location.hostname}:${port}`);
     socket.on("status", (status: Status) => {
         if (status.version !== VERSION) {

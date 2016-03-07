@@ -1,13 +1,21 @@
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 import {Status, User} from "../../../domain/status";
 import createScene from "./scenefactory";
+import View from "../component/lobby";
+import {createContainer} from "../component/utils";
 
 export default async function lobby(
     loader: createjs.PreloadJS,
     stage: createjs.Stage,
     socket: SocketIOClient.Socket
 ) {
-    document.getElementById("join").addEventListener("click", onJoinClick);
-    document.getElementById("leave").addEventListener("click", onLeaveClick);
+    let container = createContainer();
+    document.body.appendChild(container);
+    ReactDOM.render(
+        React.createElement(View, { onJoin, onLeave }),
+        document.getElementById(container.id)
+    );
     try {
         return await new Promise<any>((resolve, reject) => {
             socket.on("status", function onSocketStatus(status: Status) {
@@ -20,17 +28,16 @@ export default async function lobby(
             socket.emit("getstatus");
         });
     } finally {
-        document.getElementById("join").removeEventListener("click", onJoinClick);
-        document.getElementById("leave").removeEventListener("click", onLeaveClick);
+        document.body.removeChild(container);
     }
 
-    function onJoinClick(e: MouseEvent) {
+    function onJoin(e: MouseEvent) {
         let input = <HTMLInputElement>document.getElementById("name");
         socket.emit("join", input.value);
         console.log("join emitted");
     }
 
-    function onLeaveClick(e: MouseEvent) {
+    function onLeave(e: MouseEvent) {
         socket.emit("leave");
         console.log("leave emitted");
     }
