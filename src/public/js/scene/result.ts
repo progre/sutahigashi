@@ -25,7 +25,10 @@ export default async function result(
             }
             document.body.appendChild(container);
             ReactDOM.render(
-                React.createElement(View, status.result),
+                React.createElement(View, {
+                    number: status.result.number,
+                    winner: status.result.winner.name
+                }),
                 document.getElementById(container.id)
             );
         });
