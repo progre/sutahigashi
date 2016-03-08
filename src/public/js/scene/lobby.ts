@@ -10,17 +10,18 @@ export default async function lobby(
     stage: createjs.Stage,
     socket: SocketIOClient.Socket
 ) {
+    let element = React.createElement(View, { onJoin, onLeave });
     let container = createContainer();
     document.body.appendChild(container);
     ReactDOM.render(
-        React.createElement(View, { onJoin, onLeave }),
+        element,
         document.getElementById(container.id)
     );
     try {
         return await new Promise<any>((resolve, reject) => {
             socket.on("status", function onSocketStatus(status: Status) {
                 if (status.scene === "lobby") {
-                    updateUsers(status.lobby.users);
+                    element.props.users = status.lobby.users;
                     return;
                 }
                 resolve(createScene(status.scene));
@@ -31,19 +32,13 @@ export default async function lobby(
         document.body.removeChild(container);
     }
 
-    function onJoin(e: MouseEvent) {
-        let input = <HTMLInputElement>document.getElementById("name");
-        socket.emit("join", input.value);
+    function onJoin(name: string) {
+        socket.emit("join", name);
         console.log("join emitted");
     }
 
-    function onLeave(e: MouseEvent) {
+    function onLeave() {
         socket.emit("leave");
         console.log("leave emitted");
     }
-}
-
-function updateUsers(users: User[]) {
-    (<HTMLTextAreaElement>document.getElementById("users"))
-        .value = users.map(x => x.name).join("\n");
 }
