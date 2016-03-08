@@ -40,54 +40,61 @@ export function update(game: GameState, inputs: Input[]) {
             game.bombs.push({ remain: BOMB_DEFAULT_REMAIN, point: { x: player.x, y: player.y } });
         }
         if (input.suicide
-            || game.balls.some(x => player.x === x.point.x && player.y === x.point.y)) {
+            || game.balls.some(x => ballTouched(x, player))) {
             player.x = null;
             player.y = null;
         }
     });
-    game.bombs = game.bombs.filter(x => x.remain > 0);
-    game.bombs.forEach(bomb => {
-        bomb.remain--;
-        if (bomb.remain > 0) {
-            return;
-        }
-        let speed = 4;
-        game.balls.push(
-            {
-                speed,
-                remain: FPS / speed,
-                direction: 8,
-                point: { x: bomb.point.x, y: bomb.point.y }
-            },
-            {
-                speed,
-                remain: FPS / speed,
-                direction: 6,
-                point: { x: bomb.point.x, y: bomb.point.y }
-            },
-            {
-                speed,
-                remain: FPS / speed,
-                direction: 2,
-                point: { x: bomb.point.x, y: bomb.point.y }
-            },
-            {
-                speed,
-                remain: FPS / speed,
-                direction: 4,
-                point: { x: bomb.point.x, y: bomb.point.y }
-            }
-        );
-    });
-    game.balls.forEach(ball => {
-        ball.remain--;
-        if (ball.remain > 0) {
-            return;
-        }
-        moveBall(ball, game.lands);
-        ball.remain = FPS / ball.speed;
-    });
+    game.balls
+        .forEach(ball => {
+            ball.remain--;
+        });
+    game.balls
+        .filter(ball => ball.remain <= 0)
+        .forEach(ball => {
+            moveBall(ball, game.lands);
+            ball.remain = FPS / ball.speed;
+        });
     game.balls = game.balls.filter(x => x.point != null);
+    // 誘爆させたボムをすぐに弾にするのでボムは後
+    game.bombs
+        .forEach(bomb => {
+            bomb.remain--;
+        });
+    game.bombs
+        .filter(bomb => bomb.remain <= 0
+            || game.balls.some(ball => ballTouched(ball, bomb.point)))
+        .forEach(bomb => {
+            bomb.remain = 0;
+            let speed = 4;
+            game.balls.push(
+                {
+                    speed,
+                    remain: FPS / speed,
+                    direction: 8,
+                    point: { x: bomb.point.x, y: bomb.point.y }
+                },
+                {
+                    speed,
+                    remain: FPS / speed,
+                    direction: 6,
+                    point: { x: bomb.point.x, y: bomb.point.y }
+                },
+                {
+                    speed,
+                    remain: FPS / speed,
+                    direction: 2,
+                    point: { x: bomb.point.x, y: bomb.point.y }
+                },
+                {
+                    speed,
+                    remain: FPS / speed,
+                    direction: 4,
+                    point: { x: bomb.point.x, y: bomb.point.y }
+                }
+            );
+        });
+    game.bombs = game.bombs.filter(x => x.remain > 0);
     game.tick++;
 }
 
@@ -135,4 +142,8 @@ function addPoint(point: Point, x: number, y: number, lands: Land[][]) {
     }
     point.x = targetX;
     point.y = targetY;
+}
+
+function ballTouched(ball: Ball, target: Point) {
+    return target.x === ball.point.x && target.y === ball.point.y;
 }
