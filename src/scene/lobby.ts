@@ -25,7 +25,7 @@ export default function lobby(roomReceiver: RoomReceiver, sender: Sender, previo
             sender.send(NAME, {
                 lobby: { users: users.map(x => x) }
             });
-            if (users.length < 2) {
+            if (users.length < 3) {
                 return;
             }
             roomReceiver.removeListener("leave", onLeave);

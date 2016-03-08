@@ -29,6 +29,7 @@ export class RoomReceiver extends EventEmitter {
 export class InputReceiver extends EventEmitter {
     private inputsRepository: MultiItemArray<Input>;
     private timeoutTimers = new Map<SocketIO.Socket, NodeJS.Timer>();
+    private dropers = <SocketIO.Socket[]>[];
     private onInput: Function;
     private onDisconnect: Function;
 
@@ -37,12 +38,13 @@ export class InputReceiver extends EventEmitter {
         this.inputsRepository = new MultiItemArray<Input>(sockets.length);
         let self = this;
         this.onInput = function(input: Input) {
+            let sender = <SocketIO.Socket>this;
             tryCatch(() => {
-                let sender = <SocketIO.Socket>this;
                 clearTimeout(self.timeoutTimers.get(sender));
                 input.number = sockets.findIndex(x => x === sender);
                 self.addNewInput(input);
                 self.timeoutTimers.set(sender, setTimeout(() => {
+                    self.dropers.push(sender);
                     self.suicide(sender);
                 }, 1 * 1000));
             });
@@ -80,11 +82,33 @@ export class InputReceiver extends EventEmitter {
     }
 
     private addNewInput(input: Input) {
+        this.suicideDropers();
         this.inputsRepository.pushOffset(input.number, input);
         if (this.inputsRepository.filled(0)) {
             let inputs = this.inputsRepository.shift();
             this.emit("inputs", inputs);
         }
+    }
+
+    private suicideDropers() {
+        let droperIds = this.sockets.filter(socket => socket.disconnected)
+            .concat(this.dropers)
+            .map(socket => this.sockets.findIndex(x => x === socket));
+        if (droperIds.length <= 0) {
+            return;
+        }
+        let current = this.inputsRepository.getOrCreateFirst();
+        droperIds.forEach(droperId => {
+            current[droperId] = {
+                number: droperId,
+                up: false,
+                down: false,
+                left: false,
+                right: false,
+                bomb: false,
+                suicide: true
+            };
+        });
     }
 }
 

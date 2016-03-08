@@ -16,6 +16,10 @@ export default class MultiItemArray<T> extends Array<T[]> {
             && multi.every(x => x != null);
     }
 
+    getOrCreateFirst() {
+        return this.getOrCreate(0);
+    }
+
     private getOrCreate(index: number) {
         let mutli = this[index];
         if (mutli != null) {
