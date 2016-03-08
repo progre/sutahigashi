@@ -1,8 +1,6 @@
 /// <reference path="../../../typings/browser.d.ts" />
 import "babel-polyfill";
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import Lobby from "./component/lobby";
+import "whatwg-fetch";
 import {Scene} from "./scene/scene";
 import createScene from "./scene/scenefactory";
 import {RESOURCES as gameResource} from "./scene/game";

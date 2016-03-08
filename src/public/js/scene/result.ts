@@ -23,7 +23,7 @@ export default async function result(
                 resolve(status.scene);
                 return;
             }
-            document.body.appendChild(container);
+            document.getElementsByTagName("main")[0].appendChild(container);
             ReactDOM.render(
                 React.createElement(View, {
                     number: status.result.number,
@@ -34,7 +34,7 @@ export default async function result(
         });
         socket.emit("getstatus");
     });
-    document.body.removeChild(container);
+    document.getElementsByTagName("main")[0].removeChild(container);
     console.log("Result finished.");
     return createScene(scene);
 }

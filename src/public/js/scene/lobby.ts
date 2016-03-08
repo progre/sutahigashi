@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Status, User} from "../../../domain/status";
+import {Status} from "../../../domain/status";
 import createScene from "./scenefactory";
 import View from "../component/lobby";
 import {createContainer} from "../component/utils";
@@ -10,18 +10,17 @@ export default async function lobby(
     stage: createjs.Stage,
     socket: SocketIOClient.Socket
 ) {
-    let element = React.createElement(View, { onJoin, onLeave });
     let container = createContainer();
-    document.body.appendChild(container);
-    ReactDOM.render(
-        element,
+    document.getElementsByTagName("main")[0].appendChild(container);
+    let component = ReactDOM.render(
+        React.createElement(View, { onJoin, onLeave}),
         document.getElementById(container.id)
     );
     try {
         return await new Promise<any>((resolve, reject) => {
             socket.on("status", function onSocketStatus(status: Status) {
                 if (status.scene === "lobby") {
-                    element.props.users = status.lobby.users;
+                    component.setState({ users: status.lobby.users.map(x => x.name) })
                     return;
                 }
                 resolve(createScene(status.scene));
@@ -29,7 +28,7 @@ export default async function lobby(
             socket.emit("getstatus");
         });
     } finally {
-        document.body.removeChild(container);
+        document.getElementsByTagName("main")[0].removeChild(container);
     }
 
     function onJoin(name: string) {

@@ -19,7 +19,7 @@ export default async function lobby(
                 resolve(status.scene);
                 return;
             }
-            document.body.appendChild(container);
+            document.getElementsByTagName("main")[0].appendChild(container);
             ReactDOM.render(
                 React.createElement(View, status.interval),
                 document.getElementById(container.id)
@@ -27,7 +27,7 @@ export default async function lobby(
         });
         socket.emit("getstatus");
     });
-    document.body.removeChild(container);
+    document.getElementsByTagName("main")[0].removeChild(container);
     console.log("Interval finished.");
     return createScene(scene);
 }
