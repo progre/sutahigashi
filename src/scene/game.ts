@@ -8,10 +8,10 @@ import Sender from "../infrastructure/sender";
 
 const NAME = "game";
 
-export default async function game(numPlayers: number, receiver: InputReceiver, sender: Sender) {
+export default async function game(players: string[], receiver: InputReceiver, sender: Sender) {
     logger.info("Game starting.");
     sender.send(NAME, null);
-    let game = createStatus(numPlayers);
+    let game = createStatus(players);
     let inputsRepository = <Input[][]>[];
     let onInputs = (inputs: Input[]) => {
         inputsRepository.push(inputs);
@@ -31,8 +31,8 @@ export default async function game(numPlayers: number, receiver: InputReceiver, 
                 waiting = 0;
             }
             update(game, inputs);
-            if (game.players.filter(x => x.x != null).length <= 1) {
-                resolve(game.players.findIndex(x => x.x != null));
+            if (game.players.filter(x => x.point != null).length <= 1) {
+                resolve(game.players.findIndex(x => x.point != null));
             }
             sender.send(NAME, { game });
         }, 1000 / FPS);

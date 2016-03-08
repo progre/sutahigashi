@@ -5,18 +5,15 @@ import {Input} from "./input";
 
 const BOMB_DEFAULT_REMAIN = FPS * 3;
 
-export function createStatus(numPlayers: number) {
+export function createStatus(players: string[]) {
     let status = {
         tick: 0,
-        players: <Point[]>[],
+        players: players.map((x, i) => ({ name: x, point: getDefaultPoint(i) })),
         bombs: <Bomb[]>[],
         balls: <Ball[]>[],
         lands: createField(),
         overlays: <Overlay[][]>[]
     };
-    for (let i = 0; i < numPlayers; i++) {
-        status.players.push(getDefaultPoint(i));
-    }
     return status;
 }
 
@@ -32,17 +29,16 @@ function getDefaultPoint(i: number) {
 export function update(game: GameState, inputs: Input[]) {
     inputs.forEach((input, i) => {
         let player = game.players[i];
-        if (player.x == null) {
+        if (player.point == null) {
             return;
         }
-        movePlayer(input, player, game.lands);
+        movePlayer(input, player.point, game.lands);
         if (input.bomb) {
-            game.bombs.push({ remain: BOMB_DEFAULT_REMAIN, point: { x: player.x, y: player.y } });
+            game.bombs.push({ remain: BOMB_DEFAULT_REMAIN, point: { x: player.point.x, y: player.point.y } });
         }
         if (input.suicide
-            || game.balls.some(x => ballTouched(x, player))) {
-            player.x = null;
-            player.y = null;
+            || game.balls.some(x => ballTouched(x, player.point))) {
+            player.point = null;
         }
     });
     game.balls

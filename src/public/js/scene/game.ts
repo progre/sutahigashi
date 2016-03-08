@@ -1,6 +1,10 @@
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 import {Status, Game} from "../../../domain/status";
 import {FPS} from "../../../domain/game/definition";
 import Controller from "../infrastructure/controller";
+import GameSub from "../component/gamesub";
+import {createContainer} from "../component/utils";
 import createField, {RESOURCES as fieldResources} from "../component/game/field";
 import createPlayer, {RESOURCES as playerResources} from "../component/game/player";
 import {createBomb, createBall, RESOURCES as objectsResources} from "../component/game/objects";
@@ -17,6 +21,10 @@ export default async function game(
     socket: SocketIOClient.Socket
 ) {
     console.log("Game starting.");
+    let subContainer = createContainer();
+    let main = document.getElementsByTagName("main")[0];
+    main.appendChild(subContainer);
+    let subViewRendered = false;
 
     let controller = new Controller();
     let container = new GameViewContainer(loadQueue, <HTMLCanvasElement>stage.canvas);
@@ -43,20 +51,28 @@ export default async function game(
 
     let scene = await new Promise<any>((resolve, reject) => {
         socket.on("status", function onSocketStatus(status: Status) {
-            if (status.scene === "game") {
-                tick = status.game.tick;
-                render(container, status.game);
-                stage.update();
+            if (status.scene !== "game") {
+                socket.off("status", onSocketStatus);
+                resolve(createScene(status.scene));
                 return;
             }
-            socket.off("status", onSocketStatus);
-            resolve(createScene(status.scene));
+            if (!subViewRendered) {
+                ReactDOM.render(
+                    React.createElement(GameSub, { users: status.game.players.map(x => x.name) }),
+                    document.getElementById(subContainer.id)
+                );
+                subViewRendered = true;
+            }
+            tick = status.game.tick;
+            render(container, status.game);
+            stage.update();
         });
     });
     clearInterval(onUpdateTimer);
     stage.removeChild(container);
     stage.update();
     controller.release();
+    main.removeChild(subContainer);
     console.log("Game finished.");
     return scene;
 }
@@ -92,13 +108,13 @@ class GameViewContainer extends createjs.Container {
 
 function render(container: GameViewContainer, game: Game) {
     game.players.forEach((player, i) => {
-        if (player.x == null) {
+        if (player.point == null) {
             container.players[i].visible = false;
             return;
         }
         container.players[i].visible = true;
-        container.players[i].x = player.x * CHIP_PIXEL;
-        container.players[i].y = player.y * CHIP_PIXEL;
+        container.players[i].x = player.point.x * CHIP_PIXEL;
+        container.players[i].y = player.point.y * CHIP_PIXEL;
     });
     container.bombs.forEach((bombView, i) => {
         if (i >= game.bombs.length) {

@@ -61,17 +61,24 @@ interface UserProps {
 class User extends React.Component<UserProps, void> {
     render() {
         return <div style={this.props.style}>
-            <img src={RESOURCES[this.props.index].src} style={{
-                width: 64,
-                height: 64,
-                verticalAlign: "middle"
-            }}/>
-            <span style={{
-                width: 64,
-                margin: "0.5em",
-                fontSize: 32,
-                verticalAlign: "middle"
-            }}>{this.props.name}</span>
+            <div style={{
+                backgroundColor: "white",
+                width: 240,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap"
+            }}>
+                <img src={RESOURCES[this.props.index].src} style={{
+                    width: 64,
+                    height: 64,
+                    verticalAlign: "middle"
+                }}/>
+                <span style={{
+                    margin: "0.5em",
+                    fontSize: 32,
+                    verticalAlign: "middle"
+                }}>{this.props.name}</span>
+            </div>
         </div>;
     }
 }

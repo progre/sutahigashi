@@ -5,19 +5,23 @@ import * as React from "react";
 /* tslint:enable: no-unused-variable */
 import * as ReactDOM from "react-dom";
 import Lobby from "./component/lobby";
+import GameSub from "./component/gamesub";
 // import Interval from "./component/interval";
 import Result from "./component/result";
 
 async function main() {
-    let lobby = ReactDOM.render(
+    ReactDOM.render(
         <Lobby onJoin={null} onLeave={null}/>,
-        document.getElementById("lobby"));
+        document.getElementById("lobby"))
+        .setState({
+            users: ["さたちゅー", "したちゅー", "すたちゅー", "せたちゅー"]
+        });
+    ReactDOM.render(
+        <GameSub users={["さたちゅー", "したちゅー", "すたちゅー", "せたちゅー"]}/>,
+        document.getElementById("gamesub"));
     ReactDOM.render(
         <Result number="0" winner="test-player"/>,
         document.getElementById("result"));
-    lobby.setState({
-        users: ["さたちゅー", "したちゅー", "すたちゅー", "せたちゅー"]
-    });
 }
 
 window.addEventListener("DOMContentLoaded", function onDOMContentLoaded() {

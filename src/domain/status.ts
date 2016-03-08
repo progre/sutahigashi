@@ -29,11 +29,16 @@ export interface User {
 
 export interface Game {
     tick: number;
-    players: Point[];
+    players: Player[];
     bombs: Bomb[];
     balls: Ball[];
     lands: Land[][];
     overlays: Overlay[][];
+}
+
+export interface Player {
+    name: string;
+    point: Point;
 }
 
 export interface Bomb {

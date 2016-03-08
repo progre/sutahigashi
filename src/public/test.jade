@@ -10,7 +10,7 @@ script(src='https://code.jquery.com/jquery-2.2.1.min.js')
 script(src='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.js')
 script(src='https://code.createjs.com/createjs-2015.11.26.min.js')
 script(src='https://cdn.socket.io/socket.io-1.4.5.js')
-script(src='js/test.js')
+script(src='js/test.js?h=#{hash}')
 //[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js">
     <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js">
@@ -18,6 +18,10 @@ script(src='js/test.js')
 body(style='background-color: black;')
     div(style='position: relative')
         div#lobby
+        div(style='position: absolute; top: 0; width: 960px; height: 540px; background-color: dimgray; z-index: -1;')
+    hr
+    div(style='position: relative')
+        div#gamesub
         div(style='position: absolute; top: 0; width: 960px; height: 540px; background-color: dimgray; z-index: -1;')
     hr
     div(style='position: relative')
