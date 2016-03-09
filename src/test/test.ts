@@ -5,7 +5,7 @@ import assert from "power-assert";
 
 describe("Server", () => {
     it("is runnable", async function() {
-        this.timeout(5000);
+        this.timeout(10 * 1000);
         let httpPort = (await getPort()).toString();
         let wsPort = (await getPort(httpPort + 1)).toString();
         let started = `[????-??-?? ??:??:??.???] [INFO] [default] - Server started: ${httpPort} ${wsPort}\n`;

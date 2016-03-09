@@ -20,7 +20,7 @@ async function main() {
         <GameSub users={["さたちゅー", "したちゅー", "すたちゅー", "せたちゅー"]}/>,
         document.getElementById("gamesub"));
     ReactDOM.render(
-        <Result number="0" winner="test-player"/>,
+        <Result number={2} winner="test-player"/>,
         document.getElementById("result"));
 }
 
