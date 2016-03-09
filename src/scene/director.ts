@@ -21,10 +21,13 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
     });
     let roomReceiver = new RoomReceiver(io);
     let winner: User;
-    while (true) {
+    main_loop: while (true) {
         let users = await lobby(roomReceiver, sender, winner);
         let sockets = users.map(x => io.sockets.sockets[x.id]);
         while (true) {
+            if (sockets.every(x => x.disconnected)) {
+                continue main_loop;
+            }
             let inputReceiver = new InputReceiver(sockets);
             let winner = await game(users.map(x => x.name), inputReceiver, sender);
             inputReceiver.close();
