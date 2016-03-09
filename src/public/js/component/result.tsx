@@ -1,7 +1,11 @@
 import * as React from "react";
 import {RESOURCES} from "./game/player";
 
-export default class Result extends React.Component<any, any> {
+interface Props {
+    number: number;
+    winner: string;
+}
+export default class Result extends React.Component<Props, any> {
     render() {
         return <div style={{
             width: 960,

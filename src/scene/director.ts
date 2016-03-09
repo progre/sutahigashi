@@ -37,7 +37,7 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
                 break;
             }
         }
-        winner = users.sort((a, b) => -(a.wins - b.wins))[0];
+        winner = users.concat().sort((a, b) => -(a.wins - b.wins))[0];
         await result(sender, users.findIndex(x => x === winner), winner);
     }
 }
