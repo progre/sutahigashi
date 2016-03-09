@@ -16,7 +16,7 @@ export const RESOURCES = fieldResources
     .concat(objectsResources);
 
 export default async function game(
-    loadQueue: createjs.LoadQueue,
+    loader: createjs.LoadQueue,
     stage: createjs.Stage,
     socket: SocketIOClient.Socket
 ) {
@@ -27,7 +27,7 @@ export default async function game(
     let subViewRendered = false;
 
     let controller = new Controller();
-    let container = new GameViewContainer(loadQueue, <HTMLCanvasElement>stage.canvas);
+    let container = new GameViewContainer(loader, <HTMLCanvasElement>stage.canvas);
     stage.addChild(container);
     stage.update();
 
@@ -58,7 +58,7 @@ export default async function game(
             }
             if (!subViewRendered) {
                 ReactDOM.render(
-                    React.createElement(GameSub, { users: status.game.players.map(x => x.name) }),
+                    React.createElement(GameSub, { loader, users: status.game.players.map(x => x.name) }),
                     document.getElementById(subContainer.id)
                 );
                 subViewRendered = true;
