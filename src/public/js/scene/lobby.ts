@@ -6,14 +6,14 @@ import View from "../component/lobby";
 import {createContainer} from "../component/utils";
 
 export default async function lobby(
-    loader: createjs.PreloadJS,
+    loader: createjs.AbstractLoader,
     stage: createjs.Stage,
     socket: SocketIOClient.Socket
 ) {
     let container = createContainer();
     document.getElementsByTagName("main")[0].appendChild(container);
     let component = ReactDOM.render(
-        React.createElement(View, { onJoin, onLeave}),
+        React.createElement(View, { onJoin, onLeave, loader }),
         document.getElementById(container.id)
     );
     try {

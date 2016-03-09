@@ -4,12 +4,11 @@ import {RESOURCES} from "./game/player";
 interface Props {
     onJoin: Function;
     onLeave: (e: any) => void;
+    loader: createjs.AbstractLoader;
 }
-
 interface State {
     users: string[];
 }
-
 export default class Lobby extends React.Component<Props, State> {
     constructor() {
         super();
@@ -23,16 +22,16 @@ export default class Lobby extends React.Component<Props, State> {
             height: 540,
             backgroundColor: "white"
         }}>
-            <User index={0} name={this.state.users[0]} style={{
+            <User loader={this.props.loader} index={0} name={this.state.users[0]} style={{
                 position: "absolute", top: 100, left: 200
             }}/>
-            <User index={1} name={this.state.users[1]} style={{
+            <User loader={this.props.loader} index={1} name={this.state.users[1]} style={{
                 position: "absolute", top: 250, left: 550
             }}/>
-            <User index={2} name={this.state.users[2]} style={{
+            <User loader={this.props.loader} index={2} name={this.state.users[2]} style={{
                 position: "absolute", top: 100, left: 550
             }}/>
-            <User index={3} name={this.state.users[3]} style={{
+            <User loader={this.props.loader} index={3} name={this.state.users[3]} style={{
                 position: "absolute", top: 250, left: 200
             }}/>
             <div style={{
@@ -54,12 +53,15 @@ export default class Lobby extends React.Component<Props, State> {
 }
 
 interface UserProps {
+    loader: createjs.AbstractLoader;
     style?: React.CSSProperties;
     index: number;
     name: string;
 }
 class User extends React.Component<UserProps, void> {
     render() {
+        let id = RESOURCES[this.props.index].id;
+        let image = this.props.loader.getResult(id) as HTMLImageElement;
         return <div style={this.props.style}>
             <div style={{
                 backgroundColor: "white",
@@ -68,7 +70,7 @@ class User extends React.Component<UserProps, void> {
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap"
             }}>
-                <img src={RESOURCES[this.props.index].src} style={{
+                <img src={image.src} style={{
                     width: 64,
                     height: 64,
                     verticalAlign: "middle"

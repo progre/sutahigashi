@@ -1,10 +1,9 @@
 /// <reference path="../../../typings/browser.d.ts" />
 import "babel-polyfill";
 import "whatwg-fetch";
+import loadResource from "./infrastructure/loader";
 import {Scene} from "./scene/scene";
 import createScene from "./scene/scenefactory";
-import {RESOURCES as gameResource} from "./scene/game";
-import {RESOURCES as resultResource} from "./scene/result";
 import {Status} from "../../domain/status";
 import {VERSION} from "../../domain/version";
 
@@ -15,14 +14,7 @@ async function main() {
             resolve();
         });
     });
-    let loadQueue = new createjs.LoadQueue(false);
-    await new Promise((resolve, reject) => {
-        loadQueue.on("complete", function onComplete() {
-            loadQueue.off("complete", onComplete);
-            resolve(loadQueue);
-        });
-        loadQueue.loadManifest(gameResource.concat(resultResource));
-    });
+    let loader = await loadResource();
     let port = await (await fetch("./wsport")).text();
 
     let socket = io(`${location.hostname}:${port}`);
@@ -35,7 +27,7 @@ async function main() {
     // 今のステートを調べる
     let currentScene = await getCurrentScene(socket);
     while (true) {
-        currentScene = await currentScene(loadQueue, stage, socket);
+        currentScene = await currentScene(loader, stage, socket);
     }
 }
 
