@@ -54,7 +54,7 @@ class User extends React.Component<UserProps, void> {
                 }}/>
                 <br/>
                 <div style={{
-                    marginTop: 8,
+                    paddingTop: 8,
                     width: 160,
                     overflow: "hidden",
                     textOverflow: "ellipsis",
