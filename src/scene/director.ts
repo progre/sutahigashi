@@ -23,6 +23,7 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
     let winner: User;
     main_loop: while (true) {
         let users = await lobby(roomReceiver, sender, winner);
+        winner = null;
         let sockets = users.map(x => io.sockets.sockets[x.id]);
         while (true) {
             if (sockets.every(x => x.disconnected)) {
@@ -39,5 +40,6 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
         }
         winner = users.concat().sort((a, b) => -(a.wins - b.wins))[0];
         await result(sender, users.findIndex(x => x === winner), winner);
+        winner.wins = 0;
     }
 }
