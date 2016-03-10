@@ -1,6 +1,4 @@
 /// <reference path="../../../typings/browser.d.ts" />
-import "babel-polyfill";
-import "whatwg-fetch";
 import loadResource from "./infrastructure/loader";
 import {Scene} from "./scene/scene";
 import createScene from "./scene/scenefactory";

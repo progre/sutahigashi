@@ -14,6 +14,10 @@ browser.files.push({
     src: "src/public/js/test.tsx",
     dest: "lib/public/js/"
 });
+browser.config.externals = {
+    "react": "React",
+    "react-dom": "ReactDOM"
+};
 
 gulp.task("build",
     gulp.series(
