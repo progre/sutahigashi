@@ -20,7 +20,7 @@ export default async function lobby(
         return await new Promise<any>((resolve, reject) => {
             socket.on("status", function onSocketStatus(status: Status) {
                 if (status.scene === "lobby") {
-                    component.setState({ users: status.lobby.users.map(x => x.name) })
+                    component.setState({ users: status.lobby.users.map(x => x.name) });
                     return;
                 }
                 resolve(createScene(status.scene));

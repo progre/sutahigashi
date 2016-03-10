@@ -61,6 +61,10 @@ export class InputReceiver extends EventEmitter {
         });
     }
 
+    get allDisconnected() {
+        return this.sockets.every(x => x.disconnected);
+    }
+
     close() {
         this.sockets.forEach(socket => {
             socket.removeListener("input", this.onInput);

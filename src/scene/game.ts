@@ -20,6 +20,10 @@ export default async function game(players: string[], receiver: InputReceiver, s
     let waiting = 0;
     let onUpdateTimer: NodeJS.Timer;
     let winner = await new Promise<number>(resolve => {
+        if (receiver.allDisconnected) {
+            resolve(-1);
+            return;
+        }
         onUpdateTimer = setInterval(() => {
             let inputs = inputsRepository[game.tick];
             if (inputs == null) {
