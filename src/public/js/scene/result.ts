@@ -10,7 +10,7 @@ export const RESOURCES = [{
 }];
 
 export default async function result(
-    loadQueue: createjs.LoadQueue,
+    loader: createjs.LoadQueue,
     stage: createjs.Stage,
     socket: SocketIOClient.Socket
 ) {
@@ -26,6 +26,7 @@ export default async function result(
             document.getElementsByTagName("main")[0].appendChild(container);
             ReactDOM.render(
                 React.createElement(View, {
+                    loader,
                     number: status.result.number,
                     winner: status.result.winner.name
                 }),
