@@ -1,5 +1,4 @@
 /// <reference path="../../../typings/browser.d.ts" />
-import "babel-polyfill";
 /* tslint:disable: no-unused-variable */
 import * as React from "react";
 /* tslint:enable: no-unused-variable */

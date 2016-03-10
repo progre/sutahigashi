@@ -70,11 +70,7 @@ class User extends React.Component<UserProps, void> {
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap"
             }}>
-                <img src={image.src} style={{
-                    width: 64,
-                    height: 64,
-                    verticalAlign: "middle"
-                }}/>
+                <span ref="image"/>
                 <span style={{
                     margin: "0.5em",
                     fontSize: 32,
@@ -82,5 +78,14 @@ class User extends React.Component<UserProps, void> {
                 }}>{this.props.name}</span>
             </div>
         </div>;
+    }
+                // <img src={image.src} style={{
+                //     width: 64,
+                //     height: 64,
+                //     verticalAlign: "middle"
+                // }}/>
+
+    componentDidMount() {
+        (this.refs["image"] as HTMLElement).appendChild(this.props.loader.getResult(RESOURCES[this.props.index].id) as HTMLElement);
     }
 }

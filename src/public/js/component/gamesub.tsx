@@ -48,7 +48,7 @@ class User extends React.Component<UserProps, void> {
                 padding: 8,
                 backgroundColor: "white"
             }}>
-                <img src={image.src} style={{
+                <span ref="image" style={{
                     width: 64,
                     height: 64
                 }}/>
@@ -66,5 +66,13 @@ class User extends React.Component<UserProps, void> {
                 </div>
             </div>
         </div>;
+    }
+                // <img src={image.src} style={{
+                //     width: 64,
+                //     height: 64
+                // }}/>
+
+    componentDidMount() {
+        (this.refs["image"] as HTMLElement).appendChild(this.props.loader.getResult(RESOURCES[this.props.index].id) as HTMLElement);
     }
 }
