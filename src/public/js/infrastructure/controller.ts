@@ -60,6 +60,9 @@ function keyboardEventShim(e: HTML5KeyboardEvent) {
         case "Right":
             e.code = `Arrow${e.key}`;
             return;
+        case "Spacebar":
+            e.code = "Space";
+            return;
         default:
             e.code = e.key;
             return;
