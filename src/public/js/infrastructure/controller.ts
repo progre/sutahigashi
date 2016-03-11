@@ -34,6 +34,7 @@ export default class Controller {
 
     handleEvent(e: HTML5KeyboardEvent) {
         keyboardEventShim(e);
+        e.preventDefault();
         switch (e.code) {
             case "ArrowUp": this.up = true; return;
             case "ArrowDown": this.down = true; return;
