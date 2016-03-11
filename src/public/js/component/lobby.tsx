@@ -1,10 +1,9 @@
 import * as React from "react";
-import {RESOURCES} from "./game/player";
 
 interface Props {
+    images: HTMLImageElement[];
     onJoin: Function;
     onLeave: (e: any) => void;
-    loader: createjs.AbstractLoader;
 }
 interface State {
     users: string[];
@@ -22,16 +21,16 @@ export default class Lobby extends React.Component<Props, State> {
             height: 540,
             backgroundColor: "white"
         }}>
-            <User loader={this.props.loader} index={0} name={this.state.users[0]} style={{
+            <User image={this.props.images[0]} name={this.state.users[0]} style={{
                 position: "absolute", top: 100, left: 200
             }}/>
-            <User loader={this.props.loader} index={1} name={this.state.users[1]} style={{
+            <User image={this.props.images[1]} name={this.state.users[1]} style={{
                 position: "absolute", top: 250, left: 550
             }}/>
-            <User loader={this.props.loader} index={2} name={this.state.users[2]} style={{
+            <User image={this.props.images[2]} name={this.state.users[2]} style={{
                 position: "absolute", top: 100, left: 550
             }}/>
-            <User loader={this.props.loader} index={3} name={this.state.users[3]} style={{
+            <User image={this.props.images[3]} name={this.state.users[3]} style={{
                 position: "absolute", top: 250, left: 200
             }}/>
             <div style={{
@@ -53,15 +52,12 @@ export default class Lobby extends React.Component<Props, State> {
 }
 
 interface UserProps {
-    loader: createjs.AbstractLoader;
-    style?: React.CSSProperties;
-    index: number;
+    image: HTMLImageElement;
     name: string;
+    style?: React.CSSProperties;
 }
 class User extends React.Component<UserProps, void> {
     render() {
-        let id = RESOURCES[this.props.index].id;
-        let image = this.props.loader.getResult(id) as HTMLImageElement;
         return <div style={this.props.style}>
             <div style={{
                 backgroundColor: "white",
@@ -70,7 +66,12 @@ class User extends React.Component<UserProps, void> {
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap"
             }}>
-                <span ref="image"/>
+                <span ref="image" style={{
+                    display: "inline-flex",
+                    width: 64,
+                    height: 64,
+                    verticalAlign: "middle"
+                }}/>
                 <span style={{
                     margin: "0.5em",
                     fontSize: 32,
@@ -79,13 +80,8 @@ class User extends React.Component<UserProps, void> {
             </div>
         </div>;
     }
-                // <img src={image.src} style={{
-                //     width: 64,
-                //     height: 64,
-                //     verticalAlign: "middle"
-                // }}/>
 
     componentDidMount() {
-        (this.refs["image"] as HTMLElement).appendChild(this.props.loader.getResult(RESOURCES[this.props.index].id) as HTMLElement);
+        (this.refs["image"] as HTMLElement).appendChild(this.props.image);
     }
 }

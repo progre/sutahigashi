@@ -41,14 +41,13 @@ interface UserProps {
 }
 class User extends React.Component<UserProps, void> {
     render() {
-        let id = RESOURCES[this.props.index].id;
-        let image = this.props.loader.getResult(id) as HTMLImageElement;
         return <div style={this.props.style}>
             <div style={{
                 padding: 8,
                 backgroundColor: "white"
             }}>
                 <span ref="image" style={{
+                    display: "inline-flex",
                     width: 64,
                     height: 64
                 }}/>
@@ -67,12 +66,9 @@ class User extends React.Component<UserProps, void> {
             </div>
         </div>;
     }
-                // <img src={image.src} style={{
-                //     width: 64,
-                //     height: 64
-                // }}/>
 
     componentDidMount() {
-        (this.refs["image"] as HTMLElement).appendChild(this.props.loader.getResult(RESOURCES[this.props.index].id) as HTMLElement);
+        let image = this.props.loader.getResult(RESOURCES[this.props.index].id) as HTMLImageElement;
+        (this.refs["image"] as HTMLElement).appendChild(image);
     }
 }

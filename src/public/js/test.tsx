@@ -8,11 +8,14 @@ import Lobby from "./component/lobby";
 import GameSub from "./component/gamesub";
 // import Interval from "./component/interval";
 import Result from "./component/result";
+import {RESOURCES} from "./component/game/player";
 
 async function main() {
     let loader = await loadResource();
+    let images = RESOURCES.map(x => (loader.getResult(x.id) as HTMLImageElement).cloneNode() as HTMLImageElement);
+
     ReactDOM.render(
-        <Lobby loader={loader} onJoin={null} onLeave={null}/>,
+        <Lobby images={images} onJoin={null} onLeave={null}/>,
         document.getElementById("lobby"))
         .setState({
             users: ["さたちゅー", "したちゅー", "すたちゅー", "せたちゅー"]
