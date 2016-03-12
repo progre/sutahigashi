@@ -28,19 +28,46 @@ export const RESOURCES = [
 
 export default class SE {
     volume = 0.5;
+    game = new GameSE(this);
 
     play(id: string) {
+        if (id.split("/")[0] === "game") {
+            throw new Error();
+        }
         createjs.Sound.play(`se/${id}`, null, 0, 0, 0, this.volume);
+    }
+}
+
+class GameSE {
+    private basic = <{ [id: string]: createjs.AbstractSoundInstance }>{
+        death: createjs.Sound.createInstance("se/game/basic/death"),
+        gong: createjs.Sound.createInstance("se/game/basic/gong"),
+        put: createjs.Sound.createInstance("se/game/basic/put"),
+        explosion: createjs.Sound.createInstance("se/game/basic/explosion"),
+    };
+
+    constructor(private config: { volume: number }) {
+    }
+
+    play(id: string) {
+        let ids = id.split("/");
+        switch (ids[0]) {
+            case "basic":
+                this.basic[ids[1]].play(null, 0, 0, 0, this.config.volume);
+                break;
+            default:
+                throw new Error();
+        }
     }
 
     playGameSet() {
         const INTERVAL = 270;
         return new Promise(resolve => {
-            this.play("game/basic/gong");
+            this.basic["gong"].play(null, 0, 0, 0, this.config.volume);
             setTimeout(() => {
-                this.play("game/basic/gong");
+                this.basic["gong"].play(null, 0, 0, 0, this.config.volume);
                 setTimeout(() => {
-                    this.play("game/basic/gong");
+                    this.basic["gong"].play(null, 0, 0, 0, this.config.volume);
                     resolve();
                 }, INTERVAL);
             }, INTERVAL);

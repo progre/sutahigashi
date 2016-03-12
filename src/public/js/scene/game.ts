@@ -49,14 +49,14 @@ export default async function game(
 
     let eventDetector = new EventDetector();
     eventDetector.on("put", () => {
-        se.play("game/basic/put");
+        se.game.play("basic/put");
     });
     eventDetector.on("explosion", () => {
         console.log("exp");
-        se.play("game/basic/explosion");
+        se.game.play("basic/explosion");
     });
     eventDetector.on("death", () => {
-        se.play("game/basic/death");
+        se.game.play("basic/death");
     });
     let scene = await new Promise<any>((resolve, reject) => {
         socket.on("status", function onSocketStatus(status: Status) {
@@ -78,7 +78,7 @@ export default async function game(
             eventDetector.update(status.game);
         });
     });
-    se.playGameSet();
+    se.game.playGameSet();
     clearInterval(onUpdateTimer);
     stage.removeChild(world);
     stage.update();
