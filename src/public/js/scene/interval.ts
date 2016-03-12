@@ -34,7 +34,7 @@ export default async function lobby(
                     wins: x.wins
                 })),
                 winner: status.interval.winner
-            }
+            };
             ReactDOM.render(
                 React.createElement(View, props),
                 document.getElementById(container.id)

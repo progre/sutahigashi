@@ -1,7 +1,8 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Status} from "../../../domain/status";
+import {Status, Game} from "../../../domain/status";
 import {FPS} from "../../../domain/game/definition";
+import EventDetector from "../domain/eventdetector";
 import Controller from "../infrastructure/controller";
 import SE from "../infrastructure/se";
 import GameSub from "../component/gamesub";
@@ -46,6 +47,17 @@ export default async function game(
         sendingTick++;
     }, 1000 / FPS);
 
+    let eventDetector = new EventDetector();
+    eventDetector.on("put", () => {
+        se.play("game/basic/put");
+    });
+    eventDetector.on("explosion", () => {
+        console.log("exp");
+        se.play("game/basic/explosion");
+    });
+    eventDetector.on("death", () => {
+        se.play("game/basic/death");
+    });
     let scene = await new Promise<any>((resolve, reject) => {
         socket.on("status", function onSocketStatus(status: Status) {
             if (status.scene !== "game") {
@@ -63,8 +75,10 @@ export default async function game(
             tick = status.game.tick;
             world.render(status.game);
             stage.update();
+            eventDetector.update(status.game);
         });
     });
+    se.playGameSet();
     clearInterval(onUpdateTimer);
     stage.removeChild(world);
     stage.update();

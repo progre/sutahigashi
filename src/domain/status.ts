@@ -63,5 +63,5 @@ export enum Land {
 }
 
 export enum Overlay {
-    NONE, SOFTBLOCK/*, BOMB*/
+    NONE, SOFTBLOCK
 }
