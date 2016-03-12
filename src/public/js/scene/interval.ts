@@ -3,11 +3,13 @@ import * as ReactDOM from "react-dom";
 import {Status} from "../../../domain/status";
 import View from "../component/interval";
 import {createContainer} from "../component/utils";
+import SE from "../infrastructure/se";
 import createScene from "./scenefactory";
 
 export default async function lobby(
     loader: createjs.AbstractLoader,
     stage: createjs.Stage,
+    se: SE,
     socket: SocketIOClient.Socket
 ) {
     console.log("Interval starting.");
@@ -18,6 +20,11 @@ export default async function lobby(
                 socket.off("status", onSocketStatus);
                 resolve(status.scene);
                 return;
+            }
+            if (status.interval.winner != null) {
+                se.play("interval/crown");
+            } else {
+                se.play("interval/draw");
             }
             document.getElementsByTagName("main")[0].appendChild(container);
             let props = {

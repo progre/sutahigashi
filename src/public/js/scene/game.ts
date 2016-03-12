@@ -3,6 +3,7 @@ import * as ReactDOM from "react-dom";
 import {Status, Game} from "../../../domain/status";
 import {FPS} from "../../../domain/game/definition";
 import Controller from "../infrastructure/controller";
+import SE from "../infrastructure/se";
 import GameSub from "../component/gamesub";
 import {createContainer} from "../component/utils";
 import createField, {RESOURCES as fieldResources} from "../component/game/field";
@@ -18,6 +19,7 @@ export const RESOURCES = fieldResources
 export default async function game(
     loader: createjs.LoadQueue,
     stage: createjs.Stage,
+    se: SE,
     socket: SocketIOClient.Socket
 ) {
     console.log("Game starting.");

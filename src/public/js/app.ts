@@ -1,5 +1,6 @@
 /// <reference path="../../../typings/browser.d.ts" />
 import loadResource from "./infrastructure/loader";
+import SE from "./infrastructure/se";
 import {Scene} from "./scene/scene";
 import createScene from "./scene/scenefactory";
 import {Status} from "../../domain/status";
@@ -23,9 +24,10 @@ async function main() {
     });
     let stage = new createjs.Stage("canvas");
     // 今のステートを調べる
+    let se = new SE();
     let currentScene = await getCurrentScene(socket);
     while (true) {
-        currentScene = await currentScene(loader, stage, socket);
+        currentScene = await currentScene(loader, stage, se, socket);
     }
 }
 

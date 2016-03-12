@@ -4,10 +4,12 @@ import {Status} from "../../../domain/status";
 import createScene from "./scenefactory";
 import View from "../component/lobby";
 import {createContainer} from "../component/utils";
+import SE from "../infrastructure/se";
 
 export default async function lobby(
     loader: createjs.AbstractLoader,
     stage: createjs.Stage,
+    se: SE,
     socket: SocketIOClient.Socket
 ) {
     let container = createContainer();
@@ -17,16 +19,19 @@ export default async function lobby(
         document.getElementById(container.id)
     );
     try {
-        return await new Promise<any>((resolve, reject) => {
+        let scene = await new Promise<string>((resolve, reject) => {
             socket.on("status", function onSocketStatus(status: Status) {
-                if (status.scene === "lobby") {
-                    component.setState({ users: status.lobby.users.map(x => x.name) });
+                if (status.scene !== "lobby") {
+                    socket.off("status", onSocketStatus);
+                    resolve(status.scene);
                     return;
                 }
-                resolve(createScene(status.scene));
+                component.setState({ users: status.lobby.users.map(x => x.name) });
             });
             socket.emit("getstatus");
         });
+        se.play("lobby/bell");
+        return createScene(scene);
     } finally {
         document.getElementsByTagName("main")[0].removeChild(container);
     }

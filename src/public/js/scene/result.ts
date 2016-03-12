@@ -3,6 +3,7 @@ import * as ReactDOM from "react-dom";
 import {Status} from "../../../domain/status";
 import View, {RESOURCES as resources} from "../component/result";
 import {createContainer} from "../component/utils";
+import SE from "../infrastructure/se";
 import createScene from "./scenefactory";
 
 export const RESOURCES = resources;
@@ -10,6 +11,7 @@ export const RESOURCES = resources;
 export default async function result(
     loader: createjs.LoadQueue,
     stage: createjs.Stage,
+    se: SE,
     socket: SocketIOClient.Socket
 ) {
     console.log("Result starting.");
@@ -21,6 +23,7 @@ export default async function result(
                 resolve(status.scene);
                 return;
             }
+            se.play("result/winner");
             document.getElementsByTagName("main")[0].appendChild(container);
             ReactDOM.render(
                 React.createElement(View, {
