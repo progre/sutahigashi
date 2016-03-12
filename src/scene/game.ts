@@ -42,20 +42,26 @@ class MainLoop {
     private waiting = 0;
 
     tick(inputsRepository: Input[][], game: Game, sender: Sender) {
-        let inputs = inputsRepository[game.tick];
-        if (inputs == null) {
-            this.waiting++;
+        let first = true;
+        while (true) {
+            let inputs = inputsRepository[game.tick];
+            if (inputs == null) {
+                if (first) {
+                    this.waiting++;
+                }
+                return true;
+            }
+            if (this.waiting > 0) {
+                logger.info(`Game waited caused by late clients: ${this.waiting} frame(s)`);
+                this.waiting = 0;
+            }
+            first = false;
+            update(game, inputs);
+            if (game.players.filter(x => x.point != null).length <= 1) {
+                return false;
+            }
+            sender.send(NAME, { game });
             return true;
         }
-        if (this.waiting > 0) {
-            logger.info(`Game waited caused by late clients: ${this.waiting} frame(s)`);
-            this.waiting = 0;
-        }
-        update(game, inputs);
-        if (game.players.filter(x => x.point != null).length <= 1) {
-            return false;
-        }
-        sender.send(NAME, { game });
-        return true;
     }
 }
