@@ -6,6 +6,7 @@ interface Props {
     loader: createjs.AbstractLoader;
     onJoin: Function;
     onLeave: (e: any) => void;
+    clone?: boolean;
 }
 interface State {
     users: string[];
@@ -19,6 +20,9 @@ export default class Lobby extends React.Component<Props, State> {
     render() {
         let images = RESOURCES.map(x =>
             this.props.loader.getResult(x.id) as HTMLImageElement);
+        if (this.props.clone) {
+            images = images.map(x => x.cloneNode() as typeof x);
+        }
         return <div style={{
             position: "relative",
             width: 960,

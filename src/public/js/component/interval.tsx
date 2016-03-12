@@ -9,11 +9,15 @@ interface Props {
         wins: number;
     }[];
     winner: number;
+    clone?: boolean;
 }
-export default class Interval extends React.Component<Props, any> {
+export default class Interval extends React.Component<Props, void> {
     render() {
         let images = RESOURCES.map(x =>
             this.props.loader.getResult(x.id) as HTMLImageElement);
+        if (this.props.clone) {
+            images = images.map(x => x.cloneNode() as typeof x);
+        }
         let iconStyle = { width: 64, height: 64 };
         let list = this.props.users.map((x, i) =>
             <li key={x.name}>

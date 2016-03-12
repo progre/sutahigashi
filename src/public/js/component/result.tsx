@@ -10,11 +10,15 @@ interface Props {
     loader: createjs.AbstractLoader;
     number: number;
     winner: string;
+    clone?: boolean;
 }
 export default class Result extends React.Component<Props, any> {
     render() {
         let charaId = playerResources[this.props.number].id;
         let chara = this.props.loader.getResult(charaId) as HTMLImageElement;
+        if (this.props.clone) {
+            chara = chara.cloneNode() as typeof chara;
+        }
         let cup = this.props.loader.getResult(RESOURCES[0].id) as HTMLImageElement;
         return <div style={{
             width: 960,
