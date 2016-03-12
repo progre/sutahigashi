@@ -18,30 +18,30 @@ export default async function game(players: string[], receiver: InputReceiver, s
         inputsRepository.push(inputs);
     };
     receiver.on("inputs", onInputs);
-    let mainLoop = new MainLoop();
-    let onUpdateTimer: NodeJS.Timer;
-    await new Promise<number>(resolve => {
-        if (receiver.allDisconnected) {
-            resolve(-1);
-            return;
-        }
-        onUpdateTimer = setInterval(() => {
-            if (!mainLoop.exec(inputsRepository, game, sender)) {
+    if (!receiver.allDisconnected) {
+        await mainLoop(inputsRepository, game, sender);
+    }
+    receiver.removeListener("inputs", onInputs);
+    logger.info("Game finished.");
+    return game.players.findIndex(x => x.point != null);
+}
+
+function mainLoop(inputsRepository: Input[][], game: Game, sender: Sender) {
+    return new Promise<number>(resolve => {
+        let loop = new MainLoop();
+        let timer = setInterval(() => {
+            if (!loop.tick(inputsRepository, game, sender)) {
+                clearInterval(timer);
                 resolve();
             }
         }, 1000 / FPS);
     });
-    let winner = game.players.findIndex(x => x.point != null);
-    clearInterval(onUpdateTimer);
-    receiver.removeListener("inputs", onInputs);
-    logger.info("Game finished.");
-    return winner;
 }
 
 class MainLoop {
     private waiting = 0;
 
-    exec(inputsRepository: Input[][], game: Game, sender: Sender) {
+    tick(inputsRepository: Input[][], game: Game, sender: Sender) {
         let inputs = inputsRepository[game.tick];
         if (inputs == null) {
             this.waiting++;
