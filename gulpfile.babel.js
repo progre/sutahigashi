@@ -25,6 +25,11 @@ gulp.task("clean", async (done) => {
     mkdir("lib", done);
 });
 
+gulp.task("clean", async (done) => {
+    await del("lib/");
+    mkdir("lib", done);
+});
+
 gulp.task("build",
     gulp.series(
         "clean",
