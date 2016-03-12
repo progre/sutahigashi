@@ -1,12 +1,12 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Status} from "../../../domain/status";
-import View, {RESOURCES as resources} from "../component/result";
+import View, {RESOURCES} from "../component/result";
 import {createContainer} from "../component/utils";
 import SE from "../infrastructure/se";
 import createScene from "./scenefactory";
 
-export const RESOURCES = resources;
+export {RESOURCES};
 
 export default async function result(
     loader: createjs.LoadQueue,
