@@ -6,7 +6,7 @@ import {createContainer} from "../component/utils";
 import createScene from "./scenefactory";
 
 export default async function lobby(
-    loader: createjs.PreloadJS,
+    loader: createjs.AbstractLoader,
     stage: createjs.Stage,
     socket: SocketIOClient.Socket
 ) {
@@ -20,8 +20,16 @@ export default async function lobby(
                 return;
             }
             document.getElementsByTagName("main")[0].appendChild(container);
+            let props = {
+                loader,
+                users: status.interval.users.map((x, i) => ({
+                    name: x.name,
+                    wins: x.wins
+                })),
+                winner: status.interval.winner
+            }
             ReactDOM.render(
-                React.createElement(View, status.interval),
+                React.createElement(View, props),
                 document.getElementById(container.id)
             );
         });

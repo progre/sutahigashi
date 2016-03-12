@@ -4,7 +4,6 @@ import {Status} from "../../../domain/status";
 import createScene from "./scenefactory";
 import View from "../component/lobby";
 import {createContainer} from "../component/utils";
-import {RESOURCES} from "../component/game/player";
 
 export default async function lobby(
     loader: createjs.AbstractLoader,
@@ -13,9 +12,8 @@ export default async function lobby(
 ) {
     let container = createContainer();
     document.getElementsByTagName("main")[0].appendChild(container);
-    let images = RESOURCES.map(x => (loader.getResult(x.id) as HTMLImageElement).cloneNode() as HTMLImageElement);
     let component = ReactDOM.render(
-        React.createElement(View, { images, onJoin, onLeave }),
+        React.createElement(View, { loader, onJoin, onLeave }),
         document.getElementById(container.id)
     );
     try {

@@ -1,5 +1,6 @@
 import * as React from "react";
 import {RESOURCES} from "./game/player";
+import PreloadImage from "./preloadimage";
 
 interface Props {
     loader: createjs.AbstractLoader;
@@ -41,13 +42,14 @@ interface UserProps {
 }
 class User extends React.Component<UserProps, void> {
     render() {
+        let imageId = RESOURCES[this.props.index].id;
+        let image = this.props.loader.getResult(imageId) as HTMLImageElement;
         return <div style={this.props.style}>
             <div style={{
                 padding: 8,
                 backgroundColor: "white"
             }}>
-                <span ref="image" style={{
-                    display: "inline-flex",
+                <PreloadImage image={image} style={{
                     width: 64,
                     height: 64
                 }}/>
@@ -65,10 +67,5 @@ class User extends React.Component<UserProps, void> {
                 </div>
             </div>
         </div>;
-    }
-
-    componentDidMount() {
-        let image = this.props.loader.getResult(RESOURCES[this.props.index].id) as HTMLImageElement;
-        (this.refs["image"] as HTMLElement).appendChild(image);
     }
 }

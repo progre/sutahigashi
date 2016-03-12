@@ -1,7 +1,9 @@
 import * as React from "react";
+import PreloadImage from "./preloadimage";
+import {RESOURCES} from "../component/game/player";
 
 interface Props {
-    images: HTMLImageElement[];
+    loader: createjs.AbstractLoader;
     onJoin: Function;
     onLeave: (e: any) => void;
 }
@@ -15,22 +17,24 @@ export default class Lobby extends React.Component<Props, State> {
     }
 
     render() {
+        let images = RESOURCES.map(x =>
+            this.props.loader.getResult(x.id) as HTMLImageElement);
         return <div style={{
             position: "relative",
             width: 960,
             height: 540,
             backgroundColor: "white"
         }}>
-            <User image={this.props.images[0]} name={this.state.users[0]} style={{
+            <User image={images[0]} name={this.state.users[0]} style={{
                 position: "absolute", top: 100, left: 200
             }}/>
-            <User image={this.props.images[1]} name={this.state.users[1]} style={{
+            <User image={images[1]} name={this.state.users[1]} style={{
                 position: "absolute", top: 250, left: 550
             }}/>
-            <User image={this.props.images[2]} name={this.state.users[2]} style={{
+            <User image={images[2]} name={this.state.users[2]} style={{
                 position: "absolute", top: 100, left: 550
             }}/>
-            <User image={this.props.images[3]} name={this.state.users[3]} style={{
+            <User image={images[3]} name={this.state.users[3]} style={{
                 position: "absolute", top: 250, left: 200
             }}/>
             <div style={{
@@ -66,8 +70,7 @@ class User extends React.Component<UserProps, void> {
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap"
             }}>
-                <span ref="image" style={{
-                    display: "inline-flex",
+                <PreloadImage image={this.props.image} style={{
                     width: 64,
                     height: 64,
                     verticalAlign: "middle"
@@ -79,9 +82,5 @@ class User extends React.Component<UserProps, void> {
                 }}>{this.props.name}</span>
             </div>
         </div>;
-    }
-
-    componentDidMount() {
-        (this.refs["image"] as HTMLElement).appendChild(this.props.image);
     }
 }

@@ -1,5 +1,10 @@
 import * as React from "react";
-import {RESOURCES} from "./game/player";
+import {RESOURCES as playerResources} from "./game/player";
+import PreloadImage from "./preloadimage";
+
+export const RESOURCES = [{
+    id: "result", src: "res/result.png"
+}];
 
 interface Props {
     loader: createjs.AbstractLoader;
@@ -8,21 +13,26 @@ interface Props {
 }
 export default class Result extends React.Component<Props, any> {
     render() {
-        let id = RESOURCES[this.props.number].id;
-        let image = this.props.loader.getResult(id) as HTMLImageElement;
+        let charaId = playerResources[this.props.number].id;
+        let chara = this.props.loader.getResult(charaId) as HTMLImageElement;
+        let cup = this.props.loader.getResult(RESOURCES[0].id) as HTMLImageElement;
         return <div style={{
             width: 960,
             height: 540,
             backgroundColor: "white"
         }}>
-            <img src="res/result.png" height="320" style={{
+            <PreloadImage image={cup} style={{
+                width: 320,
+                height: 320,
                 float: "left",
                 marginTop: 110
             }}/>
             <div style={{ paddingTop: 200 }}>
                 <span style={{ fontSize: 32 }}>Winner is</span><br/>
                 <div style={{ paddingTop: "1em" }}>
-                    <img src={image.src} width="120" height="120" style={{
+                    <PreloadImage image={chara} style={{
+                        width: 120,
+                        height: 120,
                         verticalAlign: "middle"
                     }}/>
                     <span style={{
