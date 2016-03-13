@@ -1,14 +1,14 @@
-import lobby from "./lobby";
-import game from "./game";
-import interval from "./interval";
-import result from "./result";
+import Lobby from "./lobby";
+import Game from "./game";
+import Interval from "./interval";
+import Result from "./result";
 
 export default function createScene(name: string): any {
     switch (name) {
-        case "lobby": return lobby;
-        case "game": return game;
-        case "interval": return interval;
-        case "result": return result;
+        case "lobby": return new Lobby();
+        case "game": return new Game();
+        case "interval": return new Interval();
+        case "result": return new Result();
         default: throw new Error();
     }
 }
