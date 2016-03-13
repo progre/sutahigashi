@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Status} from "../../../domain/status";
+import {Status, Result as ResultStatus} from "../../../domain/status";
 import View, {RESOURCES} from "../component/result";
 import {createContainer} from "../component/utils";
 import SE from "../infrastructure/se";
@@ -9,6 +9,13 @@ export {RESOURCES};
 
 export default class Result {
     private container = createContainer();
+
+    constructor(
+        private loader: createjs.AbstractLoader,
+        private se: SE
+    ) {
+        console.log("Result starting.");
+    }
 
     close() {
         document.getElementsByTagName("main")[0].removeChild(this.container);
@@ -21,7 +28,6 @@ export default class Result {
         se: SE,
         socket: SocketIOClient.Socket
     ) {
-        console.log("Result starting.");
         return new Promise<string>((resolve, reject) => {
             let onSocketStatus = (status: Status) => {
                 if (status.scene !== "result") {
@@ -29,19 +35,23 @@ export default class Result {
                     resolve(status.scene);
                     return;
                 }
-                se.play("result/winner");
-                document.getElementsByTagName("main")[0].appendChild(this.container);
-                ReactDOM.render(
-                    React.createElement(View, {
-                        loader,
-                        number: status.result.number,
-                        winner: status.result.winner.name
-                    }),
-                    this.container
-                );
+                this.update(status.result);
             };
             socket.on("status", onSocketStatus);
             socket.emit("getstatus");
         });
+    }
+
+    update(status: ResultStatus) {
+        this.se.play("result/winner");
+        document.getElementsByTagName("main")[0].appendChild(this.container);
+        ReactDOM.render(
+            React.createElement(View, {
+                loader: this.loader,
+                number: status.number,
+                winner: status.winner.name
+            }),
+            this.container
+        );
     }
 }

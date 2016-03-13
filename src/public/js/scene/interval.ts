@@ -1,12 +1,19 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Status} from "../../../domain/status";
+import {Status, Interval as IntervalStatus} from "../../../domain/status";
 import View from "../component/interval";
 import {createContainer} from "../component/utils";
 import SE from "../infrastructure/se";
 
 export default class Interval {
     private container = createContainer();
+
+    constructor(
+        private loader: createjs.AbstractLoader,
+        private se: SE
+    ) {
+        console.log("Interval starting.");
+    }
 
     close() {
         document.getElementsByTagName("main")[0].removeChild(this.container);
@@ -19,7 +26,6 @@ export default class Interval {
         se: SE,
         socket: SocketIOClient.Socket
     ) {
-        console.log("Interval starting.");
         return new Promise<string>((resolve, reject) => {
             let onSocketStatus = (status: Status) => {
                 if (status.scene !== "interval") {
@@ -27,27 +33,31 @@ export default class Interval {
                     resolve(status.scene);
                     return;
                 }
-                if (status.interval.winner != null) {
-                    se.play("interval/crown");
-                } else {
-                    se.play("interval/draw");
-                }
-                document.getElementsByTagName("main")[0].appendChild(this.container);
-                let props = {
-                    loader,
-                    users: status.interval.users.map((x, i) => ({
-                        name: x.name,
-                        wins: x.wins
-                    })),
-                    winner: status.interval.winner
-                };
-                ReactDOM.render(
-                    React.createElement(View, props),
-                    this.container
-                );
+                this.update(status.interval);
             };
             socket.on("status", onSocketStatus);
             socket.emit("getstatus");
         });
+    }
+
+    update(status: IntervalStatus) {
+        if (status.winner != null) {
+            this.se.play("interval/crown");
+        } else {
+            this.se.play("interval/draw");
+        }
+        document.getElementsByTagName("main")[0].appendChild(this.container);
+        let props = {
+            loader: this.loader,
+            users: status.users.map((x, i) => ({
+                name: x.name,
+                wins: x.wins
+            })),
+            winner: status.winner
+        };
+        ReactDOM.render(
+            React.createElement(View, props),
+            this.container
+        );
     }
 }

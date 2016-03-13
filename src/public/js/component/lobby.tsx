@@ -2,13 +2,13 @@ import * as React from "react";
 import PreloadImage from "./preloadimage";
 import {RESOURCES} from "../component/game/player";
 
-interface Props {
+export interface Props {
     loader: createjs.AbstractLoader;
     onJoin: Function;
     onLeave: (e: any) => void;
     clone?: boolean;
 }
-interface State {
+export interface State {
     users: string[];
 }
 export default class Lobby extends React.Component<Props, State> {

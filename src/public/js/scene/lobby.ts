@@ -1,16 +1,34 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Status} from "../../../domain/status";
-import View from "../component/lobby";
+import {Status, Lobby as LobbyStatus} from "../../../domain/status";
+import View, {Props, State} from "../component/lobby";
 import {createContainer} from "../component/utils";
 import SE from "../infrastructure/se";
 
 export default class Lobby {
     private container = createContainer();
+    private component: React.Component<Props, State>;
 
     constructor(
-        private se: SE
+        loader: createjs.AbstractLoader,
+        private se: SE,
+        sender: SocketIOClient.Socket
     ) {
+        document.getElementsByTagName("main")[0].appendChild(this.container);
+        this.component = ReactDOM.render<Props, State>(
+            React.createElement(View, {
+                loader,
+                onJoin: (name: string) => {
+                    sender.emit("join", name);
+                    console.log("join emitted");
+                },
+                onLeave: () => {
+                    sender.emit("leave");
+                    console.log("leave emitted");
+                }
+            }),
+            this.container
+        );
     }
 
     close() {
@@ -24,32 +42,21 @@ export default class Lobby {
         se: SE,
         socket: SocketIOClient.Socket
     ) {
-        document.getElementsByTagName("main")[0].appendChild(this.container);
-        let component = ReactDOM.render(
-            React.createElement(View, { loader, onJoin, onLeave }),
-            this.container
-        );
         return new Promise<string>((resolve, reject) => {
-            socket.on("status", function onSocketStatus(status: Status) {
-                console.log(status);
+            let onSocketStatus = (status: Status) => {
                 if (status.scene !== "lobby") {
                     socket.off("status", onSocketStatus);
                     resolve(status.scene);
                     return;
                 }
-                component.setState({ users: status.lobby.users.map(x => x.name) });
-            });
+                this.update(status.lobby);
+            };
+            socket.on("status", onSocketStatus);
             socket.emit("getstatus");
         });
+    }
 
-        function onJoin(name: string) {
-            socket.emit("join", name);
-            console.log("join emitted");
-        }
-
-        function onLeave() {
-            socket.emit("leave");
-            console.log("leave emitted");
-        }
+    update(status: LobbyStatus) {
+        this.component.setState({ users: status.users.map(x => x.name) });
     }
 }
