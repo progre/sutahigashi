@@ -1,8 +1,8 @@
 import {Status} from "../../../domain/status";
 import {VERSION} from "../../../domain/version";
 import SE from "../infrastructure/se";
-import {Scene} from "../scene/scene";
-import createScene from "../scene/scenefactory";
+import {Scene} from "./scene";
+import createScene from "./scenefactory";
 
 export default async function direct(socket: SocketIOClient.Socket, loader: createjs.AbstractLoader) {
     socket.on("status", (status: Status) => {
@@ -13,9 +13,9 @@ export default async function direct(socket: SocketIOClient.Socket, loader: crea
     let stage = new createjs.Stage("canvas");
     // 今のステートを調べる
     let se = new SE();
-    let currentScene = await getCurrentScene(socket);
+    let scene = await getCurrentScene(socket);
     while (true) {
-        currentScene = await currentScene(loader, stage, se, socket);
+        scene = await scene(loader, stage, se, socket);
     }
 }
 
