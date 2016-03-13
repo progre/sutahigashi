@@ -7,8 +7,8 @@ export const RESOURCES = [
     { id: "p4", src: "https://pbs.twimg.com/media/CSX-VzQUkAAj6a9.png" }
 ];
 
-export default function createPlayer(loadQueue: createjs.LoadQueue, player: number) {
-    let displayObject = createResizedBitmap(<any>loadQueue.getResult(`p${player + 1}`));
+export default function createPlayer(loader: createjs.AbstractLoader, player: number) {
+    let displayObject = createResizedBitmap(<any>loader.getResult(`p${player + 1}`));
     displayObject.visible = false;
     return displayObject;
 }

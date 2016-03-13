@@ -6,11 +6,11 @@ export const RESOURCES = [
     { id: "hardblock", src: "res/hardblock.jpg" }
 ];
 
-export default function createField(loadQueue: createjs.LoadQueue) {
+export default function createField(loader: createjs.AbstractLoader) {
     let field = new createjs.MovieClip();
     Field.createField().forEach((line, y) => {
         line.forEach((chip, x) => {
-            let image = loadImage(loadQueue, chip);
+            let image = loadImage(loader, chip);
             image.x = x * CHIP_PIXEL;
             image.y = y * CHIP_PIXEL;
             field.addChild(image);
@@ -19,7 +19,7 @@ export default function createField(loadQueue: createjs.LoadQueue) {
     return field;
 }
 
-function loadImage(loadQueue: createjs.LoadQueue, land: Land): createjs.DisplayObject {
+function loadImage(loader: createjs.AbstractLoader, land: Land): createjs.DisplayObject {
     switch (land) {
         case Land.NONE:
             let shape = new createjs.Shape();
@@ -29,7 +29,7 @@ function loadImage(loadQueue: createjs.LoadQueue, land: Land): createjs.DisplayO
                 .endFill();
             return shape;
         case Land.HARDBLOCK:
-            return createResizedBitmap(<any>loadQueue.getResult("hardblock"));
+            return createResizedBitmap(<any>loader.getResult("hardblock"));
         default: throw new Error();
     }
 }

@@ -13,23 +13,23 @@ export default class GameViewContainer extends createjs.Container {
     bombs: createjs.DisplayObject[];
     balls: createjs.DisplayObject[];
 
-    constructor(loadQueue: createjs.LoadQueue, parentRect: { width: number; height: number; }) {
+    constructor(loader: createjs.AbstractLoader, parentRect: { width: number; height: number; }) {
         super();
-        let fieldArea = createFieldArea(loadQueue, parentRect);
+        let fieldArea = createFieldArea(loader, parentRect);
         this.addChild(fieldArea);
 
-        this.players = [0, 1, 2, 3].map(x => createPlayer(loadQueue, x));
+        this.players = [0, 1, 2, 3].map(x => createPlayer(loader, x));
         this.players.forEach(x => fieldArea.addChild(x));
         this.bombs = [];
         for (let i = 0; i < 15 * 13; i++) {
-            let bomb = createBomb(loadQueue);
+            let bomb = createBomb(loader);
             bomb.visible = false;
             this.bombs.push(bomb);
             fieldArea.addChild(bomb);
         }
         this.balls = [];
         for (let i = 0; i < 15 * 13 * 8; i++) {
-            let ball = createBall(loadQueue);
+            let ball = createBall(loader);
             ball.visible = false;
             this.balls.push(ball);
             fieldArea.addChild(ball);
@@ -68,12 +68,12 @@ export default class GameViewContainer extends createjs.Container {
 }
 
 function createFieldArea(
-    loadQueue: createjs.LoadQueue,
+    loader: createjs.AbstractLoader,
     parentRect: { width: number; height: number; }
 ) {
     let fieldArea = new createjs.Container();
     centering(fieldArea, parentRect, FIELD_PIXEL);
-    fieldArea.addChild(createField(loadQueue));
+    fieldArea.addChild(createField(loader));
     return fieldArea;
 }
 

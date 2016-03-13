@@ -14,7 +14,7 @@ export {RESOURCES};
 
 export default class Game {
     async exec(
-        loader: createjs.LoadQueue,
+        loader: createjs.AbstractLoader,
         stage: createjs.Stage,
         se: SE,
         socket: SocketIOClient.Socket

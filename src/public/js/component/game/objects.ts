@@ -5,10 +5,10 @@ export const RESOURCES = [
     { id: "ball", src: "https://pbs.twimg.com/media/CSX_TViU8AAc5Sk.png" }
 ];
 
-export function createBomb(loadQueue: createjs.LoadQueue) {
-    return createResizedBitmap(<any>loadQueue.getResult("bomb"));
+export function createBomb(loader: createjs.AbstractLoader) {
+    return createResizedBitmap(<any>loader.getResult("bomb"));
 }
 
-export function createBall(loadQueue: createjs.LoadQueue) {
-    return createResizedBitmap(<any>loadQueue.getResult("ball"));
+export function createBall(loader: createjs.AbstractLoader) {
+    return createResizedBitmap(<any>loader.getResult("ball"));
 }
