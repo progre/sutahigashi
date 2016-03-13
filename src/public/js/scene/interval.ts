@@ -1,11 +1,13 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Status, Interval as IntervalStatus} from "../../../domain/status";
+import {Interval as Status} from "../../../domain/status";
 import View from "../component/interval";
 import {createContainer} from "../component/utils";
 import SE from "../infrastructure/se";
 
 export default class Interval {
+    name: "interval" = "interval";
+
     private container = createContainer();
 
     constructor(
@@ -20,27 +22,7 @@ export default class Interval {
         console.log("Interval finished.");
     }
 
-    exec(
-        loader: createjs.AbstractLoader,
-        stage: createjs.Stage,
-        se: SE,
-        socket: SocketIOClient.Socket
-    ) {
-        return new Promise<string>((resolve, reject) => {
-            let onSocketStatus = (status: Status) => {
-                if (status.scene !== "interval") {
-                    socket.off("status", onSocketStatus);
-                    resolve(status.scene);
-                    return;
-                }
-                this.update(status.interval);
-            };
-            socket.on("status", onSocketStatus);
-            socket.emit("getstatus");
-        });
-    }
-
-    update(status: IntervalStatus) {
+    update(status: Status) {
         if (status.winner != null) {
             this.se.play("interval/crown");
         } else {

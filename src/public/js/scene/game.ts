@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Status, Game as GameStatus} from "../../../domain/status";
+import {Game as Status} from "../../../domain/status";
 import {FPS} from "../../../domain/game/definition";
 import EventDetector from "../domain/eventdetector";
 import Controller from "../infrastructure/controller";
@@ -14,6 +14,8 @@ export {RESOURCES};
 const wait = 10;
 
 export default class Game {
+    name: "game" = "game";
+
     private controller = new Controller();
     private eventDetector = new EventDetector();
     private subContainer = createContainer();
@@ -22,9 +24,9 @@ export default class Game {
     private showingTick = 0;
     private sendingTick = 0;
     private waiting = 0;
-    private onUpdateTimer = setInterval(() => {
-        this.tick();
-    }, 1000 / FPS);
+    private onUpdateTimer = setInterval(
+        () => this.tick(),
+        1000 / FPS);
 
     constructor(
         private loader: createjs.AbstractLoader,
@@ -62,26 +64,7 @@ export default class Game {
         console.log("Game finished.");
     }
 
-    exec(
-        loader: createjs.AbstractLoader,
-        stage: createjs.Stage,
-        se: SE,
-        socket: SocketIOClient.Socket
-    ) {
-        return new Promise<any>((resolve, reject) => {
-            let onSocketStatus = (status: Status) => {
-                if (status.scene !== "game") {
-                    socket.off("status", onSocketStatus);
-                    resolve(status.scene);
-                    return;
-                }
-                this.update(status.game);
-            };
-            socket.on("status", onSocketStatus);
-        });
-    }
-
-    update(status: GameStatus) {
+    update(status: Status) {
         if (!this.subViewRendered) {
             ReactDOM.render(
                 React.createElement(GameSub, {
