@@ -15,7 +15,10 @@ export default async function direct(socket: SocketIOClient.Socket, loader: crea
     let se = new SE();
     let scene = await getCurrentScene(socket);
     while (true) {
-        scene = await scene.exec(loader, stage, se, socket);
+        let sceneName = await scene.exec(loader, stage, se, socket);
+        scene.close();
+        console.log(sceneName);
+        scene = createScene(sceneName);
     }
 }
 

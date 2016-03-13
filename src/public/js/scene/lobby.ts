@@ -1,12 +1,14 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Status} from "../../../domain/status";
-import createScene from "./scenefactory";
 import View from "../component/lobby";
 import {createContainer} from "../component/utils";
 import SE from "../infrastructure/se";
 
 export default class Lobby {
+    close() {
+    }
+
     async exec(
         loader: createjs.AbstractLoader,
         stage: createjs.Stage,
@@ -20,8 +22,9 @@ export default class Lobby {
             document.getElementById(container.id)
         );
         try {
-            let scene = await new Promise<string>((resolve, reject) => {
+            let sceneName = await new Promise<string>((resolve, reject) => {
                 socket.on("status", function onSocketStatus(status: Status) {
+                    console.log(status);
                     if (status.scene !== "lobby") {
                         socket.off("status", onSocketStatus);
                         resolve(status.scene);
@@ -32,7 +35,7 @@ export default class Lobby {
                 socket.emit("getstatus");
             });
             se.play("lobby/bell");
-            return createScene(scene);
+            return sceneName;
         } finally {
             document.getElementsByTagName("main")[0].removeChild(container);
         }

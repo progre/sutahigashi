@@ -8,11 +8,13 @@ import SE from "../infrastructure/se";
 import GameSub from "../component/gamesub";
 import {createContainer} from "../component/utils";
 import World, {RESOURCES} from "../component/game/world";
-import createScene from "./scenefactory";
 
 export {RESOURCES};
 
 export default class Game {
+    close() {
+    }
+
     async exec(
         loader: createjs.AbstractLoader,
         stage: createjs.Stage,
@@ -59,11 +61,11 @@ export default class Game {
         eventDetector.on("death", () => {
             se.game.play("basic/death");
         });
-        let scene = await new Promise<any>((resolve, reject) => {
+        let sceneName = await new Promise<any>((resolve, reject) => {
             socket.on("status", function onSocketStatus(status: Status) {
                 if (status.scene !== "game") {
                     socket.off("status", onSocketStatus);
-                    resolve(createScene(status.scene));
+                    resolve(status.scene);
                     return;
                 }
                 if (!subViewRendered) {
@@ -86,6 +88,6 @@ export default class Game {
         controller.release();
         main.removeChild(subContainer);
         console.log("Game finished.");
-        return scene;
+        return sceneName;
     }
 }

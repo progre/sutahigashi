@@ -4,9 +4,11 @@ import {Status} from "../../../domain/status";
 import View from "../component/interval";
 import {createContainer} from "../component/utils";
 import SE from "../infrastructure/se";
-import createScene from "./scenefactory";
 
 export default class Interval {
+    close() {
+    }
+
     async exec(
         loader: createjs.AbstractLoader,
         stage: createjs.Stage,
@@ -15,7 +17,7 @@ export default class Interval {
     ) {
         console.log("Interval starting.");
         let container = createContainer();
-        let scene = await new Promise<string>((resolve, reject) => {
+        let sceneName = await new Promise<string>((resolve, reject) => {
             socket.on("status", function onSocketStatus(status: Status) {
                 if (status.scene !== "interval") {
                     socket.off("status", onSocketStatus);
@@ -45,6 +47,6 @@ export default class Interval {
         });
         document.getElementsByTagName("main")[0].removeChild(container);
         console.log("Interval finished.");
-        return createScene(scene);
+        return sceneName;
     }
 }

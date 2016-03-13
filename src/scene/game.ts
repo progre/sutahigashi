@@ -11,8 +11,8 @@ const NAME = "game";
 
 export default async function game(players: string[], receiver: InputReceiver, sender: Sender) {
     logger.info("Game starting.");
-    sender.send(NAME, null);
     let game = createStatus(players);
+    sender.send(NAME, { game });
     let inputsRepository = <Input[][]>[];
     let onInputs = (inputs: Input[]) => {
         inputsRepository.push(inputs);

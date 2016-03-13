@@ -4,11 +4,13 @@ import {Status} from "../../../domain/status";
 import View, {RESOURCES} from "../component/result";
 import {createContainer} from "../component/utils";
 import SE from "../infrastructure/se";
-import createScene from "./scenefactory";
 
 export {RESOURCES};
 
 export default class Result {
+    close() {
+    }
+
     async exec(
         loader: createjs.AbstractLoader,
         stage: createjs.Stage,
@@ -17,7 +19,7 @@ export default class Result {
     ) {
         console.log("Result starting.");
         let container = createContainer();
-        let scene = await new Promise<string>((resolve, reject) => {
+        let sceneName = await new Promise<string>((resolve, reject) => {
             socket.on("status", function onSocketStatus(status: Status) {
                 if (status.scene !== "result") {
                     socket.off("status", onSocketStatus);
@@ -39,6 +41,6 @@ export default class Result {
         });
         document.getElementsByTagName("main")[0].removeChild(container);
         console.log("Result finished.");
-        return createScene(scene);
+        return sceneName;
     }
 }
