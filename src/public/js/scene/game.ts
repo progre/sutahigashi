@@ -12,31 +12,45 @@ import World, {RESOURCES} from "../component/game/world";
 export {RESOURCES};
 
 export default class Game {
-    close() {
+    private controller = new Controller();
+    private world: World;
+    private subContainer = createContainer();
+    private onUpdateTimer: NodeJS.Timer;
+
+    constructor(
+        private stage: createjs.Stage,
+        private se: SE) {
     }
 
-    async exec(
+    close() {
+        this.se.game.playGameSet();
+        clearInterval(this.onUpdateTimer);
+        this.stage.removeChild(this.world);
+        this.stage.update();
+        this.controller.release();
+        document.getElementsByTagName("main")[0].removeChild(this.subContainer);
+        console.log("Game finished.");
+    }
+
+    exec(
         loader: createjs.AbstractLoader,
         stage: createjs.Stage,
         se: SE,
         socket: SocketIOClient.Socket
     ) {
         console.log("Game starting.");
-        let subContainer = createContainer();
-        let main = document.getElementsByTagName("main")[0];
-        main.appendChild(subContainer);
+        document.getElementsByTagName("main")[0].appendChild(this.subContainer);
         let subViewRendered = false;
 
-        let controller = new Controller();
-        let world = new World(loader, <HTMLCanvasElement>stage.canvas);
-        stage.addChild(world);
+        this.world = new World(loader, <HTMLCanvasElement>stage.canvas);
+        stage.addChild(this.world);
         stage.update();
 
         const wait = 10;
         let tick = 0;
         let sendingTick = 0;
         let waiting = 0;
-        let onUpdateTimer = setInterval(() => {
+        this.onUpdateTimer = setInterval(() => {
             if (sendingTick > tick + wait) {
                 // 入力が先行しすぎないようにする
                 waiting++;
@@ -46,7 +60,7 @@ export default class Game {
                 console.log(`Input waited caused by server lated: ${waiting} frame(s)`);
                 waiting = 0;
             }
-            socket.emit("input", controller.popStatus());
+            socket.emit("input", this.controller.popStatus());
             sendingTick++;
         }, 1000 / FPS);
 
@@ -61,8 +75,8 @@ export default class Game {
         eventDetector.on("death", () => {
             se.game.play("basic/death");
         });
-        let sceneName = await new Promise<any>((resolve, reject) => {
-            socket.on("status", function onSocketStatus(status: Status) {
+        return new Promise<any>((resolve, reject) => {
+            let onSocketStatus = (status: Status) => {
                 if (status.scene !== "game") {
                     socket.off("status", onSocketStatus);
                     resolve(status.scene);
@@ -71,23 +85,16 @@ export default class Game {
                 if (!subViewRendered) {
                     ReactDOM.render(
                         React.createElement(GameSub, { loader, users: status.game.players.map(x => x.name) }),
-                        document.getElementById(subContainer.id)
+                        this.subContainer
                     );
                     subViewRendered = true;
                 }
                 tick = status.game.tick;
-                world.render(status.game);
+                this.world.render(status.game);
                 stage.update();
                 eventDetector.update(status.game);
-            });
+            };
+            socket.on("status", onSocketStatus);
         });
-        se.game.playGameSet();
-        clearInterval(onUpdateTimer);
-        stage.removeChild(world);
-        stage.update();
-        controller.release();
-        main.removeChild(subContainer);
-        console.log("Game finished.");
-        return sceneName;
     }
 }

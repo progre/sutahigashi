@@ -6,19 +6,22 @@ import {createContainer} from "../component/utils";
 import SE from "../infrastructure/se";
 
 export default class Interval {
+    private container = createContainer();
+
     close() {
+        document.getElementsByTagName("main")[0].removeChild(this.container);
+        console.log("Interval finished.");
     }
 
-    async exec(
+    exec(
         loader: createjs.AbstractLoader,
         stage: createjs.Stage,
         se: SE,
         socket: SocketIOClient.Socket
     ) {
         console.log("Interval starting.");
-        let container = createContainer();
-        let sceneName = await new Promise<string>((resolve, reject) => {
-            socket.on("status", function onSocketStatus(status: Status) {
+        return new Promise<string>((resolve, reject) => {
+            let onSocketStatus = (status: Status) => {
                 if (status.scene !== "interval") {
                     socket.off("status", onSocketStatus);
                     resolve(status.scene);
@@ -29,7 +32,7 @@ export default class Interval {
                 } else {
                     se.play("interval/draw");
                 }
-                document.getElementsByTagName("main")[0].appendChild(container);
+                document.getElementsByTagName("main")[0].appendChild(this.container);
                 let props = {
                     loader,
                     users: status.interval.users.map((x, i) => ({
@@ -40,13 +43,11 @@ export default class Interval {
                 };
                 ReactDOM.render(
                     React.createElement(View, props),
-                    document.getElementById(container.id)
+                    this.container
                 );
-            });
+            };
+            socket.on("status", onSocketStatus);
             socket.emit("getstatus");
         });
-        document.getElementsByTagName("main")[0].removeChild(container);
-        console.log("Interval finished.");
-        return sceneName;
     }
 }

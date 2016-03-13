@@ -6,39 +6,41 @@ import {createContainer} from "../component/utils";
 import SE from "../infrastructure/se";
 
 export default class Lobby {
-    close() {
+    private container = createContainer();
+
+    constructor(
+        private se: SE
+    ) {
     }
 
-    async exec(
+    close() {
+        this.se.play("lobby/bell");
+        document.getElementsByTagName("main")[0].removeChild(this.container);
+    }
+
+    exec(
         loader: createjs.AbstractLoader,
         stage: createjs.Stage,
         se: SE,
         socket: SocketIOClient.Socket
     ) {
-        let container = createContainer();
-        document.getElementsByTagName("main")[0].appendChild(container);
+        document.getElementsByTagName("main")[0].appendChild(this.container);
         let component = ReactDOM.render(
             React.createElement(View, { loader, onJoin, onLeave }),
-            document.getElementById(container.id)
+            this.container
         );
-        try {
-            let sceneName = await new Promise<string>((resolve, reject) => {
-                socket.on("status", function onSocketStatus(status: Status) {
-                    console.log(status);
-                    if (status.scene !== "lobby") {
-                        socket.off("status", onSocketStatus);
-                        resolve(status.scene);
-                        return;
-                    }
-                    component.setState({ users: status.lobby.users.map(x => x.name) });
-                });
-                socket.emit("getstatus");
+        return new Promise<string>((resolve, reject) => {
+            socket.on("status", function onSocketStatus(status: Status) {
+                console.log(status);
+                if (status.scene !== "lobby") {
+                    socket.off("status", onSocketStatus);
+                    resolve(status.scene);
+                    return;
+                }
+                component.setState({ users: status.lobby.users.map(x => x.name) });
             });
-            se.play("lobby/bell");
-            return sceneName;
-        } finally {
-            document.getElementsByTagName("main")[0].removeChild(container);
-        }
+            socket.emit("getstatus");
+        });
 
         function onJoin(name: string) {
             socket.emit("join", name);

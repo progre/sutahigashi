@@ -8,39 +8,40 @@ import SE from "../infrastructure/se";
 export {RESOURCES};
 
 export default class Result {
+    private container = createContainer();
+
     close() {
+        document.getElementsByTagName("main")[0].removeChild(this.container);
+        console.log("Result finished.");
     }
 
-    async exec(
+    exec(
         loader: createjs.AbstractLoader,
         stage: createjs.Stage,
         se: SE,
         socket: SocketIOClient.Socket
     ) {
         console.log("Result starting.");
-        let container = createContainer();
-        let sceneName = await new Promise<string>((resolve, reject) => {
-            socket.on("status", function onSocketStatus(status: Status) {
+        return new Promise<string>((resolve, reject) => {
+            let onSocketStatus = (status: Status) => {
                 if (status.scene !== "result") {
                     socket.off("status", onSocketStatus);
                     resolve(status.scene);
                     return;
                 }
                 se.play("result/winner");
-                document.getElementsByTagName("main")[0].appendChild(container);
+                document.getElementsByTagName("main")[0].appendChild(this.container);
                 ReactDOM.render(
                     React.createElement(View, {
                         loader,
                         number: status.result.number,
                         winner: status.result.winner.name
                     }),
-                    document.getElementById(container.id)
+                    this.container
                 );
-            });
+            };
+            socket.on("status", onSocketStatus);
             socket.emit("getstatus");
         });
-        document.getElementsByTagName("main")[0].removeChild(container);
-        console.log("Result finished.");
-        return sceneName;
     }
 }

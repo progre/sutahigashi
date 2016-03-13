@@ -43,7 +43,7 @@ class GameSE {
         death: createjs.Sound.createInstance("se/game/basic/death"),
         gong: createjs.Sound.createInstance("se/game/basic/gong"),
         put: createjs.Sound.createInstance("se/game/basic/put"),
-        explosion: createjs.Sound.createInstance("se/game/basic/explosion"),
+        explosion: createjs.Sound.createInstance("se/game/basic/explosion")
     };
 
     constructor(private config: { volume: number }) {
