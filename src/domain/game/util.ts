@@ -16,6 +16,6 @@ export function findFreeArea(game: Game) {
         .filter(x => game.players.every(player => player.point == null || !equals(x, player.point)));
 }
 
-function equals(a: Point, b: Point) {
+export function equals(a: Point, b: Point) {
     return a.x === b.x && a.y === b.y;
 }

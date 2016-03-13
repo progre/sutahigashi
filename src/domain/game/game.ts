@@ -94,8 +94,16 @@ export function update(game: GameState, inputs: Input[]) {
                 }
             );
         });
+    game.items.forEach(item => {
+        let pickuper = game.players.find(player => util.equals(item.point, player.point));
+        if (pickuper != null) {
+            item.point = null;
+            console.log("pickup");
+            // TODO: アイテムの効果を与える
+        }
+    });
+    game.items = game.items.filter(item => item.point != null);
     game.bombs = game.bombs.filter(x => x.remain > 0);
-    game.tick++;
     if (rnd() < 0.01) {
         let lands = util.findFreeArea(game);
         let target = Math.floor(lands.length * rnd());
@@ -104,6 +112,7 @@ export function update(game: GameState, inputs: Input[]) {
         }
         game.items.push({ point: lands[target] });
     }
+    game.tick++;
 }
 
 function movePlayer(input: Input, player: Point, lands: Land[][]) {

@@ -1,5 +1,5 @@
 import {EventEmitter} from "events";
-import {Game, Point, Bomb, Ball, Player} from "../../../domain/status";
+import {Game, Point, Bomb, Ball, Player, Item} from "../../../domain/status";
 
 export default class EventDetector extends EventEmitter {
     private previous: Game;
@@ -21,6 +21,9 @@ export default class EventDetector extends EventEmitter {
         if (current.players.some((player, i) => isDead(player, previous.players[i]))) {
             this.emit("death");
         }
+        if (current.players.some(player => isPickuped(player, previous.items))) {
+            this.emit("pickup");
+        }
     }
 }
 
@@ -34,6 +37,10 @@ function isFromBomb(ball: Ball, previousBombs: Bomb[]) {
 
 function isDead(current: Player, previous: Player) {
     return current.point == null && previous.point != null;
+}
+
+function isPickuped(current: Player, previousItems: Item[]) {
+    return previousItems.some(item => equals(current.point, item.point));
 }
 
 function equals(a: Point, b: Point) {

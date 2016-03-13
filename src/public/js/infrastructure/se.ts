@@ -8,7 +8,7 @@ export const RESOURCES = [
     { id: "se/game/basic/gong", src: "res/se/game/basic/bell08.ogg" },
     { id: "se/game/basic/put", src: "res/se/game/basic/bosu16.ogg" },
     { id: "se/game/basic/explosion", src: "res/se/game/basic/bom27_b.ogg" },
-    // { id: "se/game/basic/pickup", src: "res/se/game/basic/cursor05.ogg" },
+    { id: "se/game/basic/pickup", src: "res/se/game/basic/cursor05.ogg" },
     // { id: "se/game/basic/bound", src: "res/se/game/basic/swing06_r.ogg" },
     // { id: "se/game/other/shot", src: "res/se/game/other/power27.ogg" },
     // { id: "se/game/other/punch", src: "res/se/game/other/puu76.ogg" }, // and overthrow
@@ -43,7 +43,8 @@ class GameSE {
         death: createjs.Sound.createInstance("se/game/basic/death"),
         gong: createjs.Sound.createInstance("se/game/basic/gong"),
         put: createjs.Sound.createInstance("se/game/basic/put"),
-        explosion: createjs.Sound.createInstance("se/game/basic/explosion")
+        explosion: createjs.Sound.createInstance("se/game/basic/explosion"),
+        pickup: createjs.Sound.createInstance("se/game/basic/pickup")
     };
 
     constructor(private config: { volume: number }) {

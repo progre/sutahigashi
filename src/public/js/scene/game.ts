@@ -51,7 +51,10 @@ export default class Game {
             })
             .on("death", () => {
                 se.game.play("basic/death");
-            });
+            })
+            .on("pickup", () => {
+                se.game.play("basic/pickup");
+            })
     }
 
     close() {
