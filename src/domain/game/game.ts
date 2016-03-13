@@ -1,7 +1,10 @@
-import {Game as GameState, Bomb, Ball, Point, Land, Overlay} from "../status";
+import * as seedrandom from "seedrandom";
+const rnd = seedrandom("remilia");
+import {Game as GameState, Item, Bomb, Ball, Point, Land, Overlay} from "../status";
 import {FPS} from "./definition";
 import {createField} from "./field";
 import {Input} from "./input";
+import * as util from "./util";
 
 const BOMB_DEFAULT_REMAIN = FPS * 3;
 
@@ -9,6 +12,7 @@ export function createStatus(players: string[]) {
     let status = {
         tick: 0,
         players: players.map((x, i) => ({ name: x, point: getDefaultPoint(i) })),
+        items: <Item[]>[],
         bombs: <Bomb[]>[],
         balls: <Ball[]>[],
         lands: createField(),
@@ -92,6 +96,14 @@ export function update(game: GameState, inputs: Input[]) {
         });
     game.bombs = game.bombs.filter(x => x.remain > 0);
     game.tick++;
+    if (rnd() < 0.01) {
+        let lands = util.findFreeArea(game);
+        let target = Math.floor(lands.length * rnd());
+        if (target === lands.length) {
+            target = 0;
+        }
+        game.items.push({ point: lands[target] });
+    }
 }
 
 function movePlayer(input: Input, player: Point, lands: Land[][]) {

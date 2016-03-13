@@ -30,6 +30,7 @@ export interface User {
 export interface Game {
     tick: number;
     players: Player[];
+    items: Item[];
     bombs: Bomb[];
     balls: Ball[];
     lands: Land[][];
@@ -38,6 +39,10 @@ export interface Game {
 
 export interface Player {
     name: string;
+    point: Point;
+}
+
+export interface Item {
     point: Point;
 }
 

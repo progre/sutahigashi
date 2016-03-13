@@ -1,7 +1,7 @@
 import {Game} from "../../../../domain/status";
 import createField, {RESOURCES as fieldResources} from "./field";
 import createPlayer, {RESOURCES as playerResources} from "./player";
-import {createBomb, createBall, RESOURCES as objectsResources} from "./objects";
+import {createBomb, createBall, createItem, RESOURCES as objectsResources} from "./objects";
 import {CHIP_PIXEL, FIELD_PIXEL} from "./chip";
 
 export const RESOURCES = fieldResources
@@ -10,8 +10,9 @@ export const RESOURCES = fieldResources
 
 export default class GameViewContainer extends createjs.Container {
     players: createjs.DisplayObject[];
-    bombs: createjs.DisplayObject[];
-    balls: createjs.DisplayObject[];
+    bombs = <createjs.DisplayObject[]>[];
+    balls = <createjs.DisplayObject[]>[];
+    items = <createjs.DisplayObject[]>[];
 
     constructor(loader: createjs.AbstractLoader, parentRect: { width: number; height: number; }) {
         super();
@@ -20,19 +21,23 @@ export default class GameViewContainer extends createjs.Container {
 
         this.players = [0, 1, 2, 3].map(x => createPlayer(loader, x));
         this.players.forEach(x => fieldArea.addChild(x));
-        this.bombs = [];
         for (let i = 0; i < 15 * 13; i++) {
             let bomb = createBomb(loader);
             bomb.visible = false;
             this.bombs.push(bomb);
             fieldArea.addChild(bomb);
         }
-        this.balls = [];
         for (let i = 0; i < 15 * 13 * 8; i++) {
             let ball = createBall(loader);
             ball.visible = false;
             this.balls.push(ball);
             fieldArea.addChild(ball);
+        }
+        for (let i = 0; i < 15 * 13; i++) {
+            let item = createItem(loader);
+            item.visible = false;
+            this.items.push(item);
+            fieldArea.addChild(item);
         }
     }
 
@@ -63,6 +68,15 @@ export default class GameViewContainer extends createjs.Container {
             ballView.visible = true;
             ballView.x = game.balls[i].point.x * CHIP_PIXEL;
             ballView.y = game.balls[i].point.y * CHIP_PIXEL;
+        });
+        this.items.forEach((itemView, i) => {
+            if (i >= game.items.length) {
+                itemView.visible = false;
+                return;
+            }
+            itemView.visible = true;
+            itemView.x = game.items[i].point.x * CHIP_PIXEL;
+            itemView.y = game.items[i].point.y * CHIP_PIXEL;
         });
     }
 }
