@@ -33,6 +33,8 @@ export function update(game: status.Game, inputs: Input[]) {
     object.movePlayers(game.players, game.lands, game.bombs, inputs);
     let actives = cleanup(game.players);
     hitTest(actives, game.balls, game.items);
+    actives = cleanup(game.players);
+    game.balls = cleanup(game.balls);
     game.items = cleanup(game.items);
     object.moveBalls(game.balls, game.lands);
     game.balls = cleanup(game.balls);
@@ -51,11 +53,27 @@ export function update(game: status.Game, inputs: Input[]) {
 }
 
 function hitTest(actives: status.Player[], balls: status.Ball[], items: status.Item[]) {
-    actives.forEach(player => {
-        if (balls.some(ball => objectTouched(ball, player.point))) {
-            player.point = null;
+    balls.forEach(ball => {
+        for (let item of items) {
+            if (!objectTouched(ball, item.point)) {
+                continue;
+            }
+            item.point = null;
+            ball.point = null;
+            items = cleanup(items);
             return;
         }
+        for (let player of actives) {
+            if (!objectTouched(ball, player.point)) {
+                continue;
+            }
+            player.point = null;
+            ball.point = null;
+            actives = cleanup(actives);
+            return;
+        }
+    });
+    actives.forEach(player => {
         items.forEach(item => {
             if (!objectTouched(item, player.point)) {
                 return;
@@ -65,11 +83,6 @@ function hitTest(actives: status.Player[], balls: status.Ball[], items: status.I
             // TODO: アイテムの効果を与える
         });
         items = cleanup(items);
-    });
-    items.forEach(item => {
-        if (balls.some(ball => objectTouched(ball, item.point))) {
-            item.point = null;
-        }
     });
 }
 
