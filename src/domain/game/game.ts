@@ -32,7 +32,7 @@ function getDefaultPoint(i: number) {
 export function update(game: status.Game, inputs: Input[]) {
     object.movePlayers(game.players, game.lands, game.bombs, inputs);
     let actives = cleanup(game.players);
-    touchTo(actives, game.balls, game.items);
+    hitTest(actives, game.balls, game.items);
     game.items = cleanup(game.items);
     object.moveBalls(game.balls, game.lands);
     game.balls = cleanup(game.balls);
@@ -50,7 +50,7 @@ export function update(game: status.Game, inputs: Input[]) {
     if (game.items.some(item => item.point == null)) { console.log(game.items); throw new Error(); }
 }
 
-function touchTo(actives: status.Player[], balls: status.Ball[], items: status.Item[]) {
+function hitTest(actives: status.Player[], balls: status.Ball[], items: status.Item[]) {
     actives.forEach(player => {
         if (balls.some(ball => objectTouched(ball, player.point))) {
             player.point = null;
@@ -65,6 +65,11 @@ function touchTo(actives: status.Player[], balls: status.Ball[], items: status.I
             // TODO: アイテムの効果を与える
         });
         items = cleanup(items);
+    });
+    items.forEach(item => {
+        if (balls.some(ball => objectTouched(ball, item.point))) {
+            item.point = null;
+        }
     });
 }
 
