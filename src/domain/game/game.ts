@@ -1,6 +1,6 @@
 import * as seedrandom from "seedrandom";
 const rnd = seedrandom("remilia");
-import {Game as GameState, Item, Bomb, Ball, Point, Land, Overlay} from "../status";
+import * as status from "../status";
 import {FPS} from "./definition";
 import {createField} from "./field";
 import {Input} from "./input";
@@ -12,11 +12,11 @@ export function createStatus(players: string[]) {
     let status = {
         tick: 0,
         players: players.map((x, i) => ({ name: x, point: getDefaultPoint(i) })),
-        items: <Item[]>[],
-        bombs: <Bomb[]>[],
-        balls: <Ball[]>[],
+        items: <status.Item[]>[],
+        bombs: <status.Bomb[]>[],
+        balls: <status.Ball[]>[],
         lands: createField(),
-        overlays: <Overlay[][]>[]
+        overlays: <status.Overlay[][]>[]
     };
     return status;
 }
@@ -30,44 +30,108 @@ function getDefaultPoint(i: number) {
     ][i];
 }
 
-export function update(game: GameState, inputs: Input[]) {
+export function update(game: status.Game, inputs: Input[]) {
+    movePlayers(game.players, game.lands, game.bombs, inputs);
+    let actives = cleanup(game.players);
+    touchTo(actives, game.balls, game.items);
+    game.items = cleanup(game.items);
+    moveBalls(game.balls, game.lands);
+    game.balls = cleanup(game.balls);
+    moveBombs(game.bombs, game.balls); // 誘爆させたボムをすぐに弾にするのでボムは後
+    game.bombs = game.bombs.filter(x => x.remain > 0);
+    if (rnd() < 0.01) {
+        let lands = util.findFreeArea(game);
+        let target = Math.floor(lands.length * rnd());
+        if (target === lands.length) {
+            target = 0;
+        }
+        game.items.push({ point: lands[target] });
+    }
+    game.tick++;
+}
+
+function movePlayers(players: status.Player[], lands: status.Land[][], bombs: status.Bomb[], inputs: Input[]) {
     inputs.forEach((input, i) => {
-        let player = game.players[i];
+        let player = players[i];
         if (player.point == null) {
             return;
         }
-        movePlayer(input, player.point, game.lands);
+        movePlayer(input, player.point, lands);
         if (input.bomb) {
-            game.bombs.push({ remain: BOMB_DEFAULT_REMAIN, point: { x: player.point.x, y: player.point.y } });
+            bombs.push({ remain: BOMB_DEFAULT_REMAIN, point: { x: player.point.x, y: player.point.y } });
         }
-        if (input.suicide
-            || game.balls.some(x => ballTouched(x, player.point))) {
+        if (input.suicide) {
             player.point = null;
         }
     });
-    game.balls
+}
+
+function movePlayer(input: Input, player: status.Point, lands: status.Land[][]) {
+    let x: number = -<any>input.left + <any>input.right;
+    let y: number = -<any>input.up + <any>input.down;
+    movePlayerPoint(player, x, y, lands);
+}
+
+function touchTo(actives: status.Player[], balls: status.Ball[], items: status.Item[]) {
+    actives.forEach(player => {
+        if (balls.some(ball => objectTouched(ball, player.point))) {
+            player.point = null;
+        }
+        items.forEach(item => {
+            if (item.point == null) { console.log(items); }
+            if (!objectTouched(item, player.point)) {
+                return;
+            }
+            item.point = null;
+            console.log("pickup");
+            // TODO: アイテムの効果を与える
+        });
+        items = cleanup(items);
+    });
+}
+
+function moveBalls(balls: status.Ball[], lands: status.Land[][]) {
+    balls
         .forEach(ball => {
             ball.remain--;
         });
-    game.balls
+    balls
         .filter(ball => ball.remain <= 0)
         .forEach(ball => {
-            moveBall(ball, game.lands);
+            moveBall(ball, lands);
             ball.remain = FPS / ball.speed;
         });
-    game.balls = game.balls.filter(x => x.point != null);
-    // 誘爆させたボムをすぐに弾にするのでボムは後
-    game.bombs
+}
+
+function moveBall(ball: status.Ball, lands: status.Land[][]) {
+    let x = 0;
+    let y = 0;
+    switch (ball.direction) {
+        case 8: y = -1; break;
+        case 6: x = 1; break;
+        case 2: y = 1; break;
+        case 4: x = -1; break;
+        default: throw new Error();
+    }
+    let {x: oldX, y: oldY} = ball.point;
+    movePlayerPoint(ball.point, x, y, lands);
+    if (ball.point.x === oldX && ball.point.y === oldY) {
+        ball.point = null;
+    }
+}
+
+function moveBombs(bombs: status.Bomb[], balls: status.Ball[]) {
+    bombs
         .forEach(bomb => {
             bomb.remain--;
         });
-    game.bombs
+    bombs
         .filter(bomb => bomb.remain <= 0
-            || game.balls.some(ball => ballTouched(ball, bomb.point)))
+            || balls.some(ball => objectTouched(ball, bomb.point)))
         .forEach(bomb => {
             bomb.remain = 0;
             let speed = 4;
-            game.balls.push(
+            balls.push(
                 {
                     speed,
                     remain: FPS / speed,
@@ -94,51 +158,9 @@ export function update(game: GameState, inputs: Input[]) {
                 }
             );
         });
-    game.items.forEach(item => {
-        let pickuper = game.players.find(player => util.equals(item.point, player.point));
-        if (pickuper != null) {
-            item.point = null;
-            console.log("pickup");
-            // TODO: アイテムの効果を与える
-        }
-    });
-    game.items = game.items.filter(item => item.point != null);
-    game.bombs = game.bombs.filter(x => x.remain > 0);
-    if (rnd() < 0.01) {
-        let lands = util.findFreeArea(game);
-        let target = Math.floor(lands.length * rnd());
-        if (target === lands.length) {
-            target = 0;
-        }
-        game.items.push({ point: lands[target] });
-    }
-    game.tick++;
 }
 
-function movePlayer(input: Input, player: Point, lands: Land[][]) {
-    let x: number = -<any>input.left + <any>input.right;
-    let y: number = -<any>input.up + <any>input.down;
-    addPoint(player, x, y, lands);
-}
-
-function moveBall(ball: Ball, lands: Land[][]) {
-    let x = 0;
-    let y = 0;
-    switch (ball.direction) {
-        case 8: y = -1; break;
-        case 6: x = 1; break;
-        case 2: y = 1; break;
-        case 4: x = -1; break;
-        default: throw new Error();
-    }
-    let {x: oldX, y: oldY} = ball.point;
-    addPoint(ball.point, x, y, lands);
-    if (ball.point.x === oldX && ball.point.y === oldY) {
-        ball.point = null;
-    }
-}
-
-function addPoint(point: Point, x: number, y: number, lands: Land[][]) {
+function movePlayerPoint(point: status.Point, x: number, y: number, lands: status.Land[][]) {
     const width = lands[0].length;
     const height = lands.length;
 
@@ -154,13 +176,17 @@ function addPoint(point: Point, x: number, y: number, lands: Land[][]) {
     } else if (targetY >= height) {
         targetY = height - 1;
     }
-    if (lands[targetY][targetX] === Land.HARDBLOCK) {
+    if (lands[targetY][targetX] === status.Land.HARDBLOCK) {
         return;
     }
     point.x = targetX;
     point.y = targetY;
 }
 
-function ballTouched(ball: Ball, target: Point) {
-    return target.x === ball.point.x && target.y === ball.point.y;
+function objectTouched(obj: status.Ball | status.Item, target: status.Point) {
+    return target.x === obj.point.x && target.y === obj.point.y;
+}
+
+function cleanup<T extends { point: status.Point }>(objects: T[]) {
+    return objects.filter(x => x.point != null);
 }
