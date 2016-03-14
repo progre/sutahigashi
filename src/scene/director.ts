@@ -22,6 +22,9 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
     let roomReceiver = new RoomReceiver(io);
     let winner: User;
     main_loop: while (true) {
+        if (winner != null && io.sockets.sockets[winner.id] == null) {
+            winner = null;
+        }
         let users = await lobby(roomReceiver, sender, winner);
         winner = null;
         let sockets = users.map(x => io.sockets.sockets[x.id]);

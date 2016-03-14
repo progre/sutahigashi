@@ -21,7 +21,9 @@ export default class EventDetector extends EventEmitter {
         if (current.players.some((player, i) => isDead(player, previous.players[i]))) {
             this.emit("death");
         }
-        if (current.players.some(player => isPickuped(player, previous.items))) {
+        if (current.players
+            .filter(player => player.point != null)
+            .some(player => isPickuped(player, previous.items))) {
             this.emit("pickup");
         }
     }
