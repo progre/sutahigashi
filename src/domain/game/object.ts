@@ -10,7 +10,7 @@ export function movePlayers(players: status.Player[], lands: status.Land[][], bo
         if (player.point == null) {
             return;
         }
-        movePlayer(input, player.point, lands);
+        movePlayer(input, player.point, lands, bombs);
         if (input.bomb) {
             bombs.push({ remain: BOMB_DEFAULT_REMAIN, point: { x: player.point.x, y: player.point.y } });
         }
@@ -20,10 +20,10 @@ export function movePlayers(players: status.Player[], lands: status.Land[][], bo
     });
 }
 
-function movePlayer(input: Input, player: status.Point, lands: status.Land[][]) {
+function movePlayer(input: Input, player: status.Point, lands: status.Land[][], bombs: status.Bomb[]) {
     let x: number = -<any>input.left + <any>input.right;
     let y: number = -<any>input.up + <any>input.down;
-    moveObjectPoint(player, x, y, lands);
+    moveObjectPoint(player, x, y, lands, bombs);
 }
 
 export function moveBalls(balls: status.Ball[], lands: status.Land[][]) {
@@ -50,13 +50,13 @@ function moveBall(ball: status.Ball, lands: status.Land[][]) {
         default: throw new Error();
     }
     let {x: oldX, y: oldY} = ball.point;
-    moveObjectPoint(ball.point, x, y, lands);
+    moveObjectPoint(ball.point, x, y, lands, []);
     if (ball.point.x === oldX && ball.point.y === oldY) {
         ball.point = null;
     }
 }
 
-function moveObjectPoint(point: status.Point, x: number, y: number, lands: status.Land[][]) {
+function moveObjectPoint(point: status.Point, x: number, y: number, lands: status.Land[][], bombs: status.Bomb[]) {
     const width = lands[0].length;
     const height = lands.length;
 
