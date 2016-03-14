@@ -47,15 +47,16 @@ export function update(game: status.Game, inputs: Input[]) {
         game.items.push({ point: lands[target] });
     }
     game.tick++;
+    if (game.items.some(item => item.point == null)) { console.log(game.items); throw new Error(); }
 }
 
 function touchTo(actives: status.Player[], balls: status.Ball[], items: status.Item[]) {
     actives.forEach(player => {
         if (balls.some(ball => objectTouched(ball, player.point))) {
             player.point = null;
+            return;
         }
         items.forEach(item => {
-            if (item.point == null) { console.log(items); }
             if (!objectTouched(item, player.point)) {
                 return;
             }
