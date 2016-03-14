@@ -54,7 +54,7 @@ export default class Game {
             })
             .on("pickup", () => {
                 se.game.play("basic/pickup");
-            })
+            });
     }
 
     close() {

@@ -55,22 +55,20 @@ export function update(game: status.Game, inputs: Input[]) {
 function hitTest(actives: status.Player[], balls: status.Ball[], items: status.Item[]) {
     balls.forEach(ball => {
         for (let item of items) {
-            if (!objectTouched(ball, item.point)) {
-                continue;
+            if (objectTouched(ball, item.point)) {
+                item.point = null;
+                ball.point = null;
+                items = cleanup(items);
+                return;
             }
-            item.point = null;
-            ball.point = null;
-            items = cleanup(items);
-            return;
         }
         for (let player of actives) {
-            if (!objectTouched(ball, player.point)) {
-                continue;
+            if (objectTouched(ball, player.point)) {
+                player.point = null;
+                ball.point = null;
+                actives = cleanup(actives);
+                return;
             }
-            player.point = null;
-            ball.point = null;
-            actives = cleanup(actives);
-            return;
         }
     });
     actives.forEach(player => {
