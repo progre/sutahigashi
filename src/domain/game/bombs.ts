@@ -12,33 +12,96 @@ export function updateBombs(bombs: status.Bomb[], balls: status.Ball[]) {
             || balls.some(ball => objects.ballTouchedToBomb(ball, bomb)))
         .forEach(bomb => {
             bomb.remain = 0;
-            let speed = 4;
-            balls.push(
-                {
-                    speed,
-                    remain: FPS / speed,
-                    direction: 8,
-                    point: { x: bomb.point.x, y: bomb.point.y }
-                },
-                {
-                    speed,
-                    remain: FPS / speed,
-                    direction: 6,
-                    point: { x: bomb.point.x, y: bomb.point.y }
-                },
-                {
-                    speed,
-                    remain: FPS / speed,
-                    direction: 2,
-                    point: { x: bomb.point.x, y: bomb.point.y }
-                },
-                {
-                    speed,
-                    remain: FPS / speed,
-                    direction: 4,
-                    point: { x: bomb.point.x, y: bomb.point.y }
-                }
-            );
+            for (let ball of createBallsForEight(bomb.point)) {
+                balls.push(ball);
+            }
         });
 }
 
+function createBallsForNormal(point: status.Point) {
+    let speed = 4;
+    let remain = FPS / speed;
+    return [
+        {
+            speed,
+            remain,
+            direction: 8,
+            point: { x: point.x, y: point.y }
+        },
+        {
+            speed,
+            remain,
+            direction: 6,
+            point: { x: point.x, y: point.y }
+        },
+        {
+            speed,
+            remain,
+            direction: 2,
+            point: { x: point.x, y: point.y }
+        },
+        {
+            speed,
+            remain,
+            direction: 4,
+            point: { x: point.x, y: point.y }
+        }
+    ];
+}
+
+function createBallsForEight(point: status.Point) {
+    let speed = 4;
+    let remain = FPS / speed;
+    let skewSpeed = speed / Math.SQRT2;
+    let skewRemain = FPS / skewSpeed;
+    return [
+        {
+            speed,
+            remain,
+            direction: 8,
+            point: { x: point.x, y: point.y }
+        },
+        {
+            speed: skewSpeed,
+            remain: skewRemain,
+            direction: 9,
+            point: { x: point.x, y: point.y }
+        },
+        {
+            speed,
+            remain,
+            direction: 6,
+            point: { x: point.x, y: point.y }
+        },
+        {
+            speed: skewSpeed,
+            remain: skewRemain,
+            direction: 3,
+            point: { x: point.x, y: point.y }
+        },
+        {
+            speed,
+            remain,
+            direction: 2,
+            point: { x: point.x, y: point.y }
+        },
+        {
+            speed: skewSpeed,
+            remain: skewRemain,
+            direction: 1,
+            point: { x: point.x, y: point.y }
+        },
+        {
+            speed,
+            remain,
+            direction: 4,
+            point: { x: point.x, y: point.y }
+        },
+        {
+            speed: skewSpeed,
+            remain: skewRemain,
+            direction: 7,
+            point: { x: point.x, y: point.y }
+        }
+    ];
+}

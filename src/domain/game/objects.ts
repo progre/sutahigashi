@@ -36,7 +36,7 @@ export function moveBalls(balls: status.Ball[], lands: status.Land[][]) {
         .filter(ball => ball.remain <= 0)
         .forEach(ball => {
             moveBall(ball, lands);
-            ball.remain = FPS / ball.speed;
+            ball.remain = FPS / ball.speed - ball.remain;
         });
 }
 
@@ -45,9 +45,13 @@ function moveBall(ball: status.Ball, lands: status.Land[][]) {
     let y = 0;
     switch (ball.direction) {
         case 8: y = -1; break;
+        case 9: x = 1; y = -1; break;
         case 6: x = 1; break;
+        case 3: x = 1; y = 1; break;
         case 2: y = 1; break;
+        case 1: x = -1; y = 1; break;
         case 4: x = -1; break;
+        case 7: x = -1; y = -1; break;
         default: throw new Error();
     }
     let {x: oldX, y: oldY} = ball.point;
