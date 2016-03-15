@@ -2,6 +2,19 @@ import * as status from "../status";
 import * as objects from "./objects";
 import {FPS} from "./definition";
 
+const BOMB_DEFAULT_REMAIN = FPS * 2.5;
+
+export function createBomb(player: status.Player) {
+    let ability = player.ability.indexOf(status.Ability.EIGHT_BOMB) >= 0
+        ? status.Ability.EIGHT_BOMB
+        : null;
+    return {
+        remain: BOMB_DEFAULT_REMAIN,
+        point: { x: player.point.x, y: player.point.y },
+        ability
+    };
+}
+
 export function updateBombs(bombs: status.Bomb[], balls: status.Ball[]) {
     bombs
         .forEach(bomb => {
@@ -12,13 +25,16 @@ export function updateBombs(bombs: status.Bomb[], balls: status.Ball[]) {
             || balls.some(ball => objects.ballTouchedToBomb(ball, bomb)))
         .forEach(bomb => {
             bomb.remain = 0;
-            for (let ball of createBallsForEight(bomb.point)) {
+            let newBalls = bomb.ability === status.Ability.EIGHT_BOMB
+                ? createBallsFromEight(bomb.point)
+                : createBallsFromNormal(bomb.point);
+            for (let ball of newBalls) {
                 balls.push(ball);
             }
         });
 }
 
-function createBallsForNormal(point: status.Point) {
+function createBallsFromNormal(point: status.Point) {
     let speed = 4;
     let remain = FPS / speed;
     return [
@@ -49,7 +65,7 @@ function createBallsForNormal(point: status.Point) {
     ];
 }
 
-function createBallsForEight(point: status.Point) {
+function createBallsFromEight(point: status.Point) {
     let speed = 4;
     let remain = FPS / speed;
     let skewSpeed = speed / Math.SQRT2;

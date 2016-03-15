@@ -2,18 +2,17 @@ import * as status from "../status";
 import {FPS} from "./definition";
 import {Input} from "./input";
 import {equals} from "./utils";
+import * as bombs from "./bombs";
 
-const BOMB_DEFAULT_REMAIN = FPS * 2.5;
-
-export function movePlayers(players: status.Player[], lands: status.Land[][], bombs: status.Bomb[], inputs: Input[]) {
+export function movePlayers(players: status.Player[], lands: status.Land[][], bombList: status.Bomb[], inputs: Input[]) {
     inputs.forEach((input, i) => {
         let player = players[i];
         if (player.point == null) {
             return;
         }
-        movePlayer(input, player.point, lands, bombs);
+        movePlayer(input, player.point, lands, bombList);
         if (input.bomb) {
-            bombs.push({ remain: BOMB_DEFAULT_REMAIN, point: { x: player.point.x, y: player.point.y } });
+            bombList.push(bombs.createBomb(player));
         }
         if (input.suicide) {
             player.point = null;

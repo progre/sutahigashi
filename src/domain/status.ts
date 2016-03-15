@@ -40,6 +40,11 @@ export interface Game {
 export interface Player {
     name: string;
     point: Point;
+    ability: Ability[];
+}
+
+export enum Ability {
+    EIGHT_BOMB
 }
 
 export interface Item {
@@ -49,6 +54,7 @@ export interface Item {
 export interface Bomb {
     remain: number;
     point: Point;
+    ability: Ability;
 }
 
 export interface Ball {

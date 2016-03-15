@@ -10,7 +10,11 @@ import * as bombs from "./bombs";
 export function createStatus(players: string[]) {
     let status = {
         tick: 0,
-        players: players.map((x, i) => ({ name: x, point: getDefaultPoint(i) })),
+        players: players.map((x, i) => ({
+            name: x,
+            point: getDefaultPoint(i),
+            ability: []
+        })),
         items: <status.Item[]>[],
         bombs: <status.Bomb[]>[],
         balls: <status.Ball[]>[],
@@ -82,8 +86,7 @@ function pickup(actives: status.Player[], items: status.Item[]) {
                 return;
             }
             item.point = null;
-            console.log("pickup");
-            // TODO: アイテムの効果を与える
+            player.ability.push(status.Ability.EIGHT_BOMB);
         });
         items = cleanup(items);
     });
