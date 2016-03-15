@@ -72,7 +72,8 @@ function moveObjectPoint(point: status.Point, x: number, y: number, lands: statu
     } else if (targetY >= height) {
         targetY = height - 1;
     }
-    if (lands[targetY][targetX] === status.Land.HARDBLOCK) {
+    if (lands[targetY][targetX] === status.Land.HARDBLOCK
+        || bombs.some(bomb => targetX === bomb.point.x && targetY === bomb.point.y)) {
         return;
     }
     point.x = targetX;
