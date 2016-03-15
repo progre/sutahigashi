@@ -32,9 +32,11 @@ function getDefaultPoint(i: number) {
 export function update(game: status.Game, inputs: Input[]) {
     object.movePlayers(game.players, game.lands, game.bombs, inputs);
     let actives = cleanup(game.players);
-    hitTest(actives, game.balls, game.items);
-    actives = cleanup(game.players);
+    burn(game.balls, actives, game.items);
     game.balls = cleanup(game.balls);
+    actives = cleanup(game.players);
+    game.items = cleanup(game.items);
+    pickup(actives, game.items);
     game.items = cleanup(game.items);
     object.moveBalls(game.balls, game.lands);
     game.balls = cleanup(game.balls);
@@ -52,7 +54,7 @@ export function update(game: status.Game, inputs: Input[]) {
     if (game.items.some(item => item.point == null)) { console.log(game.items); throw new Error(); }
 }
 
-function hitTest(actives: status.Player[], balls: status.Ball[], items: status.Item[]) {
+function burn(balls: status.Ball[], actives: status.Player[], items: status.Item[]) {
     balls.forEach(ball => {
         for (let item of items) {
             if (objectTouched(ball, item.point)) {
@@ -71,6 +73,9 @@ function hitTest(actives: status.Player[], balls: status.Ball[], items: status.I
             }
         }
     });
+}
+
+function pickup(actives: status.Player[], items: status.Item[]) {
     actives.forEach(player => {
         items.forEach(item => {
             if (!objectTouched(item, player.point)) {
