@@ -3,7 +3,7 @@ const rnd = seedrandom("remilia");
 import * as status from "../status";
 import {createField} from "./field";
 import {Input} from "./input";
-import * as util from "./util";
+import * as utils from "./utils";
 import * as objects from "./objects";
 import * as bombs from "./bombs";
 
@@ -43,7 +43,7 @@ export function update(game: status.Game, inputs: Input[]) {
     bombs.updateBombs(game.bombs, game.balls); // 誘爆させたボムをすぐに弾にするのでボムは後
     game.bombs = game.bombs.filter(x => x.remain > 0);
     if (rnd() < 0.01) {
-        let lands = util.findFreeArea(game);
+        let lands = utils.findFreeArea(game);
         let target = Math.floor(lands.length * rnd());
         if (target === lands.length) {
             target = 0;

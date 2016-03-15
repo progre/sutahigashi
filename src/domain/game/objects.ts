@@ -1,6 +1,7 @@
 import * as status from "../status";
 import {FPS} from "./definition";
 import {Input} from "./input";
+import {equals} from "./utils";
 
 const BOMB_DEFAULT_REMAIN = FPS * 2.5;
 
@@ -81,17 +82,17 @@ function moveObjectPoint(point: status.Point, x: number, y: number, lands: statu
 }
 
 export function ballTouchedToPlayer(ball: status.Ball, player: status.Player) {
-    return player.point.x === ball.point.x && player.point.y === ball.point.y;
+    return equals(player.point, ball.point);
 }
 
 export function ballTouchedToItem(ball: status.Ball, item: status.Item) {
-    return item.point.x === ball.point.x && item.point.y === ball.point.y;
+    return equals(ball.point, item.point);
 }
 
 export function ballTouchedToBomb(ball: status.Ball, bomb: status.Bomb) {
-    return bomb.point.x === ball.point.x && bomb.point.y === ball.point.y;
+    return equals(ball.point, bomb.point);
 }
 
 export function playerTouchedToItem(player: status.Player, item: status.Item) {
-    return player.point.x === item.point.x && player.point.y === item.point.y;
+    return equals(player.point, item.point);
 }
