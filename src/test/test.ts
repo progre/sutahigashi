@@ -2,6 +2,9 @@
 const getPort = <(...args: any[]) => Promise<number>>require("native-promisify")(require("getport"));
 import {fork} from "child_process";
 import assert from "power-assert";
+import * as utils from "../domain/game/utils";
+import * as seedrandom from "seedrandom";
+const rnd = seedrandom("remilia");
 
 describe("Server", () => {
     it("is runnable", async function() {
@@ -40,5 +43,15 @@ describe("Server", () => {
                 reject(err);
             }
         });
+    });
+});
+
+describe("random", () => {
+    it("is available", () => {
+        for (let i = 0; i < 1000; i++) {
+            let value = utils.random(rnd, 0, 10);
+            assert(value >= 0);
+            assert(value < 10);
+        }
     });
 });

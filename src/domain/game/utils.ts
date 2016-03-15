@@ -19,3 +19,11 @@ export function findFreeArea(game: Game) {
 export function equals(a: Point, b: Point) {
     return a.x === b.x && a.y === b.y;
 }
+
+export function random(rnd: prng, from: number, to: number) {
+    let result = from + Math.floor(to * rnd());
+    if (result === to) {
+        result = from;
+    }
+    return result;
+}

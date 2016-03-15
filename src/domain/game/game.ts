@@ -48,11 +48,11 @@ export function update(game: status.Game, inputs: Input[]) {
     game.bombs = game.bombs.filter(x => x.remain > 0);
     if (rnd() < 0.01) {
         let lands = utils.findFreeArea(game);
-        let target = Math.floor(lands.length * rnd());
-        if (target === lands.length) {
-            target = 0;
-        }
-        game.items.push({ point: lands[target] });
+        let point = lands[utils.random(rnd, 0, lands.length)];
+        const ABILITIES = [status.Ability.EIGHT_BOMB];
+        let ability = ABILITIES[utils.random(rnd, 0, ABILITIES.length)];
+        console.log(ability);
+        game.items.push({ point, ability });
     }
     game.tick++;
     if (game.items.some(item => item.point == null)) { console.log(game.items); throw new Error(); }

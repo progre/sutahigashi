@@ -49,6 +49,7 @@ export enum Ability {
 
 export interface Item {
     point: Point;
+    ability: Ability;
 }
 
 export interface Bomb {

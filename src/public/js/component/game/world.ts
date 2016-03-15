@@ -1,8 +1,10 @@
-import {Game} from "../../../../domain/status";
+import {Game, Ability} from "../../../../domain/status";
 import createField, {RESOURCES as fieldResources} from "./field";
 import createPlayer, {RESOURCES as playerResources} from "./player";
 import {createBomb, createBall, createItem, RESOURCES as objectsResources} from "./objects";
 import {CHIP_PIXEL, FIELD_PIXEL} from "./chip";
+
+const ABILITIES = [Ability.EIGHT_BOMB];
 
 export const RESOURCES = fieldResources
     .concat(playerResources)
@@ -12,7 +14,7 @@ export default class GameViewContainer extends createjs.Container {
     players: createjs.DisplayObject[];
     bombs = <createjs.DisplayObject[]>[];
     balls = <createjs.DisplayObject[]>[];
-    items = <createjs.DisplayObject[]>[];
+    items = new Map<Ability, createjs.DisplayObject[]>();
 
     constructor(loader: createjs.AbstractLoader, parentRect: { width: number; height: number; }) {
         super();
@@ -33,11 +35,16 @@ export default class GameViewContainer extends createjs.Container {
             this.balls.push(ball);
             fieldArea.addChild(ball);
         }
-        for (let i = 0; i < 15 * 13; i++) {
-            let item = createItem(loader);
-            item.visible = false;
-            this.items.push(item);
-            fieldArea.addChild(item);
+        for (let ability of ABILITIES) {
+            let items = <createjs.DisplayObject[]>[];
+            for (let i = 0; i < 15 * 13; i++) {
+                let item = createItem(loader, ability);
+                item.visible = false;
+                items.push(item);
+                fieldArea.addChild(item);
+            }
+            console.log(ability);
+            this.items.set(ability, items);
         }
     }
 
@@ -69,14 +76,17 @@ export default class GameViewContainer extends createjs.Container {
             ballView.x = game.balls[i].point.x * CHIP_PIXEL;
             ballView.y = game.balls[i].point.y * CHIP_PIXEL;
         });
-        this.items.forEach((itemView, i) => {
-            if (i >= game.items.length) {
-                itemView.visible = false;
-                return;
+        for (let abilityItems of this.items) {
+            for (let item of abilityItems[1]) {
+                item.visible = false;
             }
+        }
+        game.items.forEach((item, i) => {
+            console.log("server: " + item.ability);
+            let itemView = this.items.get(item.ability)[i];
             itemView.visible = true;
-            itemView.x = game.items[i].point.x * CHIP_PIXEL;
-            itemView.y = game.items[i].point.y * CHIP_PIXEL;
+            itemView.x = item.point.x * CHIP_PIXEL;
+            itemView.y = item.point.y * CHIP_PIXEL;
         });
     }
 }
