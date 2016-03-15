@@ -5,7 +5,7 @@ import {FPS} from "./definition";
 import {createField} from "./field";
 import {Input} from "./input";
 import * as util from "./util";
-import * as object from "./object";
+import * as objects from "./objects";
 
 export function createStatus(players: string[]) {
     let status = {
@@ -30,7 +30,7 @@ function getDefaultPoint(i: number) {
 }
 
 export function update(game: status.Game, inputs: Input[]) {
-    object.movePlayers(game.players, game.lands, game.bombs, inputs);
+    objects.movePlayers(game.players, game.lands, game.bombs, inputs);
     let actives = cleanup(game.players);
     burn(game.balls, actives, game.items);
     game.balls = cleanup(game.balls);
@@ -38,7 +38,7 @@ export function update(game: status.Game, inputs: Input[]) {
     game.items = cleanup(game.items);
     pickup(actives, game.items);
     game.items = cleanup(game.items);
-    object.moveBalls(game.balls, game.lands);
+    objects.moveBalls(game.balls, game.lands);
     game.balls = cleanup(game.balls);
     moveBombs(game.bombs, game.balls); // 誘爆させたボムをすぐに弾にするのでボムは後
     game.bombs = game.bombs.filter(x => x.remain > 0);
@@ -57,7 +57,7 @@ export function update(game: status.Game, inputs: Input[]) {
 function burn(balls: status.Ball[], actives: status.Player[], items: status.Item[]) {
     balls.forEach(ball => {
         for (let item of items) {
-            if (ballTouchedToItem(ball, item)) {
+            if (objects.ballTouchedToItem(ball, item)) {
                 item.point = null;
                 ball.point = null;
                 items = cleanup(items);
@@ -65,7 +65,7 @@ function burn(balls: status.Ball[], actives: status.Player[], items: status.Item
             }
         }
         for (let player of actives) {
-            if (ballTouchedToPlayer(ball, player)) {
+            if (objects.ballTouchedToPlayer(ball, player)) {
                 player.point = null;
                 ball.point = null;
                 actives = cleanup(actives);
@@ -78,7 +78,7 @@ function burn(balls: status.Ball[], actives: status.Player[], items: status.Item
 function pickup(actives: status.Player[], items: status.Item[]) {
     actives.forEach(player => {
         items.forEach(item => {
-            if (!playerTouchedToItem(player, item)) {
+            if (!objects.playerTouchedToItem(player, item)) {
                 return;
             }
             item.point = null;
@@ -96,7 +96,7 @@ function moveBombs(bombs: status.Bomb[], balls: status.Ball[]) {
         });
     bombs
         .filter(bomb => bomb.remain <= 0
-            || balls.some(ball => ballTouchedToBomb(ball, bomb)))
+            || balls.some(ball => objects.ballTouchedToBomb(ball, bomb)))
         .forEach(bomb => {
             bomb.remain = 0;
             let speed = 4;
@@ -127,22 +127,6 @@ function moveBombs(bombs: status.Bomb[], balls: status.Ball[]) {
                 }
             );
         });
-}
-
-function ballTouchedToPlayer(ball: status.Ball, player: status.Player) {
-    return player.point.x === ball.point.x && player.point.y === ball.point.y;
-}
-
-function ballTouchedToItem(ball: status.Ball, item: status.Item) {
-    return item.point.x === ball.point.x && item.point.y === ball.point.y;
-}
-
-function ballTouchedToBomb(ball: status.Ball, bomb: status.Bomb) {
-    return bomb.point.x === ball.point.x && bomb.point.y === ball.point.y;
-}
-
-function playerTouchedToItem(player: status.Player, item: status.Item): boolean {
-    return player.point.x === item.point.x && player.point.y === item.point.y;
 }
 
 function cleanup<T extends { point: status.Point }>(objects: T[]) {
