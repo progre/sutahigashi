@@ -57,7 +57,7 @@ export function update(game: status.Game, inputs: Input[]) {
 function burn(balls: status.Ball[], actives: status.Player[], items: status.Item[]) {
     balls.forEach(ball => {
         for (let item of items) {
-            if (objectTouched(ball, item.point)) {
+            if (ballTouchedToItem(ball, item)) {
                 item.point = null;
                 ball.point = null;
                 items = cleanup(items);
@@ -65,7 +65,7 @@ function burn(balls: status.Ball[], actives: status.Player[], items: status.Item
             }
         }
         for (let player of actives) {
-            if (objectTouched(ball, player.point)) {
+            if (ballTouchedToPlayer(ball, player)) {
                 player.point = null;
                 ball.point = null;
                 actives = cleanup(actives);
@@ -78,7 +78,7 @@ function burn(balls: status.Ball[], actives: status.Player[], items: status.Item
 function pickup(actives: status.Player[], items: status.Item[]) {
     actives.forEach(player => {
         items.forEach(item => {
-            if (!objectTouched(item, player.point)) {
+            if (!playerTouchedToItem(player, item)) {
                 return;
             }
             item.point = null;
@@ -96,7 +96,7 @@ function moveBombs(bombs: status.Bomb[], balls: status.Ball[]) {
         });
     bombs
         .filter(bomb => bomb.remain <= 0
-            || balls.some(ball => objectTouched(ball, bomb.point)))
+            || balls.some(ball => ballTouchedToBomb(ball, bomb)))
         .forEach(bomb => {
             bomb.remain = 0;
             let speed = 4;
@@ -129,8 +129,20 @@ function moveBombs(bombs: status.Bomb[], balls: status.Ball[]) {
         });
 }
 
-function objectTouched(obj: status.Ball | status.Item, target: status.Point) {
-    return target.x === obj.point.x && target.y === obj.point.y;
+function ballTouchedToPlayer(ball: status.Ball, player: status.Player) {
+    return player.point.x === ball.point.x && player.point.y === ball.point.y;
+}
+
+function ballTouchedToItem(ball: status.Ball, item: status.Item) {
+    return item.point.x === ball.point.x && item.point.y === ball.point.y;
+}
+
+function ballTouchedToBomb(ball: status.Ball, bomb: status.Bomb) {
+    return bomb.point.x === ball.point.x && bomb.point.y === ball.point.y;
+}
+
+function playerTouchedToItem(player: status.Player, item: status.Item): boolean {
+    return player.point.x === item.point.x && player.point.y === item.point.y;
 }
 
 function cleanup<T extends { point: status.Point }>(objects: T[]) {
