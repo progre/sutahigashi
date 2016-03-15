@@ -92,6 +92,6 @@ export function ballTouchedToBomb(ball: status.Ball, bomb: status.Bomb) {
     return bomb.point.x === ball.point.x && bomb.point.y === ball.point.y;
 }
 
-export function playerTouchedToItem(player: status.Player, item: status.Item): boolean {
+export function playerTouchedToItem(player: status.Player, item: status.Item) {
     return player.point.x === item.point.x && player.point.y === item.point.y;
 }
