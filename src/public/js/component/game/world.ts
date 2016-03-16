@@ -1,7 +1,7 @@
 import {Game, Ability, Land, Overlay} from "../../../../domain/status";
 import createField, {RESOURCES as fieldResources} from "./field";
 import createPlayer, {RESOURCES as playerResources} from "./player";
-import {createBomb, createBall, createItem, RESOURCES as objectsResources} from "./objects";
+import {createBomb, createBall, createItem, createSoftBlock, RESOURCES as objectsResources} from "./objects";
 import {CHIP_PIXEL, FIELD_PIXEL} from "./chip";
 
 const ABILITIES = [Ability.EIGHT_BOMB];
@@ -11,19 +11,19 @@ export const RESOURCES = fieldResources
     .concat(objectsResources);
 
 export default class GameViewContainer extends createjs.Container {
-    players: createjs.DisplayObject[];
-    bombs = <createjs.DisplayObject[]>[];
-    balls = <createjs.DisplayObject[]>[];
-    items = new Map<Ability, createjs.DisplayObject[]>();
+    private players: createjs.DisplayObject[];
+    private bombs = <createjs.DisplayObject[]>[];
+    private balls = <createjs.DisplayObject[]>[];
+    private softBlocks = <createjs.DisplayObject[][]>[];
+    private items = new Map<Ability, createjs.DisplayObject[]>();
 
     constructor(
         loader: createjs.AbstractLoader,
         parentRect: { width: number; height: number; },
-        lands: Land[][],
-        overlays: Overlay[][]
+        lands: Land[][]
     ) {
         super();
-        let fieldArea = createFieldArea(loader, parentRect, lands, overlays);
+        let fieldArea = createFieldArea(loader, parentRect, lands);
         this.addChild(fieldArea);
 
         this.players = [0, 1, 2, 3].map(x => createPlayer(loader, x));
@@ -40,6 +40,18 @@ export default class GameViewContainer extends createjs.Container {
             this.balls.push(ball);
             fieldArea.addChild(ball);
         }
+        for (let y = 0; y < 13; y++) {
+            let line = <createjs.DisplayObject[]>[];
+            for (let x = 0; x < 15; x++) {
+                let softBlock = createSoftBlock(loader);
+                softBlock.visible = false;
+                softBlock.x = x * CHIP_PIXEL;
+                softBlock.y = y * CHIP_PIXEL;
+                line.push(softBlock);
+                fieldArea.addChild(softBlock);
+            }
+            this.softBlocks.push(line);
+        }
         for (let ability of ABILITIES) {
             let items = <createjs.DisplayObject[]>[];
             for (let i = 0; i < 15 * 13; i++) {
@@ -53,6 +65,11 @@ export default class GameViewContainer extends createjs.Container {
     }
 
     render(game: Game) {
+        game.overlays.forEach((line, y) => {
+            line.forEach((overlay, x) => {
+                this.softBlocks[y][x].visible = overlay === Overlay.SOFT_BLOCK;
+            });
+        });
         game.players.forEach((player, i) => {
             if (player.point == null) {
                 this.players[i].visible = false;
@@ -97,11 +114,11 @@ export default class GameViewContainer extends createjs.Container {
 function createFieldArea(
     loader: createjs.AbstractLoader,
     parentRect: { width: number; height: number; },
-    lands: Land[][], overlays: Overlay[][]
+    lands: Land[][]
 ) {
     let fieldArea = new createjs.Container();
     centering(fieldArea, parentRect, FIELD_PIXEL);
-    fieldArea.addChild(createField(loader, lands, overlays));
+    fieldArea.addChild(createField(loader, lands));
     return fieldArea;
 }
 

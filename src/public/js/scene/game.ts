@@ -68,8 +68,7 @@ export default class Game {
             this.world = new World(
                 this.loader,
                 <HTMLCanvasElement>this.stage.canvas,
-                status.lands,
-                status.overlays);
+                status.lands);
             this.stage.addChild(this.world);
             ReactDOM.render(
                 React.createElement(GameSub, {

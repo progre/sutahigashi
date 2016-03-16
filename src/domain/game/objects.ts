@@ -74,7 +74,10 @@ function moveBall(
         default: throw new Error();
     }
     let {x: oldX, y: oldY} = ball.point;
-    moveObjectPoint(ball.point, x, y, lands, overlays, []);
+    let target = moveObjectPoint(ball.point, x, y, lands, overlays, []);
+    if (overlays[target.y][target.x] === status.Overlay.SOFT_BLOCK) {
+        overlays[target.y][target.x] = status.Overlay.NONE;
+    }
     if (ball.point.x === oldX && ball.point.y === oldY) {
         ball.point = null;
     }
@@ -105,10 +108,11 @@ function moveObjectPoint(
     if (lands[targetY][targetX] !== status.Land.NONE
         || overlays[targetY][targetX] !== status.Overlay.NONE
         || bombs.some(bomb => targetX === bomb.point.x && targetY === bomb.point.y)) {
-        return;
+        return { x: targetX, y: targetY };
     }
     point.x = targetX;
     point.y = targetY;
+    return { x: targetX, y: targetY };
 }
 
 export function ballTouchedToPlayer(ball: status.Ball, player: status.Player) {
