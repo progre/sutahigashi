@@ -14,7 +14,7 @@ async function main() {
 
     (ReactDOM.render(
         <Lobby loader={loader} onJoin={null} onLeave={null} clone={true}/>,
-        document.getElementById("lobby")) as any as React.Component<any, any>)
+        document.getElementById("lobby")) as Lobby)
         .setState({
             users: ["さたちゅー", "したちゅー", "すたちゅー", "せたちゅー"]
         });
