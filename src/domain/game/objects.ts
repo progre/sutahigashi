@@ -4,13 +4,19 @@ import {Input} from "./input";
 import {equals} from "./utils";
 import * as bombs from "./bombs";
 
-export function movePlayers(players: status.Player[], lands: status.Land[][], bombList: status.Bomb[], inputs: Input[]) {
+export function movePlayers(
+    players: status.Player[],
+    lands: status.Land[][],
+    overlays: status.Overlay[][],
+    bombList: status.Bomb[],
+    inputs: Input[]
+) {
     inputs.forEach((input, i) => {
         let player = players[i];
         if (player.point == null) {
             return;
         }
-        movePlayer(input, player.point, lands, bombList);
+        movePlayer(input, player.point, lands, overlays, bombList);
         if (input.bomb) {
             bombList.push(bombs.createBomb(player));
         }
@@ -20,13 +26,23 @@ export function movePlayers(players: status.Player[], lands: status.Land[][], bo
     });
 }
 
-function movePlayer(input: Input, player: status.Point, lands: status.Land[][], bombs: status.Bomb[]) {
+function movePlayer(
+    input: Input,
+    player: status.Point,
+    lands: status.Land[][],
+    overlays: status.Overlay[][],
+    bombs: status.Bomb[]
+) {
     let x: number = -<any>input.left + <any>input.right;
     let y: number = -<any>input.up + <any>input.down;
-    moveObjectPoint(player, x, y, lands, bombs);
+    moveObjectPoint(player, x, y, lands, overlays, bombs);
 }
 
-export function moveBalls(balls: status.Ball[], lands: status.Land[][]) {
+export function moveBalls(
+    balls: status.Ball[],
+    lands: status.Land[][],
+    overlays: status.Overlay[][]
+) {
     balls
         .forEach(ball => {
             ball.remain--;
@@ -34,12 +50,16 @@ export function moveBalls(balls: status.Ball[], lands: status.Land[][]) {
     balls
         .filter(ball => ball.remain <= 0)
         .forEach(ball => {
-            moveBall(ball, lands);
+            moveBall(ball, lands, overlays);
             ball.remain = FPS / ball.speed - ball.remain;
         });
 }
 
-function moveBall(ball: status.Ball, lands: status.Land[][]) {
+function moveBall(
+    ball: status.Ball,
+    lands: status.Land[][],
+    overlays: status.Overlay[][]
+) {
     let x = 0;
     let y = 0;
     switch (ball.direction) {
@@ -54,13 +74,19 @@ function moveBall(ball: status.Ball, lands: status.Land[][]) {
         default: throw new Error();
     }
     let {x: oldX, y: oldY} = ball.point;
-    moveObjectPoint(ball.point, x, y, lands, []);
+    moveObjectPoint(ball.point, x, y, lands, overlays, []);
     if (ball.point.x === oldX && ball.point.y === oldY) {
         ball.point = null;
     }
 }
 
-function moveObjectPoint(point: status.Point, x: number, y: number, lands: status.Land[][], bombs: status.Bomb[]) {
+function moveObjectPoint(
+    point: status.Point,
+    x: number, y: number,
+    lands: status.Land[][],
+    overlays: status.Overlay[][],
+    bombs: status.Bomb[]
+) {
     const width = lands[0].length;
     const height = lands.length;
 
@@ -76,7 +102,8 @@ function moveObjectPoint(point: status.Point, x: number, y: number, lands: statu
     } else if (targetY >= height) {
         targetY = height - 1;
     }
-    if (lands[targetY][targetX] === status.Land.HARD_BLOCK
+    if (lands[targetY][targetX] !== status.Land.NONE
+        || overlays[targetY][targetX] !== status.Overlay.NONE
         || bombs.some(bomb => targetX === bomb.point.x && targetY === bomb.point.y)) {
         return;
     }

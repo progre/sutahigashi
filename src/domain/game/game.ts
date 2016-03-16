@@ -35,7 +35,7 @@ function getDefaultPoint(i: number) {
 }
 
 export function update(game: status.Game, inputs: Input[]) {
-    objects.movePlayers(game.players, game.lands, game.bombs, inputs);
+    objects.movePlayers(game.players, game.lands, game.overlays, game.bombs, inputs);
     let actives = cleanup(game.players);
     burn(game.balls, actives, game.items);
     game.balls = cleanup(game.balls);
@@ -43,7 +43,7 @@ export function update(game: status.Game, inputs: Input[]) {
     game.items = cleanup(game.items);
     pickup(actives, game.items);
     game.items = cleanup(game.items);
-    objects.moveBalls(game.balls, game.lands);
+    objects.moveBalls(game.balls, game.lands, game.overlays);
     game.balls = cleanup(game.balls);
     bombs.updateBombs(game.bombs, game.balls); // 誘爆させたボムをすぐに弾にするのでボムは後
     game.bombs = game.bombs.filter(x => x.remain > 0);
