@@ -1,4 +1,4 @@
-import {Game, Ability} from "../../../../domain/status";
+import {Game, Ability, Land, Overlay} from "../../../../domain/status";
 import createField, {RESOURCES as fieldResources} from "./field";
 import createPlayer, {RESOURCES as playerResources} from "./player";
 import {createBomb, createBall, createItem, RESOURCES as objectsResources} from "./objects";
@@ -16,9 +16,14 @@ export default class GameViewContainer extends createjs.Container {
     balls = <createjs.DisplayObject[]>[];
     items = new Map<Ability, createjs.DisplayObject[]>();
 
-    constructor(loader: createjs.AbstractLoader, parentRect: { width: number; height: number; }) {
+    constructor(
+        loader: createjs.AbstractLoader,
+        parentRect: { width: number; height: number; },
+        lands: Land[][],
+        overlays: Overlay[][]
+    ) {
         super();
-        let fieldArea = createFieldArea(loader, parentRect);
+        let fieldArea = createFieldArea(loader, parentRect, lands, overlays);
         this.addChild(fieldArea);
 
         this.players = [0, 1, 2, 3].map(x => createPlayer(loader, x));
@@ -91,11 +96,12 @@ export default class GameViewContainer extends createjs.Container {
 
 function createFieldArea(
     loader: createjs.AbstractLoader,
-    parentRect: { width: number; height: number; }
+    parentRect: { width: number; height: number; },
+    lands: Land[][], overlays: Overlay[][]
 ) {
     let fieldArea = new createjs.Container();
     centering(fieldArea, parentRect, FIELD_PIXEL);
-    fieldArea.addChild(createField(loader));
+    fieldArea.addChild(createField(loader, lands, overlays));
     return fieldArea;
 }
 

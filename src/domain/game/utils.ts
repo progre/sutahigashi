@@ -1,4 +1,4 @@
-import {Game, Item, Bomb, Ball, Point, Land, Overlay} from "../status";
+import {Game, Point, Land} from "../status";
 
 export function findFreeArea(game: Game) {
     let area = <Point[]>[];

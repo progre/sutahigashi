@@ -8,6 +8,7 @@ import * as objects from "./objects";
 import * as bombs from "./bombs";
 
 export function createStatus(players: string[]) {
+    let {lands, overlays} = createField();
     let status = {
         tick: 0,
         players: players.map((x, i) => ({
@@ -18,8 +19,8 @@ export function createStatus(players: string[]) {
         items: <status.Item[]>[],
         bombs: <status.Bomb[]>[],
         balls: <status.Ball[]>[],
-        lands: createField(),
-        overlays: <status.Overlay[][]>[]
+        lands,
+        overlays
     };
     return status;
 }

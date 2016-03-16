@@ -71,9 +71,9 @@ export interface Point {
 }
 
 export enum Land {
-    NONE, HARDBLOCK
+    NONE, HARD_BLOCK
 }
 
 export enum Overlay {
-    NONE, SOFTBLOCK
+    NONE, SOFT_BLOCK
 }

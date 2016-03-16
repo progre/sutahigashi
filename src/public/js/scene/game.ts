@@ -37,10 +37,6 @@ export default class Game {
         console.log("Game starting.");
         document.getElementsByTagName("main")[0].appendChild(this.subContainer);
 
-        this.world = new World(loader, <HTMLCanvasElement>stage.canvas);
-        stage.addChild(this.world);
-        stage.update();
-
         this.eventDetector
             .on("put", () => {
                 se.game.play("basic/put");
@@ -69,6 +65,12 @@ export default class Game {
 
     update(status: Status) {
         if (!this.subViewRendered) {
+            this.world = new World(
+                this.loader,
+                <HTMLCanvasElement>this.stage.canvas,
+                status.lands,
+                status.overlays);
+            this.stage.addChild(this.world);
             ReactDOM.render(
                 React.createElement(GameSub, {
                     loader: this.loader,

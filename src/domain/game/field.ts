@@ -1,29 +1,38 @@
-import {Land} from "../status";
+import {Land, Overlay} from "../status";
 
 const FIELD = `
-###############
-#             #
-# # # # # # # #
-#             #
-# # # # # # # #
-#             #
-# # # # # # # #
-#             #
-# # # # # # # #
-#             #
-# # # # # # # #
-#             #
-###############
-`.split("\n")
+XXXXXXXXXXXXXXX
+X   %%%%%%%   X
+X X%X%X%X%X%X X
+X %%%%%%%%%%% X
+X%X%X%X%X%X%X%X
+X%%%%%%%%%%%%%X
+X%X%X%X%X%X%X%X
+X%%%%%%%%%%%%%X
+X%X%X%X%X%X%X%X
+X %%%%%%%%%%% X
+X X%X%X%X%X%X X
+X   %%%%%%%   X
+XXXXXXXXXXXXXXX
+`
+    .split("\n")
     .splice(1)
-    .map(x => x.split("").map(x => {
-        switch (x) {
-            case " ": return Land.NONE;
-            case "#": return Land.HARDBLOCK;
-            default: throw new Error();
-        }
-    }));
+    .map(line => line.split(""));
+
+const LANDS = FIELD.map(line => line.map(x => {
+    switch (x) {
+        case "X": return Land.HARD_BLOCK;
+        default: return Land.NONE;
+    }
+}));
+
+const OVERLAYS = FIELD.map(line => line.map(x => {
+    switch (x) {
+        case "%": return Overlay.SOFT_BLOCK;
+        default: return Overlay.NONE;
+    }
+}));
 
 export function createField() {
-    return FIELD;
+    return { lands: LANDS, overlays: OVERLAYS };
 }
