@@ -1,7 +1,7 @@
 /// <reference path="../../typings/test.d.ts" />
 const getPort = <(...args: any[]) => Promise<number>>require("native-promisify")(require("getport"));
 import {fork} from "child_process";
-import assert from "power-assert";
+import * as assert from "power-assert";
 import * as utils from "../domain/game/utils";
 import * as seedrandom from "seedrandom";
 const rnd = seedrandom("remilia");
