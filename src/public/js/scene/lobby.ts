@@ -17,7 +17,7 @@ export default class Lobby {
         sender: SocketIOClient.Socket
     ) {
         document.getElementsByTagName("main")[0].appendChild(this.container);
-        this.component = ReactDOM.render<Props, State>(
+        this.component = (ReactDOM.render(
             React.createElement(View, {
                 loader,
                 onJoin: (name: string) => {
@@ -30,7 +30,7 @@ export default class Lobby {
                 }
             }),
             this.container
-        );
+        ) as any as React.Component<any, any>);
     }
 
     close() {

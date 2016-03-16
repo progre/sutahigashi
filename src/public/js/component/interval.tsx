@@ -11,7 +11,7 @@ interface Props {
     winner: number;
     clone?: boolean;
 }
-export default class Interval extends React.Component<Props, void> {
+export default class Interval extends React.Component<Props, {}> {
     render() {
         let images = RESOURCES.map(x =>
             this.props.loader.getResult(x.id) as HTMLImageElement);

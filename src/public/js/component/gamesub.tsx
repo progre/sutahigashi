@@ -7,7 +7,7 @@ interface Props {
     users: string[];
     clone?: boolean;
 }
-export default class GameSub extends React.Component<Props, void> {
+export default class GameSub extends React.Component<Props, {}> {
     constructor() {
         super();
     }

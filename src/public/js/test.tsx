@@ -12,9 +12,9 @@ import Result from "./component/result";
 async function main() {
     let loader = await loadResource();
 
-    ReactDOM.render(
+    (ReactDOM.render(
         <Lobby loader={loader} onJoin={null} onLeave={null} clone={true}/>,
-        document.getElementById("lobby"))
+        document.getElementById("lobby")) as any as React.Component<any, any>)
         .setState({
             users: ["さたちゅー", "したちゅー", "すたちゅー", "せたちゅー"]
         });

@@ -12,7 +12,7 @@ interface Props {
     winner: string;
     clone?: boolean;
 }
-export default class Result extends React.Component<Props, any> {
+export default class Result extends React.Component<Props, {}> {
     render() {
         let charaId = playerResources[this.props.number].id;
         let chara = this.props.loader.getResult(charaId) as HTMLImageElement;

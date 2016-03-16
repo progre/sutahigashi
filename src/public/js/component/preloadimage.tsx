@@ -4,7 +4,7 @@ interface UserProps {
     image: HTMLImageElement;
     style?: React.CSSProperties;
 }
-export default class PreloadImage extends React.Component<UserProps, void> {
+export default class PreloadImage extends React.Component<UserProps, {}> {
     render() {
         let src = this.props.style;
         let dest = this.props.image.style as any;
