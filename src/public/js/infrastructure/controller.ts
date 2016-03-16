@@ -34,13 +34,12 @@ export default class Controller {
 
     handleEvent(e: HTML5KeyboardEvent) {
         keyboardEventShim(e);
-        e.preventDefault();
         switch (e.code) {
-            case "ArrowUp": this.up = true; return;
-            case "ArrowDown": this.down = true; return;
-            case "ArrowLeft": this.left = true; return;
-            case "ArrowRight": this.right = true; return;
-            case "Space": this.bomb = true; return;
+            case "ArrowUp": e.preventDefault(); this.up = true; return;
+            case "ArrowDown": e.preventDefault(); this.down = true; return;
+            case "ArrowLeft": e.preventDefault(); this.left = true; return;
+            case "ArrowRight": e.preventDefault(); this.right = true; return;
+            case "Space": e.preventDefault(); this.bomb = true; return;
             default: return;
         }
     }
@@ -60,7 +59,7 @@ function keyboardEventShim(e: HTML5KeyboardEvent) {
         case "Right":
             e.code = `Arrow${e.key}`;
             return;
-        case "Spacebar":
+        case " ":
             e.code = "Space";
             return;
         default:

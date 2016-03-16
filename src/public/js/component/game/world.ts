@@ -43,7 +43,6 @@ export default class GameViewContainer extends createjs.Container {
                 items.push(item);
                 fieldArea.addChild(item);
             }
-            console.log(ability);
             this.items.set(ability, items);
         }
     }
@@ -82,7 +81,6 @@ export default class GameViewContainer extends createjs.Container {
             }
         }
         game.items.forEach((item, i) => {
-            console.log("server: " + item.ability);
             let itemView = this.items.get(item.ability)[i];
             itemView.visible = true;
             itemView.x = item.point.x * CHIP_PIXEL;
