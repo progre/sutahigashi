@@ -9,7 +9,11 @@ import Sender from "../infrastructure/sender";
 
 const NAME = "game";
 
-export default async function game(players: string[], receiver: InputReceiver, sender: Sender) {
+export default async function game(
+    players: string[],
+    receiver: InputReceiver,
+    sender: Sender
+) {
     logger.info("Game starting.");
     let game = createStatus(players);
     sender.send(NAME, { game });
@@ -52,7 +56,8 @@ class MainLoop {
                 return true;
             }
             if (this.waiting > 0) {
-                logger.info(`Game waited caused by late clients: ${this.waiting} frame(s)`);
+                logger.info(`Game waited caused by late clients: `
+                    + `${this.waiting} frame(s)`);
                 this.waiting = 0;
             }
             first = false;
@@ -61,7 +66,6 @@ class MainLoop {
                 return false;
             }
             sender.send(NAME, { game });
-            return true;
         }
     }
 }
