@@ -1,3 +1,4 @@
+import * as clone from "clone";
 import {Land, Overlay} from "../status";
 
 const FIELD = `
@@ -34,5 +35,5 @@ const OVERLAYS = FIELD.map(line => line.map(x => {
 }));
 
 export function createField() {
-    return { lands: LANDS, overlays: OVERLAYS };
+    return clone({ lands: LANDS, overlays: OVERLAYS });
 }

@@ -1,7 +1,7 @@
 import * as status from "../status";
 import {FPS} from "./definition";
 import {Input} from "./input";
-import {equals} from "./utils";
+import * as utils from "./utils";
 import * as bombs from "./bombs";
 
 export function movePlayers(
@@ -41,7 +41,9 @@ function movePlayer(
 export function moveBalls(
     balls: status.Ball[],
     lands: status.Land[][],
-    overlays: status.Overlay[][]
+    overlays: status.Overlay[][],
+    items: status.Item[],
+    rnd: prng
 ) {
     balls
         .forEach(ball => {
@@ -50,7 +52,7 @@ export function moveBalls(
     balls
         .filter(ball => ball.remain <= 0)
         .forEach(ball => {
-            moveBall(ball, lands, overlays);
+            moveBall(ball, lands, overlays, items, rnd);
             ball.remain = FPS / ball.speed - ball.remain;
         });
 }
@@ -58,7 +60,9 @@ export function moveBalls(
 function moveBall(
     ball: status.Ball,
     lands: status.Land[][],
-    overlays: status.Overlay[][]
+    overlays: status.Overlay[][],
+    items: status.Item[],
+    rnd: prng
 ) {
     let x = 0;
     let y = 0;
@@ -77,10 +81,23 @@ function moveBall(
     let target = moveObjectPoint(ball.point, x, y, lands, overlays, []);
     if (overlays[target.y][target.x] === status.Overlay.SOFT_BLOCK) {
         overlays[target.y][target.x] = status.Overlay.NONE;
+        let item = createItem(rnd, target);
+        if (item != null) {
+            items.push(item);
+        }
     }
     if (ball.point.x === oldX && ball.point.y === oldY) {
         ball.point = null;
     }
+}
+
+function createItem(rnd: prng, point: status.Point) {
+    if (rnd() >= 0.1) {
+        return null;
+    }
+    const ABILITIES = [status.Ability.EIGHT_BOMB];
+    let ability = ABILITIES[utils.random(rnd, 0, ABILITIES.length)];
+    return { point, ability };
 }
 
 function moveObjectPoint(
@@ -116,17 +133,17 @@ function moveObjectPoint(
 }
 
 export function ballTouchedToPlayer(ball: status.Ball, player: status.Player) {
-    return equals(player.point, ball.point);
+    return utils.equals(player.point, ball.point);
 }
 
 export function ballTouchedToItem(ball: status.Ball, item: status.Item) {
-    return equals(ball.point, item.point);
+    return utils.equals(ball.point, item.point);
 }
 
 export function ballTouchedToBomb(ball: status.Ball, bomb: status.Bomb) {
-    return equals(ball.point, bomb.point);
+    return utils.equals(ball.point, bomb.point);
 }
 
 export function playerTouchedToItem(player: status.Player, item: status.Item) {
-    return equals(player.point, item.point);
+    return utils.equals(player.point, item.point);
 }

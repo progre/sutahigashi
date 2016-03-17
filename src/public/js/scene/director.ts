@@ -9,19 +9,19 @@ import Result from "./result";
 export default async function direct(socket: SocketIOClient.Socket, loader: createjs.AbstractLoader) {
     let stage = new createjs.Stage("canvas");
     let se = new SE();
-    let scene = <Scene>{ name: "", close() { }, update(_: any) { } };
+    let scene = <Scene>{ name: "", close() { /**/ }, update(_: any) { /**/ } };
     socket.on("status", (status: Status) => {
         if (status.version !== VERSION) {
             window.location.reload(true);
         }
         if (status.scene !== scene.name) {
             scene.close();
-            switch (name) {
-                case "lobby": scene = new Lobby(loader, se, socket);
-                case "game": scene = new Game(loader, stage, se, socket);
-                case "interval": scene = new Interval(loader, se);
-                case "result": scene = new Result(loader, se);
-                default: throw new Error();
+            switch (status.scene) {
+                case "lobby": scene = new Lobby(loader, se, socket); break;
+                case "game": scene = new Game(loader, stage, se, socket); break;
+                case "interval": scene = new Interval(loader, se); break;
+                case "result": scene = new Result(loader, se); break;
+                default: throw new Error(name);
             }
         }
         scene.update((<any>status)[status.scene]);

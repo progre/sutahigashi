@@ -42,7 +42,6 @@ export default class Game {
                 se.game.play("basic/put");
             })
             .on("explosion", () => {
-                console.log("exp");
                 se.game.play("basic/explosion");
             })
             .on("death", () => {

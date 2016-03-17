@@ -43,18 +43,10 @@ export function update(game: status.Game, inputs: Input[]) {
     game.items = cleanup(game.items);
     pickup(actives, game.items);
     game.items = cleanup(game.items);
-    objects.moveBalls(game.balls, game.lands, game.overlays);
+    objects.moveBalls(game.balls, game.lands, game.overlays, game.items, rnd);
     game.balls = cleanup(game.balls);
     bombs.updateBombs(game.bombs, game.balls); // 誘爆させたボムをすぐに弾にするのでボムは後
     game.bombs = game.bombs.filter(x => x.remain > 0);
-    if (rnd() < 0.01) {
-        let lands = utils.findFreeArea(game);
-        let point = lands[utils.random(rnd, 0, lands.length)];
-        const ABILITIES = [status.Ability.EIGHT_BOMB];
-        let ability = ABILITIES[utils.random(rnd, 0, ABILITIES.length)];
-        console.log(ability);
-        game.items.push({ point, ability });
-    }
     game.tick++;
     if (game.items.some(item => item.point == null)) { console.log(game.items); throw new Error(); }
 }
