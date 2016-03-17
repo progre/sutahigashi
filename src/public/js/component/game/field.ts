@@ -1,4 +1,4 @@
-import {Land, Overlay} from "../../../../domain/status";
+import {Land} from "../../../../domain/status";
 import {CHIP_PIXEL, createResizedBitmap} from "./chip";
 
 export const RESOURCES = [

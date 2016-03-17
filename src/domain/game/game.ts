@@ -3,7 +3,6 @@ const rnd = seedrandom("remilia");
 import * as status from "../status";
 import {createField} from "./field";
 import {Input} from "./input";
-import * as utils from "./utils";
 import * as objects from "./objects";
 import * as bombs from "./bombs";
 
