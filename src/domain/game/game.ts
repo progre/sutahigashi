@@ -47,7 +47,6 @@ export function update(game: status.Game, inputs: Input[]) {
     bombs.updateBombs(game.bombs, game.balls); // 誘爆させたボムをすぐに弾にするのでボムは後
     game.bombs = game.bombs.filter(x => x.remain > 0);
     game.tick++;
-    if (game.items.some(item => item.point == null)) { console.log(game.items); throw new Error(); }
 }
 
 function burn(balls: status.Ball[], actives: status.Player[], items: status.Item[]) {

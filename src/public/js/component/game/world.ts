@@ -1,4 +1,5 @@
 import {Game, Ability, Land, Overlay} from "../../../../domain/status";
+import {FIELD_WIDTH} from "../../../../domain/game/definition";
 import createField, {RESOURCES as fieldResources} from "./field";
 import createPlayer, {RESOURCES as playerResources} from "./player";
 import {createBomb, createBall, createItem, createSoftBlock, RESOURCES as objectsResources} from "./objects";
@@ -28,13 +29,13 @@ export default class GameViewContainer extends createjs.Container {
 
         this.players = [0, 1, 2, 3].map(x => createPlayer(loader, x));
         this.players.forEach(x => fieldArea.addChild(x));
-        for (let i = 0; i < 15 * 13; i++) {
+        for (let i = 0; i < FIELD_WIDTH * 13; i++) {
             let bomb = createBomb(loader);
             bomb.visible = false;
             this.bombs.push(bomb);
             fieldArea.addChild(bomb);
         }
-        for (let i = 0; i < 15 * 13 * 8; i++) {
+        for (let i = 0; i < FIELD_WIDTH * 13 * 8; i++) {
             let ball = createBall(loader);
             ball.visible = false;
             this.balls.push(ball);
@@ -42,7 +43,7 @@ export default class GameViewContainer extends createjs.Container {
         }
         for (let y = 0; y < 13; y++) {
             let line = <createjs.DisplayObject[]>[];
-            for (let x = 0; x < 15; x++) {
+            for (let x = 0; x < FIELD_WIDTH; x++) {
                 let softBlock = createSoftBlock(loader);
                 softBlock.visible = false;
                 softBlock.x = x * CHIP_PIXEL;
@@ -54,7 +55,7 @@ export default class GameViewContainer extends createjs.Container {
         }
         for (let ability of ABILITIES) {
             let items = <createjs.DisplayObject[]>[];
-            for (let i = 0; i < 15 * 13; i++) {
+            for (let i = 0; i < FIELD_WIDTH * 13; i++) {
                 let item = createItem(loader, ability);
                 item.visible = false;
                 items.push(item);
@@ -65,10 +66,10 @@ export default class GameViewContainer extends createjs.Container {
     }
 
     render(game: Game) {
-        game.overlays.forEach((line, y) => {
-            line.forEach((overlay, x) => {
-                this.softBlocks[y][x].visible = overlay === Overlay.SOFT_BLOCK;
-            });
+        game.overlays.forEach((overlay, i) => {
+            let x = i % FIELD_WIDTH;
+            let y = Math.floor(i / FIELD_WIDTH);
+            this.softBlocks[y][x].visible = overlay === Overlay.SOFT_BLOCK;
         });
         game.players.forEach((player, i) => {
             if (player.point == null) {

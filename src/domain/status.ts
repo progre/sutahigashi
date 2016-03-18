@@ -34,7 +34,7 @@ export interface Game {
     bombs: Bomb[];
     balls: Ball[];
     lands: Land[];
-    overlays: Overlay[][];
+    overlays: Overlay[];
 }
 
 export interface Player {

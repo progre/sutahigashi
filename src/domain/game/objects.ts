@@ -7,7 +7,7 @@ import * as bombs from "./bombs";
 export function movePlayers(
     players: status.Player[],
     lands: status.Land[],
-    overlays: status.Overlay[][],
+    overlays: status.Overlay[],
     bombList: status.Bomb[],
     inputs: Input[]
 ) {
@@ -30,7 +30,7 @@ function movePlayer(
     input: Input,
     player: status.Point,
     lands: status.Land[],
-    overlays: status.Overlay[][],
+    overlays: status.Overlay[],
     bombs: status.Bomb[]
 ) {
     let x: number = -<any>input.left + <any>input.right;
@@ -41,7 +41,7 @@ function movePlayer(
 export function moveBalls(
     balls: status.Ball[],
     lands: status.Land[],
-    overlays: status.Overlay[][],
+    overlays: status.Overlay[],
     items: status.Item[],
     rnd: prng
 ) {
@@ -60,7 +60,7 @@ export function moveBalls(
 function moveBall(
     ball: status.Ball,
     lands: status.Land[],
-    overlays: status.Overlay[][],
+    overlays: status.Overlay[],
     items: status.Item[],
     rnd: prng
 ) {
@@ -79,8 +79,8 @@ function moveBall(
     }
     let {x: oldX, y: oldY} = ball.point;
     let target = moveObjectPoint(ball.point, x, y, lands, overlays, []);
-    if (overlays[target.y][target.x] === status.Overlay.SOFT_BLOCK) {
-        overlays[target.y][target.x] = status.Overlay.NONE;
+    if (overlays[target.y * FIELD_WIDTH + target.x] === status.Overlay.SOFT_BLOCK) {
+        overlays[target.y * FIELD_WIDTH + target.x] = status.Overlay.NONE;
         let item = createItem(rnd, target);
         if (item != null) {
             items.push(item);
@@ -104,7 +104,7 @@ function moveObjectPoint(
     point: status.Point,
     x: number, y: number,
     lands: status.Land[],
-    overlays: status.Overlay[][],
+    overlays: status.Overlay[],
     bombs: status.Bomb[]
 ) {
     let targetX = point.x + x;
@@ -120,7 +120,7 @@ function moveObjectPoint(
         targetY = FIELD_HEIGHT - 1;
     }
     if (lands[targetY * FIELD_WIDTH + targetX] !== status.Land.NONE
-        || overlays[targetY][targetX] !== status.Overlay.NONE
+        || overlays[targetY * FIELD_WIDTH + targetX] !== status.Overlay.NONE
         || bombs.some(bomb => targetX === bomb.point.x && targetY === bomb.point.y)) {
         return { x: targetX, y: targetY };
     }
