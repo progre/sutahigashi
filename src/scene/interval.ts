@@ -20,5 +20,5 @@ export default async function interval(winner: number, users: User[], sender: Se
     await new Promise<number>((resolve, reject) => {
         setTimeout(resolve, 3000);
     });
-    return { users, finished: users.some(x => x.wins >= 3) };
+    return { users, finished: users.some(x => x.wins >= 2) };
 }
