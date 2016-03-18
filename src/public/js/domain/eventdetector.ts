@@ -26,6 +26,10 @@ export default class EventDetector extends EventEmitter {
             .some(player => isPickuped(player, previous.items))) {
             this.emit("pickup");
         }
+        if (previous.players.filter(x => x.point != null).length > 1
+            && current.players.filter(x => x.point != null).length <= 1) {
+            this.emit("gameset");
+        }
     }
 }
 

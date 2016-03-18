@@ -36,7 +36,7 @@ function mainLoop(inputsRepository: Input[][], game: Game, sender: Sender) {
         let timer = setInterval(() => {
             if (!loop.tick(inputsRepository, game, sender)) {
                 clearInterval(timer);
-                resolve();
+                setTimeout(resolve, 3000);
             }
         }, 1000 / FPS);
     });
@@ -62,10 +62,10 @@ class MainLoop {
             }
             first = false;
             update(game, inputs);
+            sender.send(NAME, { game });
             if (game.players.filter(x => x.point != null).length <= 1) {
                 return false;
             }
-            sender.send(NAME, { game });
         }
     }
 }

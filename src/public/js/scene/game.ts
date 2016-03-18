@@ -49,11 +49,13 @@ export default class Game {
             })
             .on("pickup", () => {
                 se.game.play("basic/pickup");
+            })
+            .on("gameset", () => {
+                se.game.playGameSet();
             });
     }
 
     close() {
-        this.se.game.playGameSet();
         clearInterval(this.onUpdateTimer);
         this.stage.removeChild(this.world);
         this.stage.update();

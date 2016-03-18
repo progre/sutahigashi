@@ -36,3 +36,6 @@ const OVERLAYS = FIELD.map(x => {
 export function createField() {
     return clone({ lands: LANDS, overlays: OVERLAYS });
 }
+
+export function dropSuddenDeath(overlays: Overlay[], count: number) {
+}

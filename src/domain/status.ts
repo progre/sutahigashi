@@ -75,5 +75,5 @@ export enum Land {
 }
 
 export enum Overlay {
-    NONE, SOFT_BLOCK
+    NONE, SOFT_BLOCK, SUDDEN_DEATH_BLOCK
 }
