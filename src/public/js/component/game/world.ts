@@ -20,7 +20,7 @@ export default class GameViewContainer extends createjs.Container {
     constructor(
         loader: createjs.AbstractLoader,
         parentRect: { width: number; height: number; },
-        lands: Land[][]
+        lands: Land[]
     ) {
         super();
         let fieldArea = createFieldArea(loader, parentRect, lands);
@@ -114,7 +114,7 @@ export default class GameViewContainer extends createjs.Container {
 function createFieldArea(
     loader: createjs.AbstractLoader,
     parentRect: { width: number; height: number; },
-    lands: Land[][]
+    lands: Land[]
 ) {
     let fieldArea = new createjs.Container();
     centering(fieldArea, parentRect, FIELD_PIXEL);

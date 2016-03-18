@@ -33,7 +33,7 @@ export interface Game {
     items: Item[];
     bombs: Bomb[];
     balls: Ball[];
-    lands: Land[][];
+    lands: Land[];
     overlays: Overlay[][];
 }
 

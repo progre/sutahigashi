@@ -1,14 +1,13 @@
 import {Game, Point, Land} from "../status";
+import {FIELD_WIDTH} from "./definition";
 
 export function findFreeArea(game: Game) {
     let area = <Point[]>[];
-    game.lands.forEach((line, y) => {
-        line.forEach((land, x) => {
-            if (land !== Land.NONE) {
-                return;
-            }
-            area.push({ x, y });
-        });
+    game.lands.forEach((land, i) => {
+        if (land !== Land.NONE) {
+            return;
+        }
+        area.push({ x: i % FIELD_WIDTH, y: Math.floor(i / FIELD_WIDTH) });
     });
     return area
         .filter(x => game.bombs.every(bomb => !equals(x, bomb.point)))

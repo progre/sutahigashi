@@ -20,12 +20,12 @@ XXXXXXXXXXXXXXX
     .splice(1)
     .map(line => line.split(""));
 
-const LANDS = FIELD.map(line => line.map(x => {
+const LANDS = FIELD.reduce((p, c) => p.concat(c)).map(x => {
     switch (x) {
         case "X": return Land.HARD_BLOCK;
         default: return Land.NONE;
     }
-}));
+});
 
 const OVERLAYS = FIELD.map(line => line.map(x => {
     switch (x) {

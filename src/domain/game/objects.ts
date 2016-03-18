@@ -1,12 +1,12 @@
 import * as status from "../status";
-import {FPS} from "./definition";
+import {FPS, FIELD_WIDTH, FIELD_HEIGHT} from "./definition";
 import {Input} from "./input";
 import * as utils from "./utils";
 import * as bombs from "./bombs";
 
 export function movePlayers(
     players: status.Player[],
-    lands: status.Land[][],
+    lands: status.Land[],
     overlays: status.Overlay[][],
     bombList: status.Bomb[],
     inputs: Input[]
@@ -29,7 +29,7 @@ export function movePlayers(
 function movePlayer(
     input: Input,
     player: status.Point,
-    lands: status.Land[][],
+    lands: status.Land[],
     overlays: status.Overlay[][],
     bombs: status.Bomb[]
 ) {
@@ -40,7 +40,7 @@ function movePlayer(
 
 export function moveBalls(
     balls: status.Ball[],
-    lands: status.Land[][],
+    lands: status.Land[],
     overlays: status.Overlay[][],
     items: status.Item[],
     rnd: prng
@@ -59,7 +59,7 @@ export function moveBalls(
 
 function moveBall(
     ball: status.Ball,
-    lands: status.Land[][],
+    lands: status.Land[],
     overlays: status.Overlay[][],
     items: status.Item[],
     rnd: prng
@@ -103,26 +103,23 @@ function createItem(rnd: prng, point: status.Point) {
 function moveObjectPoint(
     point: status.Point,
     x: number, y: number,
-    lands: status.Land[][],
+    lands: status.Land[],
     overlays: status.Overlay[][],
     bombs: status.Bomb[]
 ) {
-    const width = lands[0].length;
-    const height = lands.length;
-
     let targetX = point.x + x;
     let targetY = point.y + y;
     if (targetX < 0) {
         targetX = 0;
-    } else if (targetX >= width) {
-        targetX = width - 1;
+    } else if (targetX >= FIELD_WIDTH) {
+        targetX = FIELD_WIDTH - 1;
     }
     if (targetY < 0) {
         targetY = 0;
-    } else if (targetY >= height) {
-        targetY = height - 1;
+    } else if (targetY >= FIELD_HEIGHT) {
+        targetY = FIELD_HEIGHT - 1;
     }
-    if (lands[targetY][targetX] !== status.Land.NONE
+    if (lands[targetY * FIELD_WIDTH + targetX] !== status.Land.NONE
         || overlays[targetY][targetX] !== status.Overlay.NONE
         || bombs.some(bomb => targetX === bomb.point.x && targetY === bomb.point.y)) {
         return { x: targetX, y: targetY };
