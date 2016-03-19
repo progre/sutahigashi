@@ -38,6 +38,7 @@ export interface Game {
 }
 
 export interface Player {
+    id: string;
     name: string;
     point: Point;
     ability: Ability[];

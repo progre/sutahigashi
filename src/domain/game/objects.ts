@@ -13,9 +13,6 @@ export function movePlayers(
 ) {
     inputs.forEach((input, i) => {
         let player = players[i];
-        if (player.point == null) {
-            return;
-        }
         movePlayer(input, player.point, lands, overlays, bombList);
     });
 }
@@ -51,13 +48,16 @@ export function suicide(
     });
 }
 
-function movePlayer(
+export function movePlayer(
     input: Input,
     player: status.Point,
     lands: status.Land[],
     overlays: status.Overlay[],
     bombs: status.Bomb[]
 ) {
+    if (player == null) {
+        return;
+    }
     let x: number = -<any>input.left + <any>input.right;
     let y: number = -<any>input.up + <any>input.down;
     moveObjectPoint(player, x, y, lands, overlays, bombs);

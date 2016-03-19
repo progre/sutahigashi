@@ -33,7 +33,10 @@ export default async function direct(io: SocketIO.Server): Promise<void> {
                 continue main_loop;
             }
             let inputReceiver = new InputReceiver(sockets);
-            let winner = await game(users.map(x => x.name), inputReceiver, sender);
+            let winner = await game(
+                users.map(x => ({ id: x.id, name: x.name })),
+                inputReceiver,
+                sender);
             inputReceiver.close();
             let result = await interval(winner, users, sender);
             users = result.users;

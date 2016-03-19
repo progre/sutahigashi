@@ -6,12 +6,13 @@ import {Input} from "./input";
 import * as objects from "./objects";
 import * as bombs from "./bombs";
 
-export function createStatus(players: string[]) {
+export function createStatus(players: { id: string, name: string }[]) {
     let {lands, overlays} = createField();
     let status = {
         tick: 0,
         players: players.map((x, i) => ({
-            name: x,
+            id: x.id,
+            name: x.name,
             point: getDefaultPoint(i),
             ability: []
         })),

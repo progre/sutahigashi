@@ -1,7 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Game as Status} from "../../../domain/status";
+import {Game as Status, Player} from "../../../domain/status";
 import {FPS} from "../../../domain/game/definition";
+import {Input} from "../../../domain/game/input";
+import * as objects from "../../../domain/game/objects";
 import EventDetector from "../domain/eventdetector";
 import Controller from "../infrastructure/controller";
 import SE from "../infrastructure/se";
@@ -20,9 +22,9 @@ export default class Game {
     private eventDetector = new EventDetector();
     private subContainer = createContainer();
     private world: World;
-    private subViewRendered = false;
+    private firstRendered = false;
     private showingTick = 0;
-    private sendingTick = 0;
+    private sendings = <Input[]>[null]; // 最初のtickは入力なし
     private waiting = 0;
     private onUpdateTimer = setInterval(
         () => this.tick(),
@@ -65,29 +67,35 @@ export default class Game {
     }
 
     update(status: Status) {
-        if (!this.subViewRendered) {
-            this.world = new World(
-                this.loader,
-                <HTMLCanvasElement>this.stage.canvas,
-                status.lands);
-            this.stage.addChild(this.world);
-            ReactDOM.render(
-                React.createElement(GameSub, {
-                    loader: this.loader,
-                    users: status.players.map(x => x.name)
-                }),
-                this.subContainer
-            );
-            this.subViewRendered = true;
+        if (!this.firstRendered) {
+            this.initView(status);
+            this.firstRendered = true;
         }
+        let player = status.players.find(x => x.id === `/#${this.sender.id}`);
         this.showingTick = status.tick;
+        this.eventDetector.update(status);
+        this.updateMyMove(player, status);
         this.world.render(status);
         this.stage.update();
-        this.eventDetector.update(status);
+    }
+
+    private initView(status: Status) {
+        this.world = new World(
+            this.loader,
+            <HTMLCanvasElement>this.stage.canvas,
+            status.lands);
+        this.stage.addChild(this.world);
+        ReactDOM.render(
+            React.createElement(GameSub, {
+                loader: this.loader,
+                users: status.players.map(x => x.name)
+            }),
+            this.subContainer
+        );
     }
 
     private tick() {
-        if (this.sendingTick > this.showingTick + wait) {
+        if (this.sendings.length > this.showingTick + wait) {
             // 入力が先行しすぎないようにする
             this.waiting++;
             return;
@@ -96,7 +104,17 @@ export default class Game {
             console.log(`Input waited caused by server lated: ${this.waiting} frame(s)`);
             this.waiting = 0;
         }
-        this.sender.emit("input", this.controller.popStatus());
-        this.sendingTick++;
+        let input = this.controller.popStatus();
+        this.sender.emit("input", input);
+        this.sendings.push(input);
+    }
+
+    private updateMyMove(player: Player, status: Status) {
+        if (player == null) {
+            return;
+        }
+        for (let input of this.sendings.concat().splice(status.tick + 1)) {
+            objects.movePlayer(input, player.point, status.lands, status.overlays, status.bombs);
+        }
     }
 }

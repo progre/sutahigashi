@@ -10,7 +10,7 @@ import Sender from "../infrastructure/sender";
 const NAME = "game";
 
 export default async function game(
-    players: string[],
+    players: { id: string, name: string }[],
     receiver: InputReceiver,
     sender: Sender
 ) {
