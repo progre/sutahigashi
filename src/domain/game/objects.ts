@@ -17,8 +17,33 @@ export function movePlayers(
             return;
         }
         movePlayer(input, player.point, lands, overlays, bombList);
+    });
+}
+
+export function putBomb(
+    players: status.Player[],
+    bombList: status.Bomb[],
+    inputs: Input[]
+) {
+    inputs.forEach((input, i) => {
+        let player = players[i];
+        if (player.point == null) {
+            return;
+        }
         if (input.bomb) {
             bombList.push(bombs.createBomb(player));
+        }
+    });
+}
+
+export function suicide(
+    players: status.Player[],
+    inputs: Input[]
+) {
+    inputs.forEach((input, i) => {
+        let player = players[i];
+        if (player.point == null) {
+            return;
         }
         if (input.suicide) {
             player.point = null;
