@@ -5,7 +5,7 @@ import createPlayer, {RESOURCES as playerResources} from "./player";
 import {createBomb, createBall, createItem, createSoftBlock, RESOURCES as objectsResources} from "./objects";
 import {CHIP_PIXEL, FIELD_PIXEL} from "./chip";
 
-const ABILITIES = [Ability.EIGHT_BOMB];
+const ABILITIES = [Ability.EIGHT_BOMB, Ability.BOMB_UP];
 
 export const RESOURCES = fieldResources
     .concat(playerResources)

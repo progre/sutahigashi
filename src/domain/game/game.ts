@@ -81,7 +81,10 @@ function pickup(actives: status.Player[], items: status.Item[]) {
                 return;
             }
             item.point = null;
-            player.ability.push(status.Ability.EIGHT_BOMB);
+            player.ability.push(item.ability);
+            if (item.ability === status.Ability.BOMB_UP) {
+                player.remainBomb++;
+            }
         });
         items = cleanup(items);
     });

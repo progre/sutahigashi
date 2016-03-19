@@ -7,7 +7,8 @@ import * as SocketIOStatic from "socket.io";
 const socket: SocketIOStatic = require("socket.io");
 import {configure, getLogger} from "log4js";
 configure({
-    appenders: [{ type: "console", layout: { type: "basic" } }]
+    appenders: [{ type: "console", layout: { type: "basic" } }],
+    "levels": { default: "INFO" }
 });
 let logger = getLogger();
 import direct from "./scene/director";

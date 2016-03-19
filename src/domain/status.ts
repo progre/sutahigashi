@@ -46,7 +46,8 @@ export interface Player {
 }
 
 export enum Ability {
-    EIGHT_BOMB
+    EIGHT_BOMB,
+    BOMB_UP
 }
 
 export interface Item {
