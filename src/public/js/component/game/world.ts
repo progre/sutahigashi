@@ -27,20 +27,6 @@ export default class GameViewContainer extends createjs.Container {
         let fieldArea = createFieldArea(loader, parentRect, lands);
         this.addChild(fieldArea);
 
-        this.players = [0, 1, 2, 3].map(x => createPlayer(loader, x));
-        this.players.forEach(x => fieldArea.addChild(x));
-        for (let i = 0; i < FIELD_WIDTH * 13; i++) {
-            let bomb = createBomb(loader);
-            bomb.visible = false;
-            this.bombs.push(bomb);
-            fieldArea.addChild(bomb);
-        }
-        for (let i = 0; i < FIELD_WIDTH * 13 * 8; i++) {
-            let ball = createBall(loader);
-            ball.visible = false;
-            this.balls.push(ball);
-            fieldArea.addChild(ball);
-        }
         for (let y = 0; y < 13; y++) {
             let line = <createjs.DisplayObject[]>[];
             for (let x = 0; x < FIELD_WIDTH; x++) {
@@ -62,6 +48,20 @@ export default class GameViewContainer extends createjs.Container {
                 fieldArea.addChild(item);
             }
             this.items.set(ability, items);
+        }
+        this.players = [0, 1, 2, 3].map(x => createPlayer(loader, x));
+        this.players.forEach(x => fieldArea.addChild(x));
+        for (let i = 0; i < FIELD_WIDTH * 13; i++) {
+            let bomb = createBomb(loader);
+            bomb.visible = false;
+            this.bombs.push(bomb);
+            fieldArea.addChild(bomb);
+        }
+        for (let i = 0; i < FIELD_WIDTH * 13 * 8; i++) {
+            let ball = createBall(loader);
+            ball.visible = false;
+            this.balls.push(ball);
+            fieldArea.addChild(ball);
         }
     }
 
