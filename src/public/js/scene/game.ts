@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import * as clone from "clone";
 import {Game as Status, Player} from "../../../domain/status";
 import {FPS} from "../../../domain/game/definition";
 import {Input} from "../../../domain/game/input";
@@ -73,7 +74,7 @@ export default class Game {
         }
         let player = status.players.find(x => x.id === `/#${this.sender.id}`);
         this.showingTick = status.tick;
-        this.eventDetector.update(status);
+        this.eventDetector.update(clone(status));
         this.updateMyMove(player, status);
         this.world.render(status);
         this.stage.update();
@@ -115,6 +116,7 @@ export default class Game {
         }
         for (let input of this.sendings.concat().splice(status.tick + 1)) {
             objects.movePlayer(input, player.point, status.lands, status.overlays, status.bombs);
+            objects.putBomb(player, status.bombs, input);
         }
     }
 }
