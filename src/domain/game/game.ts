@@ -14,7 +14,8 @@ export function createStatus(players: { id: string, name: string }[]) {
             id: x.id,
             name: x.name,
             point: getDefaultPoint(i),
-            ability: []
+            ability: [],
+            remainBomb: 1
         })),
         items: <status.Item[]>[],
         bombs: <status.Bomb[]>[],

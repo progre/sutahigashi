@@ -11,7 +11,8 @@ export function createBomb(player: status.Player) {
     return {
         remain: BOMB_DEFAULT_REMAIN,
         point: { x: player.point.x, y: player.point.y },
-        ability
+        ability,
+        author: player
     };
 }
 
@@ -31,6 +32,7 @@ export function updateBombs(bombs: status.Bomb[], balls: status.Ball[]) {
             for (let ball of newBalls) {
                 balls.push(ball);
             }
+            bomb.author.remainBomb++;
         });
 }
 

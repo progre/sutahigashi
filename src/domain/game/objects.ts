@@ -36,8 +36,9 @@ export function putBomb(
     if (player.point == null) {
         return;
     }
-    if (input.bomb) {
+    if (input.bomb && player.remainBomb > 0) {
         bombList.push(bombs.createBomb(player));
+        player.remainBomb--;
     }
 }
 

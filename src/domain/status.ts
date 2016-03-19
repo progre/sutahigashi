@@ -42,6 +42,7 @@ export interface Player {
     name: string;
     point: Point;
     ability: Ability[];
+    remainBomb: number;
 }
 
 export enum Ability {
@@ -57,6 +58,7 @@ export interface Bomb {
     remain: number;
     point: Point;
     ability: Ability;
+    author: Player;
 }
 
 export interface Ball {
