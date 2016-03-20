@@ -126,11 +126,19 @@ function moveBall(
 }
 
 function createItem(rnd: prng, point: status.Point) {
-    if (rnd() < 0.7) {
+    let random = rnd();
+    if (random < 0.7) {
         return null;
     }
-    if (rnd() < 0.1) {
+    random = (random - 0.7) / 0.3;
+    if (random < 0.1) {
         return { point, ability: status.Ability.EIGHT_BOMB };
+    }
+    if (random < 0.3) {
+        return { point, ability: status.Ability.SPEED };
+    }
+    if (random < 0.5) {
+        return { point, ability: status.Ability.SLOW };
     }
     return { point, ability: status.Ability.BOMB_UP };
 }

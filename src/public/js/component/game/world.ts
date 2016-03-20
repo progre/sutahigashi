@@ -2,14 +2,14 @@ import {Game, Ability, Land, Overlay} from "../../../../domain/status";
 import {FIELD_WIDTH} from "../../../../domain/game/definition";
 import createField, {RESOURCES as fieldResources} from "./field";
 import createPlayer, {RESOURCES as playerResources} from "./player";
-import {createBomb, createBall, createItem, createSoftBlock, RESOURCES as objectsResources} from "./objects";
+import * as objects from "./objects";
 import {CHIP_PIXEL, FIELD_PIXEL} from "./chip";
 
-const ABILITIES = [Ability.EIGHT_BOMB, Ability.BOMB_UP];
+const ABILITIES = [Ability.EIGHT_BOMB, Ability.BOMB_UP, Ability.SPEED, Ability.SLOW];
 
 export const RESOURCES = fieldResources
     .concat(playerResources)
-    .concat(objectsResources);
+    .concat(objects.RESOURCES);
 
 export default class GameViewContainer extends createjs.Container {
     private players: createjs.DisplayObject[];
@@ -30,7 +30,7 @@ export default class GameViewContainer extends createjs.Container {
         for (let y = 0; y < 13; y++) {
             let line = <createjs.DisplayObject[]>[];
             for (let x = 0; x < FIELD_WIDTH; x++) {
-                let softBlock = createSoftBlock(loader);
+                let softBlock = objects.createSoftBlock(loader);
                 softBlock.visible = false;
                 softBlock.x = x * CHIP_PIXEL;
                 softBlock.y = y * CHIP_PIXEL;
@@ -42,7 +42,7 @@ export default class GameViewContainer extends createjs.Container {
         for (let ability of ABILITIES) {
             let items = <createjs.DisplayObject[]>[];
             for (let i = 0; i < FIELD_WIDTH * 13; i++) {
-                let item = createItem(loader, ability);
+                let item = objects.createItem(loader, ability);
                 item.visible = false;
                 items.push(item);
                 fieldArea.addChild(item);
@@ -52,13 +52,13 @@ export default class GameViewContainer extends createjs.Container {
         this.players = [0, 1, 2, 3].map(x => createPlayer(loader, x));
         this.players.forEach(x => fieldArea.addChild(x));
         for (let i = 0; i < FIELD_WIDTH * 13; i++) {
-            let bomb = createBomb(loader);
+            let bomb = objects.createBomb(loader);
             bomb.visible = false;
             this.bombs.push(bomb);
             fieldArea.addChild(bomb);
         }
         for (let i = 0; i < FIELD_WIDTH * 13 * 8; i++) {
-            let ball = createBall(loader);
+            let ball = objects.createBall(loader);
             ball.visible = false;
             this.balls.push(ball);
             fieldArea.addChild(ball);

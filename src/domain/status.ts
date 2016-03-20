@@ -47,7 +47,9 @@ export interface Player {
 
 export enum Ability {
     EIGHT_BOMB,
-    BOMB_UP
+    BOMB_UP,
+    SPEED,
+    SLOW
 }
 
 export interface Item {
@@ -60,6 +62,7 @@ export interface Bomb {
     point: Point;
     ability: Ability;
     author: Player;
+    ballSpeed: number;
 }
 
 export interface Ball {

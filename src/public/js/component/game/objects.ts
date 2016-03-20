@@ -6,7 +6,9 @@ export const RESOURCES = [
     { id: "ball", src: "https://pbs.twimg.com/media/CSX_TViU8AAc5Sk.png" },
     { id: "softblock", src: "res/softblock.png" },
     { id: "item_" + Ability.EIGHT_BOMB, src: "https://pbs.twimg.com/media/CSX_XL3UwAAJv-E.png" },
-    { id: "item_" + Ability.BOMB_UP, src: "https://pbs.twimg.com/media/CSX-N00UkAApcON.png" }
+    { id: "item_" + Ability.BOMB_UP, src: "https://pbs.twimg.com/media/CSX-N00UkAApcON.png" },
+    { id: "item_" + Ability.SPEED, src: "https://pbs.twimg.com/media/CSX_vZXUsAAAt_G.png" },
+    { id: "item_" + Ability.SLOW, src: "https://pbs.twimg.com/media/CSX_oIfVAAEDvYy.png" }
 ];
 
 export function createBomb(loader: createjs.AbstractLoader) {
