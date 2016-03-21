@@ -43,6 +43,7 @@ export interface Player {
     ability: Ability[];
     bombs: Bomb[];
     maxBomb: number;
+    direction: number;
 }
 
 export enum Ability {

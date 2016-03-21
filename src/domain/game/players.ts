@@ -29,6 +29,15 @@ export function movePlayer(
     }
     let x: number = -<any>input.left + <any>input.right;
     let y: number = -<any>input.up + <any>input.down;
+    if (x < 0) {
+        player.direction = 4;
+    } else if (0 < x) {
+        player.direction = 6;
+    } else if (y < 0) {
+        player.direction = 8;
+    } else if (0 < y) {
+        player.direction = 2;
+    }
     player.point = movePlayerPoint(player.point, x, y, game);
 }
 
