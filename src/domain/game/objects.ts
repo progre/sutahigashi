@@ -1,32 +1,6 @@
 import * as status from "../status";
 import {FPS, FIELD_WIDTH, FIELD_HEIGHT} from "./definition";
-import {Input} from "./input";
 import * as utils from "./utils";
-import * as players from "./players";
-
-export function movePlayers(
-    players: status.Player[],
-    game: status.Game,
-    inputs: Input[]
-) {
-    inputs.forEach((input, i) => {
-        let player = players[i];
-        movePlayer(input, player, game);
-    });
-}
-
-export function movePlayer(
-    input: Input,
-    player: status.Player,
-    game: status.Game
-) {
-    if (player.point == null) {
-        return;
-    }
-    let x: number = -<any>input.left + <any>input.right;
-    let y: number = -<any>input.up + <any>input.down;
-    player.point = movePlayerPoint(player.point, x, y, game);
-}
 
 export function moveBalls(
     balls: status.Ball[],
@@ -66,15 +40,18 @@ function moveBall(
         default: throw new Error();
     }
     let {x: oldX, y: oldY} = ball.point;
-    let target = moveBallPoint(ball.point, x, y, game);
-    if (game.overlays[target.y * FIELD_WIDTH + target.x] === status.Overlay.SOFT_BLOCK) {
-        game.overlays[target.y * FIELD_WIDTH + target.x] = status.Overlay.NONE;
-        let item = createItem(rnd, target);
+    ball.point = moveBallPoint(ball.point, x, y, game);
+    if (ball.point.x === oldX && ball.point.y === oldY) {
+        ball.point = null;
+        return;
+    }
+    let idx = ball.point.y * FIELD_WIDTH + ball.point.x;
+    if (game.overlays[idx] === status.Overlay.SOFT_BLOCK) {
+        game.overlays[idx] = status.Overlay.NONE;
+        let item = createItem(rnd, ball.point);
         if (item != null) {
             items.push(item);
         }
-    }
-    if (ball.point.x === oldX && ball.point.y === oldY) {
         ball.point = null;
     }
 }
@@ -97,37 +74,24 @@ function createItem(rnd: prng, point: status.Point) {
     return { point, ability: status.Ability.BOMB_UP };
 }
 
-function movePlayerPoint(
-    point: status.Point,
-    x: number, y: number,
-    game: status.Game
-) {
-    let targetX = point.x + x;
-    let targetY = point.y + y;
-    if (targetX < 0) {
-        targetX = 0;
-    } else if (targetX >= FIELD_WIDTH) {
-        targetX = FIELD_WIDTH - 1;
-    }
-    if (targetY < 0) {
-        targetY = 0;
-    } else if (targetY >= FIELD_HEIGHT) {
-        targetY = FIELD_HEIGHT - 1;
-    }
-    let bombs = players.getBombs(game.players);
-    if (game.lands[targetY * FIELD_WIDTH + targetX] !== status.Land.NONE
-        || game.overlays[targetY * FIELD_WIDTH + targetX] !== status.Overlay.NONE
-        || bombs.some(bomb => targetX === bomb.point.x && targetY === bomb.point.y)) {
-        return point;
-    }
-    return { x: targetX, y: targetY };
-}
-
 function moveBallPoint(
     point: status.Point,
     x: number, y: number,
     game: status.Game
 ) {
+    let {x: targetX, y: targetY} = movePoint(point, x, y);
+    if (game.lands[targetY * FIELD_WIDTH + targetX] !== status.Land.NONE
+        || game.overlays[targetY * FIELD_WIDTH + targetX] !== status.Overlay.NONE
+        && game.overlays[targetY * FIELD_WIDTH + targetX] !== status.Overlay.SOFT_BLOCK) {
+        return point;
+    }
+    return { x: targetX, y: targetY };
+}
+
+export function movePoint(
+    point: status.Point,
+    x: number, y: number
+) {
     let targetX = point.x + x;
     let targetY = point.y + y;
     if (targetX < 0) {
@@ -140,12 +104,6 @@ function moveBallPoint(
     } else if (targetY >= FIELD_HEIGHT) {
         targetY = FIELD_HEIGHT - 1;
     }
-    if (game.lands[targetY * FIELD_WIDTH + targetX] !== status.Land.NONE
-        || game.overlays[targetY * FIELD_WIDTH + targetX] !== status.Overlay.NONE) {
-        return { x: targetX, y: targetY };
-    }
-    point.x = targetX;
-    point.y = targetY;
     return { x: targetX, y: targetY };
 }
 

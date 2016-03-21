@@ -38,7 +38,7 @@ function getDefaultPoint(i: number) {
 
 export function update(game: status.Game, inputs: Input[]) {
     let bombList = players.getBombs(game.players);
-    objects.movePlayers(game.players, game, inputs);
+    players.movePlayers(game.players, game, inputs);
     players.putPlayersBomb(game.players, inputs);
     players.suicide(game.players, inputs);
     let actives = cleanup(game.players);

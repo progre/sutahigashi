@@ -1,13 +1,54 @@
-import {Player} from "../status";
+import * as status from "../status";
+import {FIELD_WIDTH} from "./definition";
 import {Input} from "./input";
 import * as bombs from "./bombs";
+import * as objects from "./objects";
 
-export function getBombs(players: Player[]) {
+export function getBombs(players: status.Player[]) {
     return players.map(x => x.bombs).reduce((p, c) => p.concat(c));
 }
 
+export function movePlayers(
+    players: status.Player[],
+    game: status.Game,
+    inputs: Input[]
+) {
+    inputs.forEach((input, i) => {
+        let player = players[i];
+        movePlayer(input, player, game);
+    });
+}
+
+export function movePlayer(
+    input: Input,
+    player: status.Player,
+    game: status.Game
+) {
+    if (player.point == null) {
+        return;
+    }
+    let x: number = -<any>input.left + <any>input.right;
+    let y: number = -<any>input.up + <any>input.down;
+    player.point = movePlayerPoint(player.point, x, y, game);
+}
+
+function movePlayerPoint(
+    point: status.Point,
+    x: number, y: number,
+    game: status.Game
+) {
+    let {x: targetX, y: targetY} = objects.movePoint(point, x, y);
+    let bombs = getBombs(game.players);
+    if (game.lands[targetY * FIELD_WIDTH + targetX] !== status.Land.NONE
+        || game.overlays[targetY * FIELD_WIDTH + targetX] !== status.Overlay.NONE
+        || bombs.some(bomb => targetX === bomb.point.x && targetY === bomb.point.y)) {
+        return point;
+    }
+    return { x: targetX, y: targetY };
+}
+
 export function putPlayersBomb(
-    players: Player[],
+    players: status.Player[],
     inputs: Input[]
 ) {
     inputs.forEach((input, i) => {
@@ -16,7 +57,7 @@ export function putPlayersBomb(
 }
 
 export function putBomb(
-    player: Player,
+    player: status.Player,
     input: Input
 ) {
     if (player.point == null) {
@@ -28,7 +69,7 @@ export function putBomb(
 }
 
 export function suicide(
-    players: Player[],
+    players: status.Player[],
     inputs: Input[]
 ) {
     inputs.forEach((input, i) => {
