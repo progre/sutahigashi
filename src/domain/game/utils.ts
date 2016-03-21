@@ -1,5 +1,6 @@
 import {Game, Point, Land} from "../status";
 import {FIELD_WIDTH} from "./definition";
+import * as players from "./players";
 
 export function findFreeArea(game: Game) {
     let area = <Point[]>[];
@@ -9,10 +10,12 @@ export function findFreeArea(game: Game) {
         }
         area.push({ x: i % FIELD_WIDTH, y: Math.floor(i / FIELD_WIDTH) });
     });
+    let bombs = players.getBombs(game.players);
     return area
-        .filter(x => game.bombs.every(bomb => !equals(x, bomb.point)))
+        .filter(x => bombs.every(bomb => !equals(x, bomb.point)))
         .filter(x => game.balls.every(ball => !equals(x, ball.point)))
-        .filter(x => game.players.every(player => player.point == null || !equals(x, player.point)));
+        .filter(x => game.players
+            .every(player => player.point == null || !equals(x, player.point)));
 }
 
 export function equals(a: Point, b: Point) {

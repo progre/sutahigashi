@@ -1,5 +1,6 @@
 import {Game, Ability, Land, Overlay} from "../../../../domain/status";
 import {FIELD_WIDTH} from "../../../../domain/game/definition";
+import * as players from "../../../../domain/game/players";
 import createField, {RESOURCES as fieldResources} from "./field";
 import createPlayer, {RESOURCES as playerResources} from "./player";
 import * as objects from "./objects";
@@ -80,14 +81,15 @@ export default class GameViewContainer extends createjs.Container {
             this.players[i].x = player.point.x * CHIP_PIXEL;
             this.players[i].y = player.point.y * CHIP_PIXEL;
         });
+        let bombs = players.getBombs(game.players);
         this.bombs.forEach((bombView, i) => {
-            if (i >= game.bombs.length) {
+            if (i >= bombs.length) {
                 bombView.visible = false;
                 return;
             }
             bombView.visible = true;
-            bombView.x = game.bombs[i].point.x * CHIP_PIXEL;
-            bombView.y = game.bombs[i].point.y * CHIP_PIXEL;
+            bombView.x = bombs[i].point.x * CHIP_PIXEL;
+            bombView.y = bombs[i].point.y * CHIP_PIXEL;
         });
         this.balls.forEach((ballView, i) => {
             if (i >= game.balls.length) {

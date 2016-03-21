@@ -19,26 +19,22 @@ export function movePlayers(
 
 export function putPlayersBomb(
     players: status.Player[],
-    bombList: status.Bomb[],
     inputs: Input[]
 ) {
     inputs.forEach((input, i) => {
-        let player = players[i];
-        putBomb(player, bombList, input);
+        putBomb(players[i], input);
     });
 }
 
 export function putBomb(
     player: status.Player,
-    bombList: status.Bomb[],
     input: Input
 ) {
     if (player.point == null) {
         return;
     }
-    if (input.bomb && player.remainBomb > 0) {
-        bombList.push(bombs.createBomb(player));
-        player.remainBomb--;
+    if (input.bomb && player.maxBomb > player.bombs.length) {
+        player.bombs.push(bombs.createBomb(player));
     }
 }
 

@@ -5,20 +5,21 @@ import {createField} from "./field";
 import {Input} from "./input";
 import * as objects from "./objects";
 import * as bombs from "./bombs";
+import * as players from "./players";
 
 export function createStatus(players: { id: string, name: string }[]) {
     let {lands, overlays} = createField();
-    let status = {
+    let status = <status.Game>{
         tick: 0,
         players: players.map((x, i) => ({
             id: x.id,
             name: x.name,
             point: getDefaultPoint(i),
             ability: [],
-            remainBomb: 1
+            bombs: <status.Bomb[]>[],
+            maxBomb: 1
         })),
         items: <status.Item[]>[],
-        bombs: <status.Bomb[]>[],
         balls: <status.Ball[]>[],
         lands,
         overlays
@@ -36,8 +37,9 @@ function getDefaultPoint(i: number) {
 }
 
 export function update(game: status.Game, inputs: Input[]) {
-    objects.movePlayers(game.players, game.lands, game.overlays, game.bombs, inputs);
-    objects.putPlayersBomb(game.players, game.bombs, inputs);
+    let bombList = players.getBombs(game.players);
+    objects.movePlayers(game.players, game.lands, game.overlays, bombList, inputs);
+    objects.putPlayersBomb(game.players, inputs);
     objects.suicide(game.players, inputs);
     let actives = cleanup(game.players);
     burn(game.balls, actives, game.items);
@@ -48,8 +50,10 @@ export function update(game: status.Game, inputs: Input[]) {
     game.items = cleanup(game.items);
     objects.moveBalls(game.balls, game.lands, game.overlays, game.items, rnd);
     game.balls = cleanup(game.balls);
-    bombs.updateBombs(game.bombs, game.balls); // 誘爆させたボムをすぐに弾にするのでボムは後
-    game.bombs = game.bombs.filter(x => x.remain > 0);
+    bombs.updateBombs(bombList, game.balls); // 誘爆させたボムをすぐに弾にするのでボムは後
+    game.players.forEach(player => {
+        player.bombs = player.bombs.filter(x => x.remain > 0);
+    });
     game.tick++;
 }
 
@@ -84,7 +88,7 @@ function pickup(actives: status.Player[], items: status.Item[]) {
             player.ability.push(item.ability);
             switch (item.ability) {
                 case status.Ability.BOMB_UP:
-                    player.remainBomb++;
+                    player.maxBomb++;
                     break;
                 default:
                     break;

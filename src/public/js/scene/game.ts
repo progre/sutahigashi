@@ -5,6 +5,7 @@ import {Game as Status, Player} from "../../../domain/status";
 import {FPS} from "../../../domain/game/definition";
 import {Input} from "../../../domain/game/input";
 import * as objects from "../../../domain/game/objects";
+import * as players from "../../../domain/game/players";
 import EventDetector from "../domain/eventdetector";
 import Controller from "../infrastructure/controller";
 import SE from "../infrastructure/se";
@@ -115,8 +116,13 @@ export default class Game {
             return;
         }
         for (let input of this.sendings.concat().splice(status.tick + 1)) {
-            objects.movePlayer(input, player.point, status.lands, status.overlays, status.bombs);
-            objects.putBomb(player, status.bombs, input);
+            objects.movePlayer(
+                input,
+                player.point,
+                status.lands,
+                status.overlays,
+                players.getBombs(status.players));
+            objects.putBomb(player, input);
         }
     }
 }

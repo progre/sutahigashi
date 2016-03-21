@@ -12,10 +12,16 @@ export default class EventDetector extends EventEmitter {
     }
 
     private check(previous: Game, current: Game) {
-        if (current.bombs.some(bomb => isNewBomb(bomb, previous.bombs))) {
+        let previousBombs = previous.players
+            .map(x => x.bombs)
+            .reduce((r, c) => r.concat(c));
+        let currentBombs = current.players
+            .map(x => x.bombs)
+            .reduce((r, c) => r.concat(c));
+        if (currentBombs.some(bomb => isNewBomb(bomb, previousBombs))) {
             this.emit("put");
         }
-        if (current.balls.some(ball => isFromBomb(ball, previous.bombs))) {
+        if (current.balls.some(ball => isFromBomb(ball, previousBombs))) {
             this.emit("explosion");
         }
         if (current.players.some((player, i) => isDead(player, previous.players[i]))) {

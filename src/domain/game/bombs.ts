@@ -12,7 +12,6 @@ export function createBomb(player: status.Player) {
         remain: BOMB_DEFAULT_REMAIN,
         point: { x: player.point.x, y: player.point.y },
         ability,
-        author: player,
         ballSpeed: createSpeed(player.ability)
     };
 }
@@ -33,14 +32,16 @@ export function updateBombs(bombs: status.Bomb[], balls: status.Ball[]) {
             || balls.some(ball => objects.ballTouchedToBomb(ball, bomb)))
         .forEach(bomb => {
             bomb.remain = 0;
-            let newBalls = bomb.ability === status.Ability.EIGHT_BOMB
-                ? createBallsFromEight(bomb.point, bomb.ballSpeed)
-                : createBallsFromNormal(bomb.point, bomb.ballSpeed);
-            for (let ball of newBalls) {
+            for (let ball of createBalls(bomb)) {
                 balls.push(ball);
             }
-            bomb.author.remainBomb++;
         });
+}
+
+function createBalls(bomb: status.Bomb) {
+    return bomb.ability === status.Ability.EIGHT_BOMB
+        ? createBallsFromEight(bomb.point, bomb.ballSpeed)
+        : createBallsFromNormal(bomb.point, bomb.ballSpeed);
 }
 
 function createBallsFromNormal(point: status.Point, speed: number) {

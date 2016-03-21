@@ -31,7 +31,6 @@ export interface Game {
     tick: number;
     players: Player[];
     items: Item[];
-    bombs: Bomb[];
     balls: Ball[];
     lands: Land[];
     overlays: Overlay[];
@@ -42,7 +41,8 @@ export interface Player {
     name: string;
     point: Point;
     ability: Ability[];
-    remainBomb: number;
+    bombs: Bomb[];
+    maxBomb: number;
 }
 
 export enum Ability {
@@ -61,7 +61,6 @@ export interface Bomb {
     remain: number;
     point: Point;
     ability: Ability;
-    author: Player;
     ballSpeed: number;
 }
 
