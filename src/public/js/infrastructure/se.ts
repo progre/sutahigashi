@@ -47,6 +47,10 @@ class GameSE {
         pickup: createjs.Sound.createInstance("se/game/basic/pickup")
     };
 
+    private other = <{ [id: string]: createjs.AbstractSoundInstance }>{
+        shot: createjs.Sound.createInstance("se/game/other/shot")
+    };
+
     constructor(private config: { volume: number }) {
     }
 
@@ -55,6 +59,9 @@ class GameSE {
         switch (ids[0]) {
             case "basic":
                 this.basic[ids[1]].play(null, 0, 0, 0, this.config.volume);
+                break;
+            case "other":
+                this.other[ids[1]].play(null, 0, 0, 0, this.config.volume);
                 break;
             default:
                 throw new Error();

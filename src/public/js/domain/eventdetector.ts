@@ -24,6 +24,9 @@ export default class EventDetector extends EventEmitter {
         if (current.balls.some(ball => isFromBomb(ball, previousBombs))) {
             this.emit("explosion");
         }
+        if (current.players.some((player, i) => isAttacking(player, previous.players[i]))) {
+            this.emit("shot");
+        }
         if (current.players.some((player, i) => isDead(player, previous.players[i]))) {
             this.emit("death");
         }
@@ -45,6 +48,10 @@ function isNewBomb(bomb: Bomb, previousBombs: Bomb[]) {
 
 function isFromBomb(ball: Ball, previousBombs: Bomb[]) {
     return previousBombs.some(x => equals(ball.point, x.point));
+}
+
+function isAttacking(current: Player, previous: Player) {
+    return current.attackWait > 0 && previous.attackWait === 0;
 }
 
 function isDead(current: Player, previous: Player) {

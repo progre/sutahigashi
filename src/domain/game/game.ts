@@ -1,5 +1,5 @@
 import * as seedrandom from "seedrandom";
-const rnd = seedrandom("remilia");
+const rnd = seedrandom("remilia_");
 import * as status from "../status";
 import {createField} from "./field";
 import {Input} from "./input";
@@ -43,7 +43,6 @@ export function update(game: status.Game, inputs: Input[]) {
     let bombList = players.getBombs(game.players);
     players.movePlayers(game.players, game, inputs);
     players.putPlayersBomb(game.players, inputs);
-    players.putPlayersAttack(game.players, game.balls, inputs);
     players.suicide(game.players, inputs);
     let actives = cleanup(game.players);
     burn(game.balls, actives, game.overlays, game.items);
@@ -54,6 +53,7 @@ export function update(game: status.Game, inputs: Input[]) {
     game.items = cleanup(game.items);
     objects.moveBalls(game.balls, game, game.items, rnd);
     game.balls = cleanup(game.balls);
+    players.putPlayersAttack(game.players, game.balls, inputs, game);
     bombs.updateBombs(bombList, game.balls); // 誘爆させたボムをすぐに弾にするのでボムは後
     game.players.forEach(player => {
         player.bombs = player.bombs.filter(x => x.remain > 0);

@@ -82,7 +82,8 @@ export function putBomb(
 export function putPlayersAttack(
     players: status.Player[],
     ballList: status.Ball[],
-    inputs: Input[]
+    inputs: Input[],
+    game: status.Game
 ) {
     inputs.forEach((input, i) => {
         let player = players[i];
@@ -92,7 +93,7 @@ export function putPlayersAttack(
         if (player.attackWait <= 0) {
             startAttack(player, input);
         } else {
-            endAttack(player, ballList);
+            endAttack(player, ballList, game);
         }
     });
 }
@@ -102,26 +103,31 @@ export function startAttack(
     input: Input
 ) {
     if (input.attack && player.ability.indexOf(status.Ability.HADO_GUN) >= 0) {
-        player.attackWait = 5;
+        player.attackWait = 3;
     }
 }
 
 export function endAttack(
     player: status.Player,
-    ballList: status.Ball[]
+    ballList: status.Ball[],
+    game: status.Game
 ) {
     player.attackWait--;
-    if (player.attackWait === 0 && player.ability.indexOf(status.Ability.HADO_GUN) >= 0) {
-        let point: status.Point;
-        switch (player.direction) {
-            case 8: point = { x: player.point.x, y: player.point.y - 1 }; break;
-            case 6: point = { x: player.point.x + 1, y: player.point.y }; break;
-            case 2: point = { x: player.point.x, y: player.point.y + 1 }; break;
-            case 4: point = { x: player.point.x - 1, y: player.point.y }; break;
-            default: throw new Error();
-        }
-        ballList.push(bombs.createBallOne(point, player.ability, player.direction));
+    if (player.attackWait > 0 || player.ability.indexOf(status.Ability.HADO_GUN) < 0) {
+        return;
     }
+    let point: status.Point;
+    switch (player.direction) {
+        case 8: point = { x: player.point.x, y: player.point.y - 1 }; break;
+        case 6: point = { x: player.point.x + 1, y: player.point.y }; break;
+        case 2: point = { x: player.point.x, y: player.point.y + 1 }; break;
+        case 4: point = { x: player.point.x - 1, y: player.point.y }; break;
+        default: throw new Error();
+    }
+    if (game.lands[point.y * FIELD_WIDTH + point.x] === status.Land.HARD_BLOCK) {
+        return;
+    }
+    ballList.push(bombs.createBallOne(point, player.ability, player.direction));
 }
 
 export function suicide(

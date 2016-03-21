@@ -47,6 +47,9 @@ export default class Game {
             .on("explosion", () => {
                 se.game.play("basic/explosion");
             })
+            .on("shot", () => {
+                se.game.play("other/shot");
+            })
             .on("death", () => {
                 se.game.play("basic/death");
             })
