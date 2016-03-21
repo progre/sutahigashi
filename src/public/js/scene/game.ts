@@ -118,11 +118,9 @@ export default class Game {
         for (let input of this.sendings.concat().splice(status.tick + 1)) {
             objects.movePlayer(
                 input,
-                player.point,
-                status.lands,
-                status.overlays,
-                players.getBombs(status.players));
-            objects.putBomb(player, input);
+                player,
+                status);
+            players.putBomb(player, input);
         }
     }
 }

@@ -4,15 +4,15 @@ import {FPS} from "./definition";
 
 const BOMB_DEFAULT_REMAIN = FPS * 2.5;
 
-export function createBomb(player: status.Player) {
-    let ability = player.ability.indexOf(status.Ability.EIGHT_BOMB) >= 0
+export function createBomb(point: status.Point, abilities: status.Ability[]) {
+    let ability = abilities.indexOf(status.Ability.EIGHT_BOMB) >= 0
         ? status.Ability.EIGHT_BOMB
         : null;
     return {
         remain: BOMB_DEFAULT_REMAIN,
-        point: { x: player.point.x, y: player.point.y },
+        point,
         ability,
-        ballSpeed: createSpeed(player.ability)
+        ballSpeed: createSpeed(abilities)
     };
 }
 
