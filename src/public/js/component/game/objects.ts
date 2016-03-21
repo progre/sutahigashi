@@ -8,7 +8,8 @@ export const RESOURCES = [
     { id: "item_" + Ability.EIGHT_BOMB, src: "https://pbs.twimg.com/media/CSX_XL3UwAAJv-E.png" },
     { id: "item_" + Ability.BOMB_UP, src: "https://pbs.twimg.com/media/CSX-N00UkAApcON.png" },
     { id: "item_" + Ability.SPEED, src: "https://pbs.twimg.com/media/CSX_vZXUsAAAt_G.png" },
-    { id: "item_" + Ability.SLOW, src: "https://pbs.twimg.com/media/CSX_oIfVAAEDvYy.png" }
+    { id: "item_" + Ability.SLOW, src: "https://pbs.twimg.com/media/CSX_oIfVAAEDvYy.png" },
+    { id: "item_" + Ability.HADO_GUN, src: "https://pbs.twimg.com/media/CSX_h7LUcAAsbiN.png" }
 ];
 
 export function createBomb(loader: createjs.AbstractLoader) {

@@ -51,7 +51,18 @@ export enum Ability {
     EIGHT_BOMB,
     BOMB_UP,
     SPEED,
-    SLOW
+    SLOW,
+    HADO_GUN
+}
+
+export namespace Ability {
+    export const LIST = [
+        Ability.EIGHT_BOMB,
+        Ability.BOMB_UP,
+        Ability.SPEED,
+        Ability.SLOW,
+        Ability.HADO_GUN
+    ];
 }
 
 export interface Item {

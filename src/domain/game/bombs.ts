@@ -129,3 +129,14 @@ function createBallsFromEight(point: status.Point, speed: number) {
         }
     ];
 }
+
+export function createBallOne(point: status.Point, abilities: status.Ability[], direction: number) {
+    let speed = createSpeed(abilities);
+    let remain = FPS / speed;
+    return {
+        speed,
+        remain,
+        direction,
+        point: { x: point.x, y: point.y }
+    };
+}

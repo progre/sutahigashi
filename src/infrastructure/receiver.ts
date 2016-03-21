@@ -80,6 +80,7 @@ export class InputReceiver extends EventEmitter {
             left: false,
             right: false,
             bomb: false,
+            attack: false,
             suicide: true
         };
         this.addNewInput(input);
@@ -110,6 +111,7 @@ export class InputReceiver extends EventEmitter {
                 left: false,
                 right: false,
                 bomb: false,
+                attack: false,
                 suicide: true
             };
         });

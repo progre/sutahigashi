@@ -10,7 +10,7 @@ export const RESOURCES = [
     { id: "se/game/basic/explosion", src: "res/se/game/basic/bom27_b.ogg" },
     { id: "se/game/basic/pickup", src: "res/se/game/basic/cursor05.ogg" },
     // { id: "se/game/basic/bound", src: "res/se/game/basic/swing06_r.ogg" },
-    // { id: "se/game/other/shot", src: "res/se/game/other/power27.ogg" },
+    { id: "se/game/other/shot", src: "res/se/game/other/power27.ogg" },
     // { id: "se/game/other/punch", src: "res/se/game/other/puu76.ogg" }, // and overthrow
     // { id: "se/game/other/kick", src: "res/se/game/other/hit34.ogg" },
     // { id: "se/game/other/swing", src: "res/se/game/other/swing06_h.ogg" },

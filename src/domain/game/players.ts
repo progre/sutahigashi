@@ -27,7 +27,6 @@ export function movePlayer(
         return;
     }
     if (player.attackWait > 0) {
-        player.attackWait--;
         return;
     }
     let x: number = -<any>input.left + <any>input.right;
@@ -77,6 +76,51 @@ export function putBomb(
     }
     if (input.bomb && player.maxBomb > player.bombs.length) {
         player.bombs.push(bombs.createBomb(player.point, player.ability));
+    }
+}
+
+export function putPlayersAttack(
+    players: status.Player[],
+    ballList: status.Ball[],
+    inputs: Input[]
+) {
+    inputs.forEach((input, i) => {
+        let player = players[i];
+        if (player.point == null) {
+            return;
+        }
+        if (player.attackWait <= 0) {
+            startAttack(player, input);
+        } else {
+            endAttack(player, ballList);
+        }
+    });
+}
+
+export function startAttack(
+    player: status.Player,
+    input: Input
+) {
+    if (input.attack && player.ability.indexOf(status.Ability.HADO_GUN) >= 0) {
+        player.attackWait = 5;
+    }
+}
+
+export function endAttack(
+    player: status.Player,
+    ballList: status.Ball[]
+) {
+    player.attackWait--;
+    if (player.attackWait === 0 && player.ability.indexOf(status.Ability.HADO_GUN) >= 0) {
+        let point: status.Point;
+        switch (player.direction) {
+            case 8: point = { x: player.point.x, y: player.point.y - 1 }; break;
+            case 6: point = { x: player.point.x + 1, y: player.point.y }; break;
+            case 2: point = { x: player.point.x, y: player.point.y + 1 }; break;
+            case 4: point = { x: player.point.x - 1, y: player.point.y }; break;
+            default: throw new Error();
+        }
+        ballList.push(bombs.createBallOne(point, player.ability, player.direction));
     }
 }
 

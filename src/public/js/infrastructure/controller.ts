@@ -6,6 +6,7 @@ export default class Controller {
     private left = false;
     private right = false;
     private bomb = false;
+    private attack = false;
 
     constructor() {
         window.addEventListener("keydown", this);
@@ -22,6 +23,7 @@ export default class Controller {
             left: this.left,
             right: this.right,
             bomb: this.bomb,
+            attack: this.attack,
             suicide: false
         };
         this.up = false;
@@ -29,6 +31,7 @@ export default class Controller {
         this.left = false;
         this.right = false;
         this.bomb = false;
+        this.attack = false;
         return status;
     }
 
@@ -40,6 +43,8 @@ export default class Controller {
             case "ArrowLeft": e.preventDefault(); this.left = true; return;
             case "ArrowRight": e.preventDefault(); this.right = true; return;
             case "Space": e.preventDefault(); this.bomb = true; return;
+            case "KeyZ": e.preventDefault(); this.bomb = true; return;
+            case "KeyX": e.preventDefault(); this.attack = true; return;
             default: return;
         }
     }
@@ -61,6 +66,14 @@ function keyboardEventShim(e: HTML5KeyboardEvent) {
             return;
         case " ":
             e.code = "Space";
+            return;
+        case "Z":
+        case "z":
+            e.code = "KeyZ";
+            return;
+        case "X":
+        case "x":
+            e.code = "KeyX";
             return;
         default:
             e.code = e.key;

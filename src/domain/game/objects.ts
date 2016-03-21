@@ -45,30 +45,24 @@ function moveBall(
         ball.point = null;
         return;
     }
-    let idx = ball.point.y * FIELD_WIDTH + ball.point.x;
-    if (game.overlays[idx] === status.Overlay.SOFT_BLOCK) {
-        game.overlays[idx] = status.Overlay.NONE;
-        let item = createItem(rnd, ball.point);
-        if (item != null) {
-            items.push(item);
-        }
-        ball.point = null;
-    }
 }
 
-function createItem(rnd: prng, point: status.Point) {
+export function createItem(rnd: prng, point: status.Point) {
     let random = rnd();
     if (random < 0.7) {
         return null;
     }
     random = (random - 0.7) / 0.3;
-    if (random < 0.1) {
+    if (random < 0.08) {
         return { point, ability: status.Ability.EIGHT_BOMB };
     }
-    if (random < 0.3) {
+    if (random < 0.16) {
+        return { point, ability: status.Ability.HADO_GUN };
+    }
+    if (random < 0.36) {
         return { point, ability: status.Ability.SPEED };
     }
-    if (random < 0.5) {
+    if (random < 0.56) {
         return { point, ability: status.Ability.SLOW };
     }
     return { point, ability: status.Ability.BOMB_UP };

@@ -6,8 +6,6 @@ import createPlayer, {RESOURCES as playerResources} from "./player";
 import * as objects from "./objects";
 import {CHIP_PIXEL, FIELD_PIXEL} from "./chip";
 
-const ABILITIES = [Ability.EIGHT_BOMB, Ability.BOMB_UP, Ability.SPEED, Ability.SLOW];
-
 export const RESOURCES = fieldResources
     .concat(playerResources)
     .concat(objects.RESOURCES);
@@ -40,7 +38,7 @@ export default class GameViewContainer extends createjs.Container {
             }
             this.softBlocks.push(line);
         }
-        for (let ability of ABILITIES) {
+        for (let ability of Ability.LIST) {
             let items = <createjs.DisplayObject[]>[];
             for (let i = 0; i < FIELD_WIDTH * 13; i++) {
                 let item = objects.createItem(loader, ability);
