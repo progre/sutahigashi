@@ -14,8 +14,7 @@ export function movePlayers(
     inputs: Input[]
 ) {
     inputs.forEach((input, i) => {
-        let player = players[i];
-        movePlayer(input, player, game);
+        movePlayer(input, players[i], game);
     });
 }
 
@@ -25,6 +24,10 @@ export function movePlayer(
     game: status.Game
 ) {
     if (player.point == null) {
+        return;
+    }
+    if (player.attackWait > 0) {
+        player.attackWait--;
         return;
     }
     let x: number = -<any>input.left + <any>input.right;
